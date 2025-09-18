@@ -28,3 +28,7 @@ I am Shinu, and this is my first semester in BU. I love to play video games, cro
 ## Junzhe Chen
 
 I am Junzhe, and this is my lazt semester in BU. I have my Bachlor degree in math in University of Airzona.
+
+## Qiuting Zhao
+
+My name is Qiuting Zhao, and this is my last semester in BU MSCS. I have my Bachelor degree in Computer Science and Computer Science Game Design in University of California, Santa Cruz. I love playing any kind of game and delving into their inner logic.
