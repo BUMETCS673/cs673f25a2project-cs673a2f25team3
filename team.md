@@ -9,12 +9,12 @@ I am getting my major in Compter Science. My favorite part about programming is 
 My name is Bohan Lin. This is my first semester in BU MET MSCS. I have my Bachelor degree in computer science and math in Brandeis University. I like coding. 
 
 ## Dexiao Zhang
-#### Technical Skills
+### Technical Skills
 - **Programming Languages**: Java, Python
 - **GitHub Experience**: Beginner, currently learning
 - **Development Focus**: Backend Development
 
-#### Course Expectations
+### Course Expectations
 Through this project, I hope to:
 - Learn team collaboration and software development processes
 - Enhance backend development skills
