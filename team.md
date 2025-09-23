@@ -27,7 +27,7 @@ I am Shinu, and this is my first semester in BU. I love to play video games, cro
 
 ## Junzhe Chen
 
-I am Junzhe, and this is my lazt semester in BU. I have my Bachlor degree in math in University of Airzona.
+I am Junzhe, and this is my last semester in BU. I have my Bachlor degree in math in University of Airzona.
 
 ## Qiuting Zhao
 
