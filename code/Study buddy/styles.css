@@ -1,0 +1,121 @@
+/* Page background and base styles */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  font-family: "Open Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: linear-gradient(135deg, #d041a0, #d3b3d1);
+  background-position: center;
+  background-size: cover;
+  display: flex; align-items: center; justify-content: center;
+  padding: 10px;
+}
+
+/* Card container */
+.page { width: 100%; display: flex; align-items: center; justify-content: center; }
+.card {
+  width: 400px; max-width: 92vw;
+  border-radius: 12px;
+  padding: 28px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.title { color: #fff; font-size: 26px; font-weight: 800; letter-spacing: 0.2px; }
+.subtitle { color: #f3f3f3; font-size: 13px; margin-top: 6px; opacity: 0.95; }
+
+/* Form and input fields (floating label) */
+.form { margin-top: 18px; text-align: left; }
+.input-field {
+  position: relative;
+  border-bottom: 2px solid rgba(255,255,255,0.55);
+  margin: 16px 0 20px;
+  padding-top: 10px;
+}
+.input-field input {
+  width: 100%;
+  height: 40px;
+  background: transparent;
+  border: none; outline: none;
+  color: #fff; font-size: 16px;
+}
+.input-field label {
+  position: absolute; left: 0; top: 50%;
+  transform: translateY(-50%);
+  color: #fff; font-size: 16px;
+  pointer-events: none; transition: 0.15s ease;
+  opacity: 0.95;
+}
+.input-field input:focus ~ label,
+.input-field input:valid ~ label {
+  font-size: 12px; top: 0; transform: translateY(-100%);
+  opacity: 0.85;
+}
+
+/* Show/Hide password button */
+.toggle-btn {
+  position: absolute; right: 6px; top: 50%;
+  transform: translateY(-50%);
+  border: 1px solid rgba(255,255,255,0.6);
+  background: transparent; color: #fff;
+  padding: 4px 8px; border-radius: 6px;
+  font-size: 12px; cursor: pointer;
+  transition: 0.2s ease;
+}
+.toggle-btn:hover { background: rgba(255,255,255,0.18); }
+
+/* Row alignment */
+.row-between {
+  display: flex; align-items: center; justify-content: space-between;
+  margin: 6px 0 14px;
+}
+.remember { color: #fff; font-size: 14px; user-select: none; }
+.remember input { margin-right: 6px; }
+
+/* Link-style button */
+.link-btn {
+  background: transparent;
+  border: none; color: #fff;
+  font-size: 14px; cursor: pointer;
+  text-decoration: underline; opacity: 0.95;
+}
+.link-btn:hover { opacity: 1; }
+
+/* Primary submit button */
+.primary-btn {
+  width: 100%;
+  background: #fff; color: #000;
+  font-weight: 700; border: 2px solid transparent;
+  padding: 12px 18px; border-radius: 8px;
+  cursor: pointer; transition: 0.25s ease; font-size: 16px;
+}
+.primary-btn:hover { color: #fff; background: rgba(255,255,255,0.15); border-color: #fff; }
+.primary-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Divider line */
+.divider { position: relative; text-align: center; margin: 18px 0 8px; }
+.divider::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 50%;
+  height: 1px; background: rgba(255,255,255,0.4);
+}
+.divider span {
+  position: relative; background: transparent; color: #fff;
+  font-size: 12px; padding: 0 8px;
+}
+
+/* Third-party login buttons */
+.oauth { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.oauth-btn {
+  background: #fff; color: #000;
+  font-weight: 700; border: 2px solid transparent;
+  padding: 10px 12px; border-radius: 8px;
+  cursor: pointer; transition: 0.25s ease; font-size: 14px;
+}
+.oauth-btn:hover { color: #fff; background: rgba(255,255,255,0.15); border-color: #fff; }
+
+/* Alerts */
+.alert { margin-top: 12px; padding: 10px 12px; border-radius: 8px; font-size: 14px; }
+.alert-error { color: #ffebee; background: rgba(255, 82, 82, 0.25); border: 1px solid rgba(255,82,82,0.45); }
+.alert-success { color: #e6ffed; background: rgba(76, 175, 80, 0.25); border: 1px solid rgba(76,175,80,0.45); }

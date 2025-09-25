@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Select Study Time</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script>
+    function selectTime(minutes) {
+      localStorage.setItem("study_time", minutes);
+
+      // go to game.html
+      window.location.href = "game.html"; 
+    }
+  </script>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <h1 class="title">Select Study Time</h1>
+      <p class="subtitle">Select your study time</p>
+
+      <div style="margin-top:20px; display: flex; flex-direction: column; gap: 12px;">
+        <!-- 45min button -->
+        <button class="primary-btn" onclick="selectTime(45)">Study 45 minutes</button>
+
+        <!-- test button -->
+        <button class="primary-btn" onclick="selectTime(0.1667)">Test</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
