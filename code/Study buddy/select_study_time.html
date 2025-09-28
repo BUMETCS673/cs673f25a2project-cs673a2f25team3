@@ -3,31 +3,168 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Select Study Time</title>
+  <title>Study Timer</title>
   <link rel="stylesheet" href="./styles.css" />
-  <script>
-    function selectTime(minutes) {
-      localStorage.setItem("study_time", minutes);
-
-      // go to game.html
-      window.location.href = "game.html"; 
-    }
-  </script>
 </head>
 <body>
   <div class="page">
     <div class="card">
-      <h1 class="title">Select Study Time</h1>
-      <p class="subtitle">Select your study time</p>
+      <h1 class="title">Study Timer</h1>
 
-      <div style="margin-top:20px; display: flex; flex-direction: column; gap: 12px;">
-        <!-- 45min button -->
-        <button class="primary-btn" onclick="selectTime(45)">Study 45 minutes</button>
+      <div id="timer" class="timer">--:--</div>
 
-        <!-- test button -->
-        <button class="primary-btn" onclick="selectTime(0.1667)">Test</button>
+      <div class="controls">
+        <button id="pauseBtn" class="primary-btn" disabled>Pause</button>
+        <button id="resetBtn" class="ghost-btn" disabled>Reset</button>
+      </div>
+
+      <div class="link-area">
+        <button class="link-btn" id="changeBtn">← Change duration</button>
       </div>
     </div>
   </div>
+
+  <!-- Time selecter -->
+  <div class="overlay" id="overlay">
+    <div class="picker-card">
+          
+      <h1 class="title"> Select study time </h1>
+      <p class="subtitle" style="margin-top:6px;">Choose how long you want to study</p>
+      <p class="subtitle"></p>
+      <div class="pick-list">
+        <button class="primary-btn" onclick="startWithMinutes(15)">Study 15 minutes</button>
+        <button class="primary-btn" onclick="startWithMinutes(25)">Study 25 minutes</button>
+        <button class="primary-btn" onclick="startWithMinutes(30)">Study 30 minutes</button>
+        <button class="primary-btn" onclick="startWithMinutes(45)">Study 45 minutes</button>
+        <button class="primary-btn" onclick="startWithMinutes(10/60)">test</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- when time out go to game page -->
+  <div class="modal" id="doneModal">
+    <div class="modal-card">
+      <h2 class="title" style="font-size:22px;">Time out</h2>
+      <p class="subtitle" style="margin-top:6px;">Do you want to play a game?</p>
+      <div class="modal-actions">
+        <button class="primary-btn" id="goMini">Go ahead</button>
+        <button class="ghost-btn" id="stayHere">Stay this page</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const timerEl = document.getElementById("timer");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const changeBtn = document.getElementById("changeBtn");
+    const overlay = document.getElementById("overlay");
+
+    const doneModal = document.getElementById("doneModal");
+    const goMini = document.getElementById("goMini");
+    const stayHere = document.getElementById("stayHere");
+
+    let totalMs = 0;
+    let remainingMs = 0;
+    let endAt = 0;
+    let paused = false;
+    let rafId = null;
+
+    function format(ms) {
+      const t = Math.max(0, Math.ceil(ms / 1000));
+      const m = Math.floor(t / 60);
+      const s = t % 60;
+      return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+    }
+
+    function render() {
+      if (paused) return;
+      remainingMs = endAt - Date.now();
+      if (remainingMs <= 0) {
+        timerEl.textContent = "00:00";
+        pauseBtn.disabled = true;
+        resetBtn.disabled = false;
+        cancelAnimationFrame(rafId);
+        // show modal
+        doneModal.style.display = "flex";
+        return;
+      }
+      timerEl.textContent = format(remainingMs);
+      rafId = requestAnimationFrame(render);
+    }
+
+    function initTimer(minutes) {
+      totalMs = Math.max(0, Math.round(minutes * 60 * 1000));
+      remainingMs = totalMs;
+      endAt = Date.now() + remainingMs;
+      paused = false;
+
+      timerEl.textContent = format(remainingMs);
+      pauseBtn.textContent = "Pause";
+      pauseBtn.disabled = totalMs <= 0;
+      resetBtn.disabled = totalMs <= 0;
+
+      cancelAnimationFrame(rafId);
+      if (totalMs > 0) rafId = requestAnimationFrame(render);
+    }
+
+    function openPicker() {
+      overlay.style.display = "flex";
+      cancelAnimationFrame(rafId);
+    }
+    function closePicker() {
+      overlay.style.display = "none";
+      if (!paused && totalMs > 0) {
+        endAt = Date.now() + remainingMs;
+        rafId = requestAnimationFrame(render);
+      }
+    }
+
+    // begin with selected minutes
+    window.startWithMinutes = function (minutes) {
+      initTimer(minutes);
+      closePicker();
+    };
+
+    //  event listeners
+    pauseBtn.addEventListener("click", () => {
+      if (!paused) {
+        paused = true;
+        cancelAnimationFrame(rafId);
+        remainingMs = Math.max(0, endAt - Date.now());
+        pauseBtn.textContent = "Resume";
+      } else {
+        paused = false;
+        endAt = Date.now() + remainingMs;
+        pauseBtn.textContent = "Pause";
+        rafId = requestAnimationFrame(render);
+      }
+    });
+
+    resetBtn.addEventListener("click", () => {
+      paused = false;
+      pauseBtn.textContent = "Pause";
+      pauseBtn.disabled = totalMs <= 0;
+      remainingMs = totalMs;
+      endAt = Date.now() + remainingMs;
+      cancelAnimationFrame(rafId);
+      if (totalMs > 0) rafId = requestAnimationFrame(render);
+    });
+
+    changeBtn.addEventListener("click", () => openPicker());
+
+    // modal buttons
+    goMini.addEventListener("click", () => {
+      window.location.href = "game.html"; // go to game page
+    });
+
+    stayHere.addEventListener("click", () => {
+      doneModal.style.display = "none";
+      // reset timer
+    });
+
+    // initially
+    openPicker();
+  </script>
 </body>
 </html>

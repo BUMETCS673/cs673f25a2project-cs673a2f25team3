@@ -8,14 +8,24 @@
   </head>
   <body>
     <div id="root"></div>
-    
-    <!-- React and Babel CDN -->
+
+    <!-- React & ReactDOM -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+
+
+    <!-- Source: https://ant.design/components/_util-cn-->
+    <!-- Setting button (Ant Design Icons) -->
+    <script src="https://unpkg.com/@ant-design/icons/dist/index.umd.js"></script>
+
+    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <script type="text/babel">
-      // Fake login API (demo) 
+      // Use for AntDesignIcons
+      const IconsGlobal = window.Icons || window.icons || window.AntDesignIcons;
+
+      // Fake login API (demo)
       function fakeLoginApi({ email, password }) {
         return new Promise((resolve, reject) => {
           setTimeout(() => {
@@ -59,7 +69,7 @@
             const storage = remember ? localStorage : sessionStorage;
             storage.setItem("auth_token", res.token);
             storage.setItem("auth_email", res.user.email);
-            window.location.href = "select_study_time.html"; 
+            window.location.href = "select_study_time.html";
           } catch (err) {
             setError(err.message || "Login failed, please try again later");
           } finally {
@@ -69,6 +79,19 @@
 
         return (
           <div className="page">
+            {/* SettingOutlined */}
+            <button
+              type="button"
+              className="settings-icon-btn"
+              onClick={() => window.location.href = "setting.html"}
+              aria-label="Settings"
+              title="Settings"
+            >
+            {IconsGlobal
+            ? <IconsGlobal.SettingOutlined style={{ fontSize: 28 }} />
+            : "⚙️"}
+            </button>
+
             <div className="card">
               <h1 className="title">Welcome</h1>
 
@@ -137,27 +160,6 @@
                   {loading ? "Logging in…" : "Login"}
                 </button>
               </form>
-
-              <div className="divider">
-                <span>Or continue with</span>
-              </div>
-
-              <div className="oauth">
-                <button
-                  type="button"
-                  className="oauth-btn"
-                  onClick={() => alert("Google login demo")}
-                >
-                  Google
-                </button>
-                <button
-                  type="button"
-                  className="oauth-btn"
-                  onClick={() => alert("Facebook login demo")}
-                >
-                  Facebook
-                </button>
-              </div>
             </div>
           </div>
         );
