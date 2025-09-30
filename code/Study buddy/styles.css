@@ -259,3 +259,9 @@ body {
 .modal-actions {
   display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px;
 }
+
+/* Study Buddy image */
+
+img.study-buddy {
+  width: 100%;
+}
