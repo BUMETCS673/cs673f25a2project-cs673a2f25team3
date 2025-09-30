@@ -8,7 +8,53 @@ const db = require("../db/db");
 
 const router = express.Router();
 
-// Register
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User registration, login, and profile
+ */
+
+/**
+ * @swagger
+ * /api/users/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     username:
+ *                       type: string
+ *       400:
+ *         description: Bad request, e.g., missing username/password
+ */
 router.post("/register", (req, res) => {
   const { username, password } = req.body;
 
@@ -19,7 +65,7 @@ router.post("/register", (req, res) => {
   User.createUser(username, password, (err, user) => {
     if (err) return res.status(400).json({ error: err.message });
 
-    // Automatically create default profile & settings data 
+    // Automatically create default profile & settings data
     db.run("INSERT INTO profiles (user_id) VALUES (?)", [user.id]);
     db.run("INSERT INTO settings (user_id) VALUES (?)", [user.id]);
 
@@ -30,7 +76,50 @@ router.post("/register", (req, res) => {
   });
 });
 
-// Login
+/**
+ * @swagger
+ * /api/users/login:
+ *   post:
+ *     summary: Login with username and password
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful, returns token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     username:
+ *                       type: string
+ *                 token:
+ *                   type: string
+ *       400:
+ *         description: User not found or bad request
+ *       401:
+ *         description: Invalid credentials
+ */
 router.post("/login", (req, res) => {
   const { username, password } = req.body;
 
@@ -58,7 +147,29 @@ router.post("/login", (req, res) => {
   });
 });
 
-// Get registered user data
+/**
+ * @swagger
+ * /api/users/me:
+ *   get:
+ *     summary: Get current logged-in user info
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Current user info
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 username:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized (invalid or missing token)
+ */
 router.get("/me", auth, (req, res) => {
   res.json({
     id: req.user.id,
