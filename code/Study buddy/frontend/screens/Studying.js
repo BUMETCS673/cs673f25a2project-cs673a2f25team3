@@ -2,7 +2,8 @@ import { Text, Button, View } from 'react-native';
 
 // this page is not finished
 
-export default function Studying({ navigation, route }) {
+// Studying page - this is the page that is open during studying
+export default function Studying({ route }) {
   // get params
   const { minutes } = route.params;
 

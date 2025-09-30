@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import { NavigationButton } from '../components/NavigationButton';
 
+// Page for selecting the time studying
 export default function SelectStudyTime({ navigation }) {
   return (
     <View>
