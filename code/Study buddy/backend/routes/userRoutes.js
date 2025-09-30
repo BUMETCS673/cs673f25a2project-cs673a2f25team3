@@ -4,7 +4,7 @@ const User = require("../models/userModel");
 
 const router = express.Router();
 
-// 注册
+// Register
 router.post("/register", (req, res) => {
   const { username, password } = req.body;
   User.createUser(username, password, (err, user) => {
@@ -13,7 +13,7 @@ router.post("/register", (req, res) => {
   });
 });
 
-// 登录
+// Login
 router.post("/login", (req, res) => {
   const { username, password } = req.body;
   User.getUserByUsername(username, (err, user) => {
