@@ -7,7 +7,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
   else console.log("✅ Connected to SQLite database");
 });
 
-// 初始化表
+// initializing table
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
