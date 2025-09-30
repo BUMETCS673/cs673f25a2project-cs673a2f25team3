@@ -1,13 +1,15 @@
-import { Button, View } from 'react-native';
+import { Button, View, TouchableOpacity, Text } from 'react-native';
+import { styles } from '../styles/style';
+import { NavigationButton } from '../components/NavigationButton';
 
 export default function Home({ navigation }) {
   return (
     <View>
-      <Button title="Start Studying" onPress={() => navigation.navigate('SelectStudyTime')} as="a" />
-      <Button title="Game Menu" onPress={() => navigation.navigate('GameMenu')} as="a" />
-      <Button title="Statistics" onPress={() => navigation.navigate('Statistics')} as="a" />
-      <Button title="Settings" onPress={() => navigation.navigate('Settings')} as="a" />
-      <Button title="Logout" onPress={() => navigation.navigate('Login')} as="a" />
+      <NavigationButton text="Start Studying!" link="SelectStudyTime" />
+      <NavigationButton text="Game Menu" link="Game Menu" />
+      <NavigationButton text="Statistics" link="Statistics" />
+      <NavigationButton text="Settings" link="Settings" />
+      <NavigationButton text="Logout" link="Login" />
     </View>
   );
 }

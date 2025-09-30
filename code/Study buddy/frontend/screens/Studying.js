@@ -12,8 +12,8 @@ export default function Studying({ navigation, route }) {
       <Text>Studying for {minutes} minutes</Text>
 
       {/* navigation */}
-      <Button title="Select Different Time" onPress={() => navigation.navigate('SelectStudyTime')} as="a" />
-      <Button title="Return Home" onPress={() => navigation.navigate('Home')} as="a" />
+      <NavigationButton text="Select Different Time" link="SelectStudyTime" />
+      <NavigationButton text="Return Home" link="Home" />
     </View>
   );
 }

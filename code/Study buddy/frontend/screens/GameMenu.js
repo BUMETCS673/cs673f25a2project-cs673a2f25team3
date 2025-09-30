@@ -1,11 +1,12 @@
-import { Button, View } from 'react-native';
+import { View } from 'react-native';
+import { NavigationButton } from '../components/NavigationButton';
 
 // this page is not finished
 
 export default function GameMenu({ navigation }) {
   return (
     <View>
-      <Button title="Return Home" onPress={() => navigation.navigate('Home')} as="a" />
+      <NavigationButton text="Return Home" link="Home" />
     </View>
   );
 }

@@ -1,13 +1,14 @@
-import { Button, View } from 'react-native';
+import { View } from 'react-native';
+import { NavigationButton } from '../components/NavigationButton';
 
 export default function SelectStudyTime({ navigation }) {
   return (
     <View>
-      <Button title="15 Minutes" onPress={() => navigation.navigate('Studying', {minutes: "10"})} as="a" />
-      <Button title="30 Minutes" onPress={() => navigation.navigate('Studying', {minutes: "30"})} as="a" />
-      <Button title="60 Minutes" onPress={() => navigation.navigate('Studying', {minutes: "60"})} as="a" />
-      <Button title="Return Home" onPress={() => navigation.navigate('Home')} as="a" />
-      <Button title="Test" onPress={() => navigation.navigate('Studying', {minutes: "0.2"})} as="a" />
+      <NavigationButton text="15 Minutes" link="Studying" params={{minutes: "15"}} />
+      <NavigationButton text="30 Minutes" link="Studying" params={{minutes: "30"}} />
+      <NavigationButton text="60 Minutes" link="Studying" params={{minutes: "60"}} />
+      <NavigationButton text="Return Home" link="Home" />
+      <NavigationButton text="Test" link="Studying" params={{minutes: "0.2"}} />
     </View>
   );
 }

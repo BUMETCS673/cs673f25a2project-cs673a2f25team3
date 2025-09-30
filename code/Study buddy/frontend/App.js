@@ -1,5 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './screens/Home';
@@ -12,6 +10,7 @@ import Studying from './screens/Studying';
 
 const Stack = createNativeStackNavigator();
 
+// name is the routing name that needs to go in buttons to direct to the right page
 export default function App() {
   return (
     <NavigationContainer>
