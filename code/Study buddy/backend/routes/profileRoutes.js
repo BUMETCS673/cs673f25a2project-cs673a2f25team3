@@ -5,7 +5,7 @@ const Profile = require("../models/profileModel");
 const router = express.Router();
 router.use(auth);
 
-// GET /api/profiles/me
+// GET /api/profiles/me Get profile data
 router.get("/me", (req, res) => {
   Profile.getProfile(req.user.id, (err, profile) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -13,7 +13,7 @@ router.get("/me", (req, res) => {
   });
 });
 
-// POST /api/profiles/me
+// POST /api/profiles/me Add profile data
 router.post("/me", (req, res) => {
   const { bio, avatar_url } = req.body;
   Profile.updateProfile(req.user.id, bio, avatar_url, (err, updated) => {

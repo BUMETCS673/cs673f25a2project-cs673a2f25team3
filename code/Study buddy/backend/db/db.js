@@ -7,7 +7,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
   else console.log("✅ Connected to SQLite database");
 });
 
-// initializing table
+// initializing tables (make sure userId is unique)
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
@@ -21,7 +21,7 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS settings (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
+      user_id INTEGER NOT NULL UNIQUE,
       theme TEXT DEFAULT 'light',
       daily_goal INTEGER DEFAULT 25,
       FOREIGN KEY (user_id) REFERENCES users(id)
@@ -41,7 +41,7 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS profiles (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
+      user_id INTEGER NOT NULL UNIQUE,
       bio TEXT,
       avatar_url TEXT,
       FOREIGN KEY (user_id) REFERENCES users(id)

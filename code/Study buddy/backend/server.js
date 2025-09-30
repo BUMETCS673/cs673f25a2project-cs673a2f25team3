@@ -1,3 +1,5 @@
+// backend/server.js
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const logger = require("./middleware/logger");
@@ -8,7 +10,7 @@ const studyRoutes = require("./routes/studyRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -19,8 +21,11 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/study", studyRoutes);
 app.use("/api/profiles", profileRoutes);
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
-});
+// listen Only listen when running server.js directly. Do not listen when testing
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
+  });
+}
 
-module.exports = app; // for testing
+module.exports = app;

@@ -5,7 +5,7 @@ const Study = require("../models/studyModel");
 const router = express.Router();
 router.use(auth);
 
-// POST /api/study/me  新增学习记录
+// POST /api/study/me  Add study history
 router.post("/me", (req, res) => {
   const { duration } = req.body;
   Study.addSession(req.user.id, duration, (err, session) => {
@@ -14,7 +14,7 @@ router.post("/me", (req, res) => {
   });
 });
 
-// GET /api/study/me  获取我的学习记录
+// GET /api/study/me  Get study history
 router.get("/me", (req, res) => {
   Study.getSessions(req.user.id, (err, sessions) => {
     if (err) return res.status(500).json({ error: err.message });

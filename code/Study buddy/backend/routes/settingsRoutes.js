@@ -5,7 +5,7 @@ const Settings = require("../models/settingsModel");
 const router = express.Router();
 router.use(auth);
 
-// GET /api/settings/me
+// GET /api/settings/me Get setting data
 router.get("/me", (req, res) => {
   Settings.getSettings(req.user.id, (err, settings) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -13,7 +13,7 @@ router.get("/me", (req, res) => {
   });
 });
 
-// POST /api/settings/me
+// POST /api/settings/me Add setting data
 router.post("/me", (req, res) => {
   const { theme, daily_goal } = req.body;
   Settings.updateSettings(req.user.id, theme, daily_goal, (err, updated) => {
