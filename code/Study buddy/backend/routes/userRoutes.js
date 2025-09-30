@@ -1,26 +1,59 @@
+
+require('dotenv').config();
 const express = require("express");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const auth = require("../middleware/auth");
 
 const router = express.Router();
 
-// Register
+
 router.post("/register", (req, res) => {
   const { username, password } = req.body;
   User.createUser(username, password, (err, user) => {
     if (err) return res.status(400).json({ error: err.message });
-    res.status(201).json(user);
+    res.status(201).json({
+      message: "User registered successfully",
+      user: { id: user.id, username: user.username }
+    });
   });
 });
 
-// Login
 router.post("/login", (req, res) => {
   const { username, password } = req.body;
+  console.log(">>> /login handler hit for:", username);
+
   User.getUserByUsername(username, (err, user) => {
     if (err || !user) return res.status(400).json({ error: "User not found" });
+
     const valid = bcrypt.compareSync(password, user.password);
     if (!valid) return res.status(401).json({ error: "Invalid credentials" });
-    res.json({ message: "Login successful", user_id: user.id });
+
+    console.log(">>> issuing token for user:", user.username);
+
+    const token = jwt.sign(
+      { id: user.id, username: user.username },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+    );
+    console.log("DEV TOKEN:", token);
+
+    console.log(">>> token generated, length:", token.length);
+
+    res.json({
+      message: "Login successful",
+      user: { id: user.id, username: user.username },
+      token
+    });
+  });
+});
+
+
+router.get("/me", auth, (req, res) => {
+  res.json({
+    id: req.user.id,
+    username: req.user.username
   });
 });
 

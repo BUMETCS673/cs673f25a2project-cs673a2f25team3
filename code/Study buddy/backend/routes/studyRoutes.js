@@ -1,17 +1,22 @@
 const express = require("express");
+const auth = require("../middleware/auth");
 const Study = require("../models/studyModel");
-const router = express.Router();
 
-router.post("/:userId", (req, res) => {
+const router = express.Router();
+router.use(auth);
+
+// POST /api/study/me  新增学习记录
+router.post("/me", (req, res) => {
   const { duration } = req.body;
-  Study.addSession(req.params.userId, duration, (err, session) => {
+  Study.addSession(req.user.id, duration, (err, session) => {
     if (err) return res.status(500).json({ error: err.message });
     res.status(201).json(session);
   });
 });
 
-router.get("/:userId", (req, res) => {
-  Study.getSessions(req.params.userId, (err, sessions) => {
+// GET /api/study/me  获取我的学习记录
+router.get("/me", (req, res) => {
+  Study.getSessions(req.user.id, (err, sessions) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(sessions);
   });
