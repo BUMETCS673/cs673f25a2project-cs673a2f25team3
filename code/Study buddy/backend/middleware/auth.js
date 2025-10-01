@@ -1,5 +1,12 @@
 const jwt = require("jsonwebtoken");
 
+/**
+ * Middleware to authenticate requests using JWT.
+ * - Looks for a Bearer token in the "Authorization" header.
+ * - Verifies the token using the secret stored in environment variables.
+ * - If valid, attaches the user payload to req.user and calls next().
+ * - If invalid or missing, responds with HTTP 401 (Unauthorized).
+ */
 function auth(req, res, next) {
   const header = req.headers.authorization || "";
   const [scheme, token] = header.split(" ");
