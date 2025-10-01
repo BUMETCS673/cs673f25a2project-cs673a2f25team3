@@ -1,4 +1,7 @@
-import { Text, Button, View } from 'react-native';
+import { Text, View } from 'react-native';
+import { styles } from '../styles/style';
+import { NavigationButton } from '../components/NavigationButton';
+import { Background } from '../components/Background';
 
 // this page is not finished
 
@@ -8,13 +11,15 @@ export default function Studying({ route }) {
   const { minutes } = route.params;
 
   return (
-    <View>
-      {/* display the amount of time left */}
-      <Text>Studying for {minutes} minutes</Text>
+    <Background>
+      <View style={styles.card}>
+        {/* display the amount of time left */}
+        <Text>Studying for {minutes} minutes</Text>
 
-      {/* navigation */}
-      <NavigationButton text="Select Different Time" link="SelectStudyTime" />
-      <NavigationButton text="Return Home" link="Home" />
-    </View>
+        {/* navigation */}
+        <NavigationButton text="Select Different Time" link="SelectStudyTime" />
+        <NavigationButton text="Return Home" link="Home" />
+      </View>
+    </Background>
   );
 }

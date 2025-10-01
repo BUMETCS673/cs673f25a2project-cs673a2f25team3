@@ -1,5 +1,7 @@
 import { View } from 'react-native';
+import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
+import { Background } from '../components/Background';
 
 // this page is not finished
 
@@ -7,8 +9,10 @@ import { NavigationButton } from '../components/NavigationButton';
 // Implimented settings: none
 export default function Settings({ navigation }) {
   return (
-    <View>
-      <NavigationButton text="Return Home" link="Home" />
-    </View>
+    <Background>
+      <View style={styles.card}>
+        <NavigationButton text="Return Home" link="Home" />
+      </View>
+    </Background>
   );
 }
