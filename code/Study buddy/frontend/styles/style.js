@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { borderRadius, fonts, padding } from "./base";
 
 // general stylesheet used across the app
 export const styles = StyleSheet.create({
@@ -14,30 +15,31 @@ background: {
 card: {
   width: 400,
   // maxWidth: '92vw',
-  borderRadius: 12,
-  padding: 28,
+  borderRadius: borderRadius.md,
+  padding: padding.lg,
   borderWidth: 1,
   borderColor: 'rgba(255,255,255,0.45)',
-  backgroundColor: 'rgba(255,255,255,0.08)',
+  backgroundColor: 'rgba(255,255,255,0.2)',
   // blurRadius: 8
   // boxShadow: '0 12 30 rgba(0,0,0,0.15)'
 },
 
 // style for buttons
 navigationButton: {
-  backgroundColor: '#fff', 
-  color: '#000',
-  fontWeight: 700, 
+  backgroundColor: 'white', 
+  color: 'black',
+  fontWeight: 'bold', 
   borderWidth: 2,
-  borderColor: 'rgba(255, 0, 144, 0)',
-  paddingVertical: 12,
-  paddingHorizontal: 18,
-  borderRadius: 8,
+  borderColor: 'transparent',
+  paddingVertical: padding.sm,
+  paddingHorizontal: padding.md,
+  borderRadius: borderRadius.sm,
   cursor: 'pointer', 
   // transition: 0.25s ease; 
-  fontSize: 30,
+  fontSize: fonts.lg,
   textAlign: 'center',
-  textAlignVertical: 'center'
+  textAlignVertical: 'center',
+  margin: padding.xs
 }
 
 });
