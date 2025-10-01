@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
@@ -9,6 +9,7 @@ export default function GameMenu({ navigation }) {
   return (
     <Background>
       <View style={styles.card}>
+        <Text h1 style={styles.cardH1}>Game Menu</Text>
         <NavigationButton text="Return Home" link="Home" />
       </View>
     </Background>

@@ -9,7 +9,7 @@ export default function Home({ }) {
     <Background>
       <View style={styles.card}>
         <NavigationButton text="Start Studying!" link="SelectStudyTime" />
-        <NavigationButton text="Game Menu" link="Game Menu" />
+        <NavigationButton text="Game Menu" link="GameMenu" />
         <NavigationButton text="Statistics" link="Statistics" />
         <NavigationButton text="Settings" link="Settings" />
         <NavigationButton text="Logout" link="Login" />

@@ -24,6 +24,15 @@ card: {
   // boxShadow: '0 12 30 rgba(0,0,0,0.15)'
 },
 
+// text in card
+cardH1: {
+  color: 'white',
+  textAlign: 'center',
+  fontSize: fonts.lg,
+  fontWeight: 'bold',
+  marginBottom: padding.md
+},
+
 // style for buttons
 navigationButton: {
   backgroundColor: 'white', 
