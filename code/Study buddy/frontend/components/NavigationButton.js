@@ -1,4 +1,4 @@
-import { Button, View, TouchableOpacity, Text } from 'react-native';
+import { TouchableOpacity, Text } from 'react-native';
 import { styles } from '../styles/style';
 import { useNavigation } from '@react-navigation/native';
 

@@ -49,6 +49,21 @@ navigationButton: {
   textAlign: 'center',
   textAlignVertical: 'center',
   margin: padding.xs
-}
+},
+
+// style for checkboxes
+checkboxOutline: {
+  flexDirection: 'row',
+  alignItems: 'center',
+},
+checkboxText: {
+  fontSize: fonts.md,
+  color:'white',
+},
+checkbox: {
+  margin: padding.sm,
+  fontSize: fonts.md,
+  color:'white'
+},
 
 });
