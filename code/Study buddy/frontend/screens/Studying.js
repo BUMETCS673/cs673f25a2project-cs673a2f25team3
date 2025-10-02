@@ -14,7 +14,8 @@ export default function Studying({ route }) {
     <Background>
       <View style={styles.card}>
         {/* display the amount of time left */}
-        <Text>Studying for {minutes} minutes</Text>
+        <Text h1 style={styles.cardH1}>Study hard!</Text>
+        <Text style={styles.paragraph}>{minutes} minutes left</Text>
 
         {/* navigation */}
         <NavigationButton text="Select Different Time" link="SelectStudyTime" />

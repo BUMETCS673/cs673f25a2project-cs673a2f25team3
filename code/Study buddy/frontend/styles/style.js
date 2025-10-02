@@ -14,17 +14,16 @@ background: {
 // container to put elements into
 card: {
   width: 400,
-  // maxWidth: '92vw',
   borderRadius: borderRadius.md,
   padding: padding.lg,
   borderWidth: 1,
   borderColor: 'rgba(255,255,255,0.45)',
-  backgroundColor: 'rgba(255,255,255,0.2)',
-  // blurRadius: 8
-  // boxShadow: '0 12 30 rgba(0,0,0,0.15)'
+  backgroundColor: 'rgba(255,255,255,0.2)'
 },
 
-// text in card
+// text
+
+// headers
 cardH1: {
   color: 'white',
   textAlign: 'center',
@@ -33,7 +32,13 @@ cardH1: {
   marginBottom: padding.md
 },
 
-// style for buttons
+// general text
+paragraph: {
+  fontSize: fonts.md,
+  color:'white',
+},
+
+// button
 navigationButton: {
   backgroundColor: 'white', 
   color: 'black',
@@ -43,15 +48,14 @@ navigationButton: {
   paddingVertical: padding.sm,
   paddingHorizontal: padding.md,
   borderRadius: borderRadius.sm,
-  cursor: 'pointer', 
-  // transition: 0.25s ease; 
+  cursor: 'pointer',
   fontSize: fonts.lg,
   textAlign: 'center',
   textAlignVertical: 'center',
   margin: padding.xs
 },
 
-// style for checkboxes
+// checkbox
 checkboxOutline: {
   flexDirection: 'row',
   alignItems: 'center',

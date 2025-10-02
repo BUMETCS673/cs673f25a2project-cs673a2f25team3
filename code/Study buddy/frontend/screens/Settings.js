@@ -15,6 +15,7 @@ export default function Settings({ navigation }) {
   return (
     <Background>
       <View style={styles.card}>
+        <Text h1 style={styles.cardH1}>Settings</Text>
         <CustomCheckbox text="Sound On" />
         <NavigationButton text="Return Home" link="Home" />
       </View>
