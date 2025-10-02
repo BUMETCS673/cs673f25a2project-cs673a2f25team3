@@ -38,6 +38,14 @@ paragraph: {
   color:'white',
 },
 
+timer: {
+  fontSize: fonts.huge,
+  fontWeight: 'bold',
+  color:'white',
+  textAlign: 'center',
+  marginBottom: padding.md
+},
+
 // button
 navigationButton: {
   backgroundColor: 'white', 
