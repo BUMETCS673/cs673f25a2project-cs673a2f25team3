@@ -1,0 +1,54 @@
+# reference: https://github.com/BUMETCS673/seprojects-cs673olf24team1/blob/ea3a0785bd0eaaa063c90f6f7ff99dbeabb6ba34/.github/workflows/github-actions.yml
+
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - '**' 
+    paths:
+      - "code/frontend/**"
+      - "code/backend/**"
+      - "tests/**"
+
+  pull_request:
+    branches:
+      - '**'   # Run on PRs from any branch
+
+
+jobs:
+  # Job 1: Lint and Test React Frontend
+  frontend:
+    name: React Frontend Linting and Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: |
+          cd code/frontend
+          npm install
+
+      - name: Install ESLint
+        run: |
+          cd code/frontend
+          npm install eslint eslint-plugin-react eslint-plugin-react-hooks --save-dev
+
+      - name: Lint React code
+        run: |
+          cd code/frontend
+          npx eslint . --fix || true
+
+      - name: Run React Unit Tests
+        run: |
+          cd code/frontend
+          npm test
+
+  ## NEED TO SET UP BACKEND CHECKS
