@@ -50,8 +50,8 @@ router.use(auth);
  *         description: Internal server error
  */
 router.post("/me", (req, res) => {
-  const { duration } = req.body;
-  Study.addSession(req.user.id, duration, (err, session) => {
+  const { duration, start_time, end_time } = req.body;
+  Study.addSession(req.user.id, duration, start_time, end_time, (err, session) => {
     if (err) return res.status(500).json({ error: err.message });
     res.status(201).json(session);
   });

@@ -33,6 +33,8 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
       duration INTEGER NOT NULL,
+      start_time TIMESTAMP NOT NULL,
+      end_time TIMESTAMP NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
@@ -47,6 +49,18 @@ db.serialize(() => {
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS study_buddies (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL UNIQUE,
+      name TEXT NOT NULL,
+      energy INTEGER DEFAULT 100,
+      exp INTEGER DEFAULT 0,
+      status INTEGER DEFAULT 4,
+      FOREIGN KEY(user_id) REFERENCES users(id)
+    )
+  `)
 });
 
 module.exports = db;

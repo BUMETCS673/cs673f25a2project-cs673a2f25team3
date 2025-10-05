@@ -1,4 +1,3 @@
-// backend/server.js
 require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
@@ -8,7 +7,7 @@ const userRoutes = require("./routes/userRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 const studyRoutes = require("./routes/studyRoutes");
 const profileRoutes = require("./routes/profileRoutes");
-
+const buddyRoutes = require("./routes/buddyRoutes")
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
@@ -58,6 +57,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/study", studyRoutes);
 app.use("/api/profiles", profileRoutes);
+app.use("/api/buddy", buddyRoutes)
 
 // listen Only listen when running server.js directly. Do not listen when testing
 if (process.env.NODE_ENV !== "test") {
