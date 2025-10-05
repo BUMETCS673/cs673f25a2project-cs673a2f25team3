@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Home Page</title>
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <!-- Ant Design Icons -->
+  <script src="https://unpkg.com/@ant-design/icons/dist/index.umd.js"></script>
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <link rel="stylesheet" href="./home_style.css" />
+  
+</head>
+<body>
+
+  <a href="personal.html" class="avatar-btn">
+    <img src="cat.jpg" alt="User Avatar">
+  </a>
+
+  <!-- Setting button -->
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const IconsGlobal = window.Icons || window.icons || window.AntDesignIcons;
+    function SettingsButton() {
+      return (
+        <button
+          type="button"
+          className="settings-icon-btn"
+          onClick={() => window.location.href = "setting.html"}
+          aria-label="Settings"
+          title="Settings"
+        >
+          {IconsGlobal
+            ? <IconsGlobal.SettingOutlined style={{ fontSize: 40 }} />
+            : "⚙️"}
+        </button>
+      );
+    }
+    ReactDOM.createRoot(document.getElementById("root")).render(<SettingsButton />);
+  </script>
+
+  <!-- nav bar -->
+  <div class="fixed bottom-6 left-6 right-6">
+    <div class="bg-black/40 backdrop-blur-md rounded-[32px] px-6 py-4 nav-shadow">
+      <div class="flex justify-between items-center">
+        
+        <!-- Study time -->
+        <a href="select_study_time.html"
+           class="flex flex-col items-center w-12 h-14 group transition">
+          <i class="fas fa-compass text-white text-xl transform transition duration-300 group-hover:scale-125 group-hover:text-yellow-300"></i>
+          <span class="text-white text-xs mt-1 transition duration-300 group-hover:text-yellow-300">Study</span>
+        </a>
+
+        <!-- Game -->
+        <a href="game.html"
+           class="flex flex-col items-center w-12 h-14 group transition">
+          <i class="fas fa-gamepad text-white text-xl transform transition duration-300 group-hover:scale-125 group-hover:text-yellow-300"></i>
+          <span class="text-white text-xs mt-1 transition duration-300 group-hover:text-yellow-300">Game</span>
+        </a>
+
+        <!-- Calender -->
+        <a href="calender.html"
+           class="flex flex-col items-center w-12 h-14 group transition">
+          <i class="fas fa-calendar text-white text-xl transform transition duration-300 group-hover:scale-125 group-hover:text-yellow-300"></i>
+          <span class="text-white text-xs mt-1 transition duration-300 group-hover:text-yellow-300">Calender</span>
+        </a>
+
+        <!-- Home -->
+        <a href="home.html"
+           class="flex flex-col items-center w-12 h-14 group transition">
+          <i class="fas fa-user text-white text-xl transform transition duration-300 group-hover:scale-125 group-hover:text-yellow-300"></i>
+          <span class="text-white text-xs mt-1 transition duration-300 group-hover:text-yellow-300">Home</span>
+        </a>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>

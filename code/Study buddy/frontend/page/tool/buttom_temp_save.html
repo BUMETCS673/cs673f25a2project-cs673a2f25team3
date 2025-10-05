@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    .container {
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
+
+    .main-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #3498db;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: white;
+      font-size: 24px;
+    }
+
+    .sub-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e74c3c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      opacity: 0;
+      transform: scale(0);
+      transition: all 0.3s ease;
+    }
+
+    .show .sub1 {
+      top: -60px;
+      left: 10px;
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .show .sub2 {
+      top: -20px;
+      left: 80px;
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .show .sub3 {
+      top: 60px;
+      left: 40px;
+      opacity: 1;
+      transform: scale(1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="menu">
+    <div class="main-icon">+</div>
+    <div class="sub-icon sub1">A</div>
+    <div class="sub-icon sub2">B</div>
+    <div class="sub-icon sub3">C</div>
+  </div>
+
+  <script>
+    const menu = document.getElementById("menu");
+    const mainIcon = menu.querySelector(".main-icon");
+
+    mainIcon.addEventListener("click", () => {
+      menu.classList.toggle("show");
+    });
+  </script>
+</body>
+</html>

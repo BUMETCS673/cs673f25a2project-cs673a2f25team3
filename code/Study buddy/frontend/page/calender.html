@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Ant Design Icons -->
+    <script src="https://unpkg.com/@ant-design/icons/dist/index.umd.js"></script>
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+        
+    <link rel="stylesheet" href="./home_style.css" />
+</head>
+<body>
+    <div class="calendar-app">
+        <div class="header">
+            <div class="month-control">
+                <button class="month-btn" id="prev-month">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="month-indicator" id="current-month">2023.10</div>
+                <button class="month-btn" id="next-month">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <button class="nav-btn" id="today-btn">
+                <i class="fas fa-calendar-day"></i>
+                <span>Return Today</span>
+            </button>
+        </div>
+        
+        
+        <div class="weekdays">
+            <div>Sun</div><div>Mon</div><div>Tus</div><div>Wen</div><div>Thu</div><div>Fri</div><div>Sat</div>
+        </div>
+        
+        <!-- calender -->
+        <div class="calendar-grid" id="calendar-grid">
+            <!-- to java  -->
+        </div>
+    </div>
+    
+    <!-- Study record -->
+    <div class="detail-overlay" id="detail-overlay">
+        <div class="detail-content">
+            <div class="detail-header">
+                <div class="detail-title" id="detail-date">2023年10月15日</div>
+                <button class="close-btn" id="close-detail">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <h3>Study Time</h3>
+            <div class="chart-container" id="chart-container"></div>
+            
+            <h3 style="margin-top: 1.5rem;">Study History</h3>
+            <div class="records-list" id="records-list">
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- nav bar -->
+    <div class="fixed bottom-6 left-6 right-6">
+        <div class="bg-black/40 backdrop-blur-md rounded-[32px] px-6 py-4 nav-shadow">
+            <div class="flex justify-between items-center">
+            
+                <!-- Study time -->
+                <a href="select_study_time.html"
+                    class="flex flex-col items-center w-12 h-14 group transition">
+                    <i class="fas fa-compass text-white text-xl transform transition duration-300 group-hover:scale-125 group-hover:text-yellow-300"></i>
+                    <span class="text-white text-xs mt-1 transition duration-300 group-hover:text-yellow-300">Study</span>
+                </a>
+
+                <!-- Game -->
+                <a href="game.html"
+                    class="flex flex-col items-center w-12 h-14 group transition">
+                    <i class="fas fa-gamepad text-white text-xl transform transition duration-300 group-hover:scale-125 group-hover:text-yellow-300"></i>
+                    <span class="text-white text-xs mt-1 transition duration-300 group-hover:text-yellow-300">Game</span>
+                </a>
+
+                <!-- Calender (active) -->
+                <a href="calender.html"
+                    class="flex flex-col items-center w-12 h-14 group transition active">
+                    <i class="fas fa-calendar text-white text-xl transform transition duration-300 group-hover:scale-125 group-hover:text-yellow-300"></i>
+                    <span class="text-white text-xs mt-1 transition duration-300 group-hover:text-yellow-300">Calender</span>
+                </a>
+
+                <!-- Home -->
+                <a href="home.html"
+                    class="flex flex-col items-center w-12 h-14 group transition">
+                    <i class="fas fa-user text-white text-xl transform transition duration-300 group-hover:scale-125 group-hover:text-yellow-300"></i>
+                    <span class="text-white text-xs mt-1 transition duration-300 group-hover:text-yellow-300">Home</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <script>
+        // Date info
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+        
+        // DOM
+        const monthIndicator = document.getElementById('current-month');
+        const calendarGrid = document.getElementById('calendar-grid');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        const todayBtn = document.getElementById('today-btn');
+        const detailOverlay = document.getElementById('detail-overlay');
+        const detailDate = document.getElementById('detail-date');
+        const closeDetailBtn = document.getElementById('close-detail');
+        const recordsList = document.getElementById('records-list');
+        
+        // calendar month-year format
+        function formatMonthYear(date) {
+            return `${date.getFullYear()}.${date.getMonth() + 1}`;
+        }
+        
+        // calendar days generation
+        function generateDays(month, year) {
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startDayOffset = firstDay.getDay();
+            
+            // clear previous cells
+            calendarGrid.innerHTML = '';
+            
+            // create empty cells for previous month
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+            for (let i = startDayOffset - 1; i >= 0; i--) {
+                const dayNum = prevMonthLastDay - i;
+                createCalendarCell(dayNum, true);
+            }
+            
+            // create current month days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isToday = checkIfToday(new Date(year, month, day));
+                createCalendarCell(day, false, isToday);
+            }
+            
+            // create empty cells for next month to fill the grid
+            const totalCells = 42; // 7x6
+            const remaining = totalCells - (startDayOffset + daysInMonth);
+            for (let i = 1; i <= remaining; i++) {
+                createCalendarCell(i, true);
+            }
+        }
+        
+        // check if the date is today
+        function checkIfToday(date) {
+            const today = new Date();
+            return date.getFullYear() === today.getFullYear() &&
+                   date.getMonth() === today.getMonth() &&
+                   date.getDate() === today.getDate();
+        }
+        
+        // create a calendar cell
+        function createCalendarCell(day, isInactive, isToday = false) {
+            const cell = document.createElement('div');
+            cell.className = 'calendar-day';
+            if (isInactive) cell.classList.add('inactive');
+            if (isToday) cell.classList.add('today');
+            
+            const dateEl = document.createElement('div');
+            dateEl.className = 'date';
+            dateEl.textContent = day;
+            
+            // add event indicator for demo purposes
+            if (!isInactive && (day % 3 === 0 || day % 7 === 0 || day % 10 === 0)) {
+                const indicator = document.createElement('div');
+                indicator.className = 'event-indicator';
+                indicator.innerHTML = '<i class="fas fa-circle"></i>';
+                cell.appendChild(dateEl);
+                cell.appendChild(indicator);
+            } else {
+                cell.appendChild(dateEl);
+            }
+            
+            // make clickable
+            if (!isInactive) {
+                cell.addEventListener('click', () => openDayDetail(currentYear, currentMonth, day));
+            }
+            
+            calendarGrid.appendChild(cell);
+        }
+        
+        // open day detail panel
+        function openDayDetail(year, month, day) {
+            const date = new Date(year, month, day);
+            detailDate.textContent = `${year}.${month + 1}.${day}`;
+            generateLearnedChart(day % 3 === 0);
+            generateDummyRecords(day);
+            detailOverlay.classList.add('active');
+        }
+        
+        // apply event listeners
+        function generateLearnedChart(hasData) {
+            const chartDom = document.getElementById('chart-container');
+            const myChart = echarts.init(chartDom);
+            
+            if (!hasData) {
+                //no data
+                myChart.setOption({
+                    grid: {
+                        left: '5%',
+                        right: '5%',
+                        top: '10%',
+                        bottom: '10%'
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: Array.from({length: 24}, (_, i) => `${i}:00`)
+                    },
+                    yAxis: {
+                        type: 'value',
+                        max: 60,
+                        name: 'min'
+                    },
+                    series: [{
+                        type: 'line',
+                        smooth: true,
+                        data: Array(24).fill(0),
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#cfcfcf',
+                            type: 'dashed'
+                        }
+                    }]
+                });
+                
+                return;
+            }
+            
+            // dummy data generation
+            const hours = Array.from({length: 24}, (_, i) => `${i}:00`);
+            const fakeData = hours.map((_, i) => {
+                const peak1 = (i >= 9 && i <= 12) ? 40 : 0;
+                const peak2 = (i >= 15 && i <= 18) ? 50 : 0;
+                const peak3 = (i >= 20 && i <= 22) ? 45 : 0;
+                const random1 = Math.floor(Math.random() * 15);
+                const random2 = Math.floor(Math.random() * 7);
+                return peak1 + peak2 + peak3 + random1 + random2;
+            });
+            
+            myChart.setOption({
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: '{b}<br/>{a}: {c} min'
+                },
+                grid: {
+                    left: '5%',
+                    right: '5%',
+                    top: '10%',
+                    bottom: '10%'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: hours
+                },
+                yAxis: {
+                    type: 'value',
+                    max: 60,
+                    name: 'min'
+                },
+                series: [{
+                    name: 'Study Time',
+                    type: 'line',
+                    data: fakeData,
+                    smooth: true,
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: 'rgba(74, 108, 247, 0.5)' },
+                            { offset: 1, color: 'rgba(74, 108, 247, 0.1)' }
+                        ])
+                    },
+                    lineStyle: {
+                        color: '#4a6cf7'
+                    },
+                    itemStyle: {
+                        color: '#4a6cf7'
+                    }
+                }]
+            });
+        }
+        
+        // test data for records
+        function generateDummyRecords(day) {
+            recordsList.innerHTML = '';
+            
+            if (day % 3 === 0) {
+                // some dummy records
+                const records = [
+                    { icon: 'book', title: 'Math', duration: '2.15' },
+                    { icon: 'edit', title: 'Writing', duration: '1.30' },
+                    { icon: 'code', title: 'Program develpment', duration: '3.10' },
+                    { icon: 'flask', title: 'I dont know', duration: '2.45' }
+                ];
+                
+                records.forEach(record => {
+                    const recordEl = document.createElement('div');
+                    recordEl.className = 'record-item';
+                    recordEl.innerHTML = `
+                        <div class="record-icon">
+                            <i class="fas fa-${record.icon}"></i>
+                        </div>
+                        <div class="record-content">
+                            <div class="record-title">${record.title}</div>
+                            <div class="record-desc">${record.desc}</div>
+                            <div class="record-duration">Study Time: ${record.duration}</div>
+                        </div>
+                    `;
+                    recordsList.appendChild(recordEl);
+                });
+            } else {
+                // no record
+                recordsList.innerHTML = `
+                    <div class="empty-learn">
+                        <i class="far fa-file-alt"></i>
+                        <div>No record.</div>
+                        <div style="margin-top: 0.5rem; font-size: 0.9rem;">Begin to your study！</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // month navigation
+        function navigateMonth(direction) {
+            if (direction === 'prev') {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+            } else if (direction === 'next') {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+            }
+            
+            updateCalendar();
+        }
+        
+        // return today
+        function goToToday() {
+            currentDate = new Date();
+            currentMonth = currentDate.getMonth();
+            currentYear = currentDate.getFullYear();
+            updateCalendar();
+        }
+        
+        // update calendar display
+        function updateCalendar() {
+            monthIndicator.textContent = formatMonthYear(new Date(currentYear, currentMonth));
+            generateDays(currentMonth, currentYear);
+        }
+        
+        // initialize
+        function init() {
+            updateCalendar();
+            
+            // Add event listeners
+            prevMonthBtn.addEventListener('click', () => navigateMonth('prev'));
+            nextMonthBtn.addEventListener('click', () => navigateMonth('next'));
+            todayBtn.addEventListener('click', goToToday);
+            closeDetailBtn.addEventListener('click', () => {
+                detailOverlay.classList.remove('active');
+            });
+            
+            // initial chart with no data
+            generateLearnedChart(true);
+        }
+        
+        // apply init on DOMContentLoaded
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
