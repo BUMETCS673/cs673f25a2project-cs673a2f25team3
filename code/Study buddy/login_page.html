@@ -69,7 +69,7 @@
             const storage = remember ? localStorage : sessionStorage;
             storage.setItem("auth_token", res.token);
             storage.setItem("auth_email", res.user.email);
-            window.location.href = "select_study_time.html";
+            window.location.href = "home.html";
           } catch (err) {
             setError(err.message || "Login failed, please try again later");
           } finally {
