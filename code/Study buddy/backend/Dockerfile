@@ -10,7 +10,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies cleanly
-RUN npm ci  # install all dependencies including devDependencies
+RUN npm install  # install all dependencies including devDependencies
 
 # Copy source code
 COPY . .
