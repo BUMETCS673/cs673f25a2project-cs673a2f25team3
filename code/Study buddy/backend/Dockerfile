@@ -10,7 +10,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies cleanly
-RUN npm ci --omit=dev  # omit=dev for production; remove this flag for dev builds
+RUN npm ci  # install all dependencies including devDependencies
 
 # Copy source code
 COPY . .
