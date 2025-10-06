@@ -33,22 +33,22 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd code/Study buddy/frontend/
+          cd "code/Study buddy/frontend/"
           npm install
 
       - name: Install ESLint
         run: |
-          cd code/Study buddy/frontend/
+          cd "code/Study buddy/frontend/"
           npm install eslint eslint-plugin-react eslint-plugin-react-hooks --save-dev
 
       - name: Lint React code
         run: |
-          cd code/Study buddy/frontend/
+          cd "code/Study buddy/frontend/"
           npx eslint . --fix || true
 
       - name: Run React Unit Tests
         run: |
-          cd code/Study buddy/frontend/
+          cd "code/Study buddy/frontend/"
           npm test
 
   ## NEED TO SET UP BACKEND CHECKS
