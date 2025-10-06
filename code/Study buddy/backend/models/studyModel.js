@@ -1,52 +1,44 @@
 const db = require("../db/db");
 
-/**
- * Add a new study session for a user.
- *
- * @param {number} userId - The ID of the user
- * @param {number} duration - Length of the study session (e.g., in minutes)
- * @param {string} [startTime] - Optional ISO start time
- * @param {string} [endTime] - Optional ISO end time
- * @param {function} callback - Callback function (err, newSession)
- */
-function addSession(userId, duration, startTime, endTime, callback) {
-  // ✅ Default values if not provided
-  const start = startTime || new Date().toISOString();
-  const end =
-    endTime || new Date(Date.now() + duration * 60000).toISOString();
-
-  const query = `
-    INSERT INTO study_sessions (user_id, duration, start_time, end_time)
-    VALUES (?, ?, ?, ?)
-  `;
-
-  db.run(query, [userId, duration, start, end], function (err) {
-    if (err) {
-      console.error("❌ addSession error:", err);
-      return callback(err);
-    }
-    callback(null, {
-      id: this.lastID,
-      user_id: userId,
-      duration,
-      start_time: start,
-      end_time: end,
+const Study = {
+  // 新增学习记录
+  addSession(user_id, duration, start_time, end_time, callback) {
+    const sql = `
+      INSERT INTO study_sessions (user_id, duration, start_time, end_time, created_at)
+      VALUES (?, ?, ?, ?, datetime('now'))
+    `;
+    db.run(sql, [user_id, duration, start_time, end_time], function (err) {
+      if (err) return callback(err);
+      callback(null, {
+        id: this.lastID,
+        user_id,
+        duration,
+        start_time,
+        end_time,
+      });
     });
-  });
-}
+  },
 
-/**
- * Retrieve all study sessions for a user, ordered by creation time (newest first).
- *
- * @param {number} userId - The ID of the user
- * @param {function} callback - Callback function (err, rows)
- */
-function getSessions(userId, callback) {
-  const query =
-    "SELECT * FROM study_sessions WHERE user_id = ? ORDER BY created_at DESC";
-  db.all(query, [userId], (err, rows) => {
-    callback(err, rows);
-  });
-}
+  // 获取所有学习记录（按时间降序）
+  getSessions(user_id, callback) {
+    const sql = `
+      SELECT * FROM study_sessions
+      WHERE user_id = ?
+      ORDER BY created_at DESC
+    `;
+    db.all(sql, [user_id], callback);
+  },
 
-module.exports = { addSession, getSessions };
+  // 获取最新一条学习记录
+  getLatestSession(user_id, callback) {
+    const sql = `
+      SELECT * FROM study_sessions
+      WHERE user_id = ?
+      ORDER BY created_at DESC
+      LIMIT 1
+    `;
+    db.get(sql, [user_id], callback);
+  },
+};
+
+module.exports = Study;

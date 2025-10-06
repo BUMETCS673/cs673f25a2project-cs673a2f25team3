@@ -81,6 +81,8 @@ router.get("/me", (req, res) => {
  *                   type: string
  *                 avatar_url:
  *                   type: string
+ *       400:
+ *         description: Invalid data
  *       401:
  *         description: Unauthorized (invalid or missing token)
  *       500:
@@ -88,6 +90,9 @@ router.get("/me", (req, res) => {
  */
 router.post("/me", (req, res) => {
   const { bio, avatar_url } = req.body;
+  if (!bio || !avatar_url) {
+    return res.status(400).json({ error: "Bio and avatar_url cannot be empty" });
+  }
   Profile.updateProfile(req.user.id, bio, avatar_url, (err, updated) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(updated);

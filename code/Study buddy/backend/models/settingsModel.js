@@ -8,7 +8,8 @@ const db = require("../db/db");
  */
 function getSettings(userId, callback) {
   db.get("SELECT * FROM settings WHERE user_id = ?", [userId], (err, row) => {
-    callback(err, row);
+    if (err) return callback(err);
+    callback(null, row || null);
   });
 }
 

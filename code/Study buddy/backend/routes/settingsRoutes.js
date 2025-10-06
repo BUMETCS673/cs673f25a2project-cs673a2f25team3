@@ -81,6 +81,8 @@ router.get("/me", (req, res) => {
  *                   type: string
  *                 daily_goal:
  *                   type: integer
+ *       400:
+ *         description: Invalid data
  *       401:
  *         description: Unauthorized (invalid or missing token)
  *       500:
@@ -88,6 +90,10 @@ router.get("/me", (req, res) => {
  */
 router.post("/me", (req, res) => {
   const { theme, daily_goal } = req.body;
+  const validThemes = ["light", "dark"];
+  if (!validThemes.includes(theme) || typeof daily_goal !== "number" || daily_goal < 0) {
+    return res.status(400).json({ error: "Invalid settings data" });
+  }
   Settings.updateSettings(req.user.id, theme, daily_goal, (err, updated) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(updated);

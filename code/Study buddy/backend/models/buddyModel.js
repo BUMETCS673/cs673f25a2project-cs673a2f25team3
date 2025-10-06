@@ -5,9 +5,18 @@ function getBuddy(userId, callback) {
 }
 
 function createBuddy(userId, name, callback) {
-  const query = `INSERT INTO study_buddies (user_id, name) VALUES (?, ?)`;
-  db.run(query, [userId, name], function(err) {
-    callback(err, { id: this.lastID, user_id: userId, name, energy: 100, exp: 0, status: 4 });
+  const defaultEnergy = 100;
+  const defaultStatus = 4;
+  const sql = `INSERT INTO study_buddies (user_id, name, energy, status) VALUES (?, ?, ?, ?)`;
+  db.run(sql, [userId, name, defaultEnergy, defaultStatus], function(err) {
+    if (err) return callback(err);
+    callback(null, {
+      id: this.lastID,
+      user_id: userId,
+      name,
+      energy: defaultEnergy,
+      status: defaultStatus
+    });
   });
 }
 

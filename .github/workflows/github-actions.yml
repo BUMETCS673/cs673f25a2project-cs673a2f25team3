@@ -51,4 +51,29 @@ jobs:
           cd code/frontend
           npm test
 
-  ## NEED TO SET UP BACKEND CHECKS
+  # Job 2: Backend tests
+  backend:
+    name: Node.js Backend Testing
+    runs-on: ubuntu-latest
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Install backend dependencies
+        run: |
+          cd code/backend
+          npm install
+        
+      - name: Run backend tests
+        run: |
+          cd code/backend
+          npm test
