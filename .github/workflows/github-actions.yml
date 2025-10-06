@@ -7,8 +7,8 @@ on:
     branches:
       - '**' 
     paths:
-      - "code/frontend/**"
-      - "code/backend/**"
+      - "code/Study buddy/frontend/**"
+      - "code/Study buddy/backend/**"
       - "tests/**"
 
   pull_request:
