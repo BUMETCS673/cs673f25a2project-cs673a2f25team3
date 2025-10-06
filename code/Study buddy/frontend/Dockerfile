@@ -13,8 +13,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     bash git python3 make g++ \
  && rm -rf /var/lib/apt/lists/*
 
+
 # Install deps first for better layer caching
 COPY package*.json ./
+COPY babel.config.js ./
+COPY eslint.config.js ./
 RUN npm install
 
 # (Optional) global expo; you can rely on npx instead if you prefer
