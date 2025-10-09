@@ -1,11 +1,11 @@
 const db = require("../db/db");
 
 const Study = {
-  // 新增学习记录
+  // Add study session
   addSession(user_id, duration, start_time, end_time, callback) {
     const sql = `
-      INSERT INTO study_sessions (user_id, duration, start_time, end_time, created_at)
-      VALUES (?, ?, ?, ?, datetime('now'))
+      INSERT INTO study_sessions (user_id, duration, start_time, end_time)
+      VALUES (?, ?, ?, ?)
     `;
     db.run(sql, [user_id, duration, start_time, end_time], function (err) {
       if (err) return callback(err);
@@ -19,7 +19,7 @@ const Study = {
     });
   },
 
-  // 获取所有学习记录（按时间降序）
+  // Get all sessions
   getSessions(user_id, callback) {
     const sql = `
       SELECT * FROM study_sessions
@@ -29,7 +29,7 @@ const Study = {
     db.all(sql, [user_id], callback);
   },
 
-  // 获取最新一条学习记录
+  // Get latest session
   getLatestSession(user_id, callback) {
     const sql = `
       SELECT * FROM study_sessions

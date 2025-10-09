@@ -67,6 +67,29 @@ describe("Buddy API Acceptance Tests", () => {
     expect(res.statusCode).toBe(400);
     expect(res.body.error).toBe("Buddy already exists");
   });
+ // 200 test: verify energy decay after time passes
+ test("Energy decays by 1 per hour elapsed", async () => {
+   const now = Date.now();
+   const fiveHoursAgo = now - 5 * 3600000; // 5 hours in ms
+
+   await new Promise((resolve, reject) => {
+     db.run(
+       "UPDATE study_buddies SET last_update_ms = ?",
+       [fiveHoursAgo],
+       (err) => (err ? reject(err) : resolve())
+     );
+   });
+
+   const res = await request(app)
+     .get("/api/buddy/me")
+     .set("Authorization", `Bearer ${token}`);
+
+   expect(res.statusCode).toBe(200);
+   expect(res.body.buddy).toBeDefined();
+   expect(res.body.buddy.energy).toBe(95);
+ });
+
+
 });
 
 afterAll(() => db.close());
