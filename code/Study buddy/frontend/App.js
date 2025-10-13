@@ -8,6 +8,11 @@ import Settings from './screens/Settings';
 import Login from './screens/Login';
 import Studying from './screens/Studying';
 
+/*
+  60% framework
+  40% manual
+*/
+
 const Stack = createNativeStackNavigator();
 
 // name is the routing name that needs to go in buttons to direct to the right page

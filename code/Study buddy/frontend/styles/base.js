@@ -1,5 +1,10 @@
 import {StyleSheet, Dimensions} from 'react-native'
 
+/*
+  5% framework
+  95% manual
+*/
+
 export const dimensions = {
   fullHeight: Dimensions.get('window').height,
   fullWidth: Dimensions.get('window').width

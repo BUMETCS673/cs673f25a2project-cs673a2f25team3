@@ -3,6 +3,11 @@ import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
 
+/*
+  50% framework
+  50% manual
+*/
+
 // this page is not finished
 
 export default function GameMenu({ navigation }) {

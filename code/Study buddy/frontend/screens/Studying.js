@@ -5,6 +5,12 @@ import { Background } from '../components/Background';
 import React, { useState, useEffect } from "react";
 import { createClock, timeToString } from "../util/formatString";
 
+/*
+  10% AI
+  20% framework
+  70% manual
+*/
+
 // Studying page - this is the page that is open during studying
 export default function Studying({ route, navigation }) {
   const [startTime, setStartTime] = useState();

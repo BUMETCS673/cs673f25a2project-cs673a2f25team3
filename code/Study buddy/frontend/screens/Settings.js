@@ -5,13 +5,16 @@ import { Background } from '../components/Background';
 import { CustomCheckbox } from '../components/Checkbox';
 import { useState } from 'react';
 
+/*
+  50% framework
+  50% manual
+*/
+
 // this page is not finished
 
 // Settings page - used to change font, style, and other important settings
 // Implimented settings: none
 export default function Settings({ navigation }) {
-  const [isChecked, setChecked] = useState(false);
-
   return (
     <Background>
       <View style={styles.card}>

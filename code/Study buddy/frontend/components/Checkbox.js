@@ -3,10 +3,15 @@ import { styles } from '../styles/style';
 import { Checkbox } from 'react-native-paper';
 import { useState } from 'react';
 
-// purpose: ???
+/*
+  30% framework
+  70% manual
+*/
+
+// purpose: checkbox with custom styling that meets accessibility guidelines
 // parameters: 
-//    ???
-// example: ???
+//    text: text next to the checkbox
+// example: <CustomCheckbox text="Sound On" />
 export const CustomCheckbox = (props) => {
     const [isChecked, setChecked] = useState(false);
     
@@ -28,9 +33,5 @@ export const CustomCheckbox = (props) => {
         </View>
     );
     
-}
-
-function flipChecked() {
-
 }
 

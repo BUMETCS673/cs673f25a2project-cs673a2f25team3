@@ -1,6 +1,11 @@
 import { StyleSheet } from "react-native";
 import { borderRadius, fonts, padding } from "./base";
 
+/*
+  5% framework
+  95% manual
+*/
+
 // general stylesheet used across the app
 export const styles = StyleSheet.create({
 

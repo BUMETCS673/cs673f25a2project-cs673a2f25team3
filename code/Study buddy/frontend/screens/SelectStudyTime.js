@@ -3,6 +3,11 @@ import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
 
+/*
+  30% framework
+  70% manual
+*/
+
 // Page for selecting the time studying
 export default function SelectStudyTime({ navigation }) {
   return (
