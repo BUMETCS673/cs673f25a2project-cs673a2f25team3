@@ -1,3 +1,10 @@
+/*
+  10% framework
+  80% manual
+  10% AI
+*/
+
+
 import { Asset } from "expo-asset";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
