@@ -9,7 +9,7 @@ import { Background } from '../components/Background';
 */
 
 // Home page - this is the general page for navigation and the first page the user sees (after loging in)
-export default function Home() {
+export default function Home({ }) {
   return (
     <Background>
       <View style={styles.card}>
