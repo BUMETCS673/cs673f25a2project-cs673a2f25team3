@@ -1,4 +1,9 @@
+# 50% reference
+# 40% AI
+# 10% manual
+
 # reference: https://github.com/BUMETCS673/seprojects-cs673olf24team1/blob/ea3a0785bd0eaaa063c90f6f7ff99dbeabb6ba34/.github/workflows/github-actions.yml
+
 
 name: CI Pipeline
 
@@ -17,7 +22,7 @@ on:
 
 
 jobs:
-  # Job 1: Lint and Test React Frontend
+  # Frontend checks
   frontend:
     name: React Frontend Linting and Testing
     runs-on: ubuntu-latest
@@ -51,4 +56,35 @@ jobs:
           cd "code/Study buddy/frontend/"
           npm test
 
-  ## NEED TO SET UP BACKEND CHECKS
+  ## Backend checks
+  backend:
+    name: Backend Linting and Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: |
+          cd "code/Study buddy/backend/"
+          npm install
+
+      - name: Install ESLint
+        run: |
+          cd "code/Study buddy/backend/"
+          npm install eslint eslint-plugin-react eslint-plugin-react-hooks --save-dev
+
+      - name: Lint Backend code
+        run: |
+          cd "code/Study buddy/backend/"
+          npx eslint . --fix || true
+
+      - name: Run Backend Tests
+        run: |
+          cd "code/Study buddy/backend/"
+          npm test
