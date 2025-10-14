@@ -1,31 +1,41 @@
-const express = require("express");
-const auth = require("../middleware/auth");
-const Buddy = require("../models/buddyModel");
-
+// routes/buddyRoutes.js
+const express = require('express');
 const router = express.Router();
+const auth = require('../middleware/auth');
+const Buddy = require('../models/buddyModel');
+
+// All buddy endpoints require auth
 router.use(auth);
 
-router.post("/me", (req, res) => {
-  const { name } = req.body;
-  if (!name || typeof name !== "string") {
-    return res.status(400).json({ error: "Name is required" });
+// POST /api/buddy/me  -> create buddy for current user
+router.post('/me', (req, res) => {
+  const { name } = req.body || {};
+  const userId = req.user.id;
+
+  if (!name || typeof name !== 'string') {
+    return res.status(400).json({ error: 'Invalid buddy name' });
   }
-  Buddy.createBuddy(req.user.id, name, (err, buddy) => {
-    if (err) {
-      if (err.message && err.message.includes("UNIQUE")) {
-        return res.status(400).json({ error: "Buddy already exists" });
-      }
-      return res.status(500).json({ error: err.message });
+
+  Buddy.findByUserId(userId, (err, existing) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (existing) {
+      return res.status(400).json({ error: 'Buddy already exists' });
     }
-    return res.status(201).json({ buddy });
+    Buddy.create({ userId, name }, (err2, buddy) => {
+      if (err2) return res.status(500).json({ error: err2.message });
+      // tests expect { buddy: {...} }
+      return res.status(201).json({ buddy });
+    });
   });
 });
 
-router.get("/me", (req, res) => {
-  Buddy.applyEnergyDecay(req.user.id, (err, buddy) => {
+// GET /api/buddy/me  -> fetch buddy for current user, with auto energy decay by elapsed hours
+router.get('/me', (req, res) => {
+  const userId = req.user.id;
+  Buddy.decayByElapsedHours(userId, (err, buddy) => {
     if (err) return res.status(500).json({ error: err.message });
-    if (!buddy) return res.status(404).json({ error: "Buddy not found" });
-    res.status(200).json({ buddy });
+    if (!buddy) return res.status(404).json({ error: 'Buddy not found' });
+    return res.status(200).json({ buddy });
   });
 });
 
