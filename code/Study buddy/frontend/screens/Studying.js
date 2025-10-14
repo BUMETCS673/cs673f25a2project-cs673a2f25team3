@@ -5,6 +5,12 @@ import { Background } from '../components/Background';
 import React, { useState, useEffect } from "react";
 import { createClock, timeToString } from "../util/formatString";
 
+/*
+  10% AI
+  20% framework
+  70% manual
+*/
+
 // Studying page - this is the page that is open during studying
 export default function Studying({ route, navigation }) {
   const [startTime, setStartTime] = useState();
@@ -87,7 +93,7 @@ export default function Studying({ route, navigation }) {
     return (
       <Background>
         <View style={styles.card}>
-          <Text h1 style={styles.cardH1}>Study hard!</Text>
+          <Text style={styles.cardH1} accessibilityRole='header'>Study hard!</Text>
 
           {/* display the amount of time left */}
           <Text style={styles.timer}>{createClock(timeOnClock)}</Text>
@@ -118,7 +124,7 @@ export default function Studying({ route, navigation }) {
     return (
       <Background>
         <View style={styles.card}>
-          <Text h1 style={styles.cardH1}>You finished!</Text>
+          <Text style={styles.cardH1} accessibilityRole='header'>You finished!</Text>
 
           <Text style={styles.paragraph}>You studied for {timeToString(totalTimeStudied)}</Text>
 

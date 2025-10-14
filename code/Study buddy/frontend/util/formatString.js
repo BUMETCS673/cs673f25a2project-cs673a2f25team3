@@ -1,3 +1,7 @@
+/*
+  100% manual
+*/
+
 export function createClock(miliseconds) {
     var day = Math.floor((miliseconds/1000/60/60/24));
     var hour = Math.floor((miliseconds/1000/60/60) % 24);
