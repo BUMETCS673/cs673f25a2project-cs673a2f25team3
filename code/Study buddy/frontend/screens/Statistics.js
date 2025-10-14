@@ -15,7 +15,7 @@ export default function Statistics() {
   return (
     <Background>
       <View style={styles.card}>
-        <Text h1 style={styles.cardH1}>Statistics</Text>
+        <Text style={styles.cardH1} accessibilityRole='header'>Statistics</Text>
         <NavigationButton text="Return Home" link="Home" />
       </View>
     </Background>

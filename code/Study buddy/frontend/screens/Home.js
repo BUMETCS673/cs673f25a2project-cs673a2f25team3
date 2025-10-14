@@ -13,7 +13,7 @@ export default function Home({ }) {
   return (
     <Background>
       <View style={styles.card}>
-        <Text h1 style={styles.cardH1}>Home</Text>
+        <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
         <NavigationButton text="Start Studying!" link="SelectStudyTime" />
         <NavigationButton text="Game Menu" link="GameMenu" />
         <NavigationButton text="Statistics" link="Statistics" />

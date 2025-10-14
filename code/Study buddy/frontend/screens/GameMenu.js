@@ -14,7 +14,7 @@ export default function GameMenu({ navigation }) {
   return (
     <Background>
       <View style={styles.card}>
-        <Text h1 style={styles.cardH1}>Game Menu</Text>
+        <Text style={styles.cardH1} accessibilityRole='header'>Game Menu</Text>
         <NavigationButton text="Return Home" link="Home" />
       </View>
     </Background>

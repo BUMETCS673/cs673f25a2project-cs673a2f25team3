@@ -18,13 +18,13 @@ export const NavigationButton = (props) => {
 
     if (Object.hasOwn(props, 'params')) {
         return(
-            <TouchableOpacity onPress={() => navigation.navigate(props.link, props.params)} as="a">
+            <TouchableOpacity onPress={() => navigation.navigate(props.link, props.params)} accessibilityRole='link'>
                 <Text style={styles.navigationButton}>{props.text}</Text>
             </TouchableOpacity>
         );
     } else {
         return(
-            <TouchableOpacity onPress={() => navigation.navigate(props.link)} as="a">
+            <TouchableOpacity onPress={() => navigation.navigate(props.link)} accessibilityRole='link'>
                 <Text style={styles.navigationButton}>{props.text}</Text>
             </TouchableOpacity>
         );

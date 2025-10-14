@@ -93,7 +93,7 @@ export default function Studying({ route, navigation }) {
     return (
       <Background>
         <View style={styles.card}>
-          <Text h1 style={styles.cardH1}>Study hard!</Text>
+          <Text style={styles.cardH1} accessibilityRole='header'>Study hard!</Text>
 
           {/* display the amount of time left */}
           <Text style={styles.timer}>{createClock(timeOnClock)}</Text>
@@ -124,7 +124,7 @@ export default function Studying({ route, navigation }) {
     return (
       <Background>
         <View style={styles.card}>
-          <Text h1 style={styles.cardH1}>You finished!</Text>
+          <Text style={styles.cardH1} accessibilityRole='header'>You finished!</Text>
 
           <Text style={styles.paragraph}>You studied for {timeToString(totalTimeStudied)}</Text>
 

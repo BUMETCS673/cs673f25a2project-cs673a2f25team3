@@ -15,7 +15,7 @@ export default function Login({ navigation }) {
   return (
     <Background>
       <View style={styles.card}>
-        <Text h1 style={styles.cardH1}>Login</Text>
+        <Text style={styles.cardH1} accessibilityRole='header'>Login</Text>
         <NavigationButton text="Login" link="Home" />
       </View>
     </Background>
