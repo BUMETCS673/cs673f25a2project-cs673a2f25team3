@@ -1,3 +1,5 @@
+// 100% AI generated to fix bugs on backend test on CI/CD
+
 // Ensure test environment
 process.env.NODE_ENV = "test";
 

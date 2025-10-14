@@ -1,3 +1,5 @@
+// 100% AI generated to fix bugs on backend test on CI/CD
+
 /** @type {import('jest').Config} */
 module.exports = {
   testEnvironment: "node",
