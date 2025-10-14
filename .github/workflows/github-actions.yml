@@ -38,7 +38,7 @@ jobs:
 
       - name: Install ESLint
         run: |
-          cd code/frontend
+          cd code/Study buddy/frontend
           npm install eslint eslint-plugin-react eslint-plugin-react-hooks --save-dev
 
       - name: Lint React code
@@ -48,7 +48,7 @@ jobs:
 
       - name: Run React Unit Tests
         run: |
-          cd code/frontend
+          cd code/Study buddy/frontend
           npm test
 
   # Job 2: Backend tests
@@ -70,10 +70,10 @@ jobs:
 
       - name: Install backend dependencies
         run: |
-          cd code/backend
+          cd code/Study buddy/backend
           npm install
         
       - name: Run backend tests
         run: |
-          cd code/backend
+          cd code/Study buddy/backend
           npm test

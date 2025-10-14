@@ -1,3 +1,8 @@
+/*
+  90% Human
+  10% framework
+*/
+
 const request = require("supertest");
 const app = require("../../server");
 const db = require("../../db/db");

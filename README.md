@@ -81,12 +81,18 @@ npx expo start
 * **Profile**
    * `GET /api/profiles/me` - Get profile info
    * `POST /api/profiles/me` - Update profile info
+   * `PUT /api/profiles/me` - Replace profile info
 * **Settings**
    * `GET /api/settings/me` - Get user settings
    * `POST /api/settings/me` - Update settings
+   * `PUT /api/settings/me` - Replace settings
 * **Study**
    * `POST /api/study/me` - Add a study session
    * `GET /api/study/me` - Get all study sessions
+   * `GET /api/study/me/latest` - Get the latest study sessions
+* **Buddy**
+   * `POST /api/buddy/me` - Create a buddy for the logged-in user
+   * `GET /api/buddy/me` - Get the logged-in user's buddy with energy decay applied
 All routes except registration and login require **Authorization** header with a Bearer token
 
 ---

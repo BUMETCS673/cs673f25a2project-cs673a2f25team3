@@ -1,6 +1,10 @@
 const db = require("../db/db");
 const bcrypt = require("bcrypt");
 
+/*
+  100% HUman
+*/
+
 /**
  * Create a new user in the database.
  */

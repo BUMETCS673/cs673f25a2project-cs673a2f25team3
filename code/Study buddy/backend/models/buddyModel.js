@@ -1,6 +1,10 @@
 // models/buddyModel.js
 // Works with SQLite3 + the 'study_buddies' view defined in db.js (with triggers).
 
+/*
+  100% HUman
+*/
+
 const db = require('../db/db');
 
 function computeStatus(energy) {

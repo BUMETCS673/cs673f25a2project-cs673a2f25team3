@@ -1,5 +1,9 @@
 const db = require("../db/db");
 
+/*
+  100% HUman
+*/
+
 const Study = {
   // Add study session
   addSession(user_id, duration, start_time, end_time, callback) {

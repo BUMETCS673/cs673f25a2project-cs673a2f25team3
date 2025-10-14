@@ -1,3 +1,8 @@
+/*
+  90% Human
+  10% framework
+*/
+
 const db = require("../../db/db");
 const Profile = require("../../models/profileModel");
 

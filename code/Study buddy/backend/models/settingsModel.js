@@ -1,5 +1,10 @@
 const db = require("../db/db");
 
+/*
+  20% AI
+  80% HUman
+*/
+
 /**
  * Retrieve a user's settings from the database by userId.
  *

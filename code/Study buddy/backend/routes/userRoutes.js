@@ -1,5 +1,5 @@
-require('dotenv').config();
 const express = require("express");
+require('dotenv').config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
@@ -8,11 +8,48 @@ const db = require("../db/db");
 
 const router = express.Router();
 
+/*
+  20% AI
+  70% Human
+  10% Framweork
+*/
+
 /**
  * @swagger
  * tags:
  *   name: Users
  *   description: User registration, login, and profile
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         username:
+ *           type: string
+ *       example:
+ *         id: 1
+ *         username: "johndoe"
+ *     AuthResponse:
+ *       type: object
+ *       properties:
+ *         message:
+ *           type: string
+ *         user:
+ *           $ref: '#/components/schemas/User'
+ *         token:
+ *           type: string
+ *       example:
+ *         message: "Login successful"
+ *         user:
+ *           id: 1
+ *           username: "johndoe"
+ *         token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  */
 
 /**
@@ -35,6 +72,9 @@ const router = express.Router();
  *                 type: string
  *               password:
  *                 type: string
+ *             example:
+ *               username: "johndoe"
+ *               password: "password123"
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -46,14 +86,18 @@ const router = express.Router();
  *                 message:
  *                   type: string
  *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                     username:
- *                       type: string
+ *                   $ref: '#/components/schemas/User'
+ *               example:
+ *                 message: "User registered successfully"
+ *                 user:
+ *                   id: 1
+ *                   username: "johndoe"
  *       400:
  *         description: Bad request, e.g., missing username/password
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Username and password are required"
  */
 router.post("/register", (req, res) => {
   const { username, password } = req.body;
@@ -65,7 +109,6 @@ router.post("/register", (req, res) => {
   User.createUser(username, password, (err, user) => {
     if (err) return res.status(400).json({ error: err.message });
 
-    // Automatically create default profile & settings data
     db.run("INSERT INTO profiles (user_id) VALUES (?)", [user.id]);
     db.run("INSERT INTO settings (user_id) VALUES (?)", [user.id]);
 
@@ -96,29 +139,28 @@ router.post("/register", (req, res) => {
  *                 type: string
  *               password:
  *                 type: string
+ *             example:
+ *               username: "johndoe"
+ *               password: "password123"
  *     responses:
  *       200:
  *         description: Login successful, returns token
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                     username:
- *                       type: string
- *                 token:
- *                   type: string
+ *               $ref: '#/components/schemas/AuthResponse'
  *       400:
  *         description: User not found or bad request
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "User not found"
  *       401:
  *         description: Invalid credentials
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Invalid credentials"
  */
 router.post("/login", (req, res) => {
   const { username, password } = req.body;
@@ -161,14 +203,13 @@ router.post("/login", (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                 username:
- *                   type: string
+ *               $ref: '#/components/schemas/User'
  *       401:
  *         description: Unauthorized (invalid or missing token)
+ *         content:
+ *           application/json:
+ *             example:
+ *               error: "Unauthorized"
  */
 router.get("/me", auth, (req, res) => {
   res.json({

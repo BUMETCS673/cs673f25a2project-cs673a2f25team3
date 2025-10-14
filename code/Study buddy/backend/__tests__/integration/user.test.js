@@ -1,3 +1,8 @@
+/*
+  90% Human
+  10% framework
+*/
+
 const db = require("../../db/db");
 const User = require("../../models/userModel");
 const bcrypt = require("bcrypt");
