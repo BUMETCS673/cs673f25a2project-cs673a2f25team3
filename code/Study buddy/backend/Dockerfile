@@ -11,6 +11,7 @@ WORKDIR /app
 
 # Copy only package manifests first for caching
 COPY package*.json ./
+COPY eslint.config.js ./
 
 # Install dependencies cleanly
 RUN npm install  # install all dependencies including devDependencies
