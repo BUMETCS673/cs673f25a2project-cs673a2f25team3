@@ -6,9 +6,6 @@ const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const fs = require("fs");
 
-const isTest = process.env.NODE_ENV === "test";
-const dbPath = isTest ? ":memory:" : path.resolve(__dirname, "database.sqlite");
-
 if (dbPath !== ":memory:") {
   const dir = path.dirname(dbPath);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
