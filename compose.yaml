@@ -1,6 +1,7 @@
 # 90% AI generated
 # 10% Bug fixing
 
+# compose.yaml
 version: "3.9"
 
 networks:
@@ -10,6 +11,7 @@ networks:
 volumes:
   backend_node_modules:
   frontend_node_modules:
+  npm_cache:               # optional (speeds up npm installs)
 
 services:
   js-backend:
@@ -49,13 +51,17 @@ services:
       CHOKIDAR_USEPOLLING: "true"
       WATCHPACK_POLLING: "true"
       HOME: "/app"
-      EXPO_START_TUNNEL: ""   # optional; avoids warning if unset
     volumes:
-      - "./code/Study buddy/frontend:/app"
-      - "frontend_node_modules:/app/node_modules"
+      - "./code/Study buddy/frontend:/app"      # your source (hot reload)
+      - "frontend_node_modules:/app/node_modules" # deps live in a separate volume
+      - "npm_cache:/root/.npm"                  # optional cache
     working_dir: /app
-    # Use a valid host mode for Expo CLI
-    command: npx expo start --dev-client --web --host lan
+    # Install AFTER volumes are mounted, then start Expo with a valid host
+    command: >
+      bash -lc "
+      ([ -d node_modules ] && [ -f package-lock.json ] && [ -d node_modules/.bin ]) || npm install;
+      npx expo start --dev-client --web --host lan
+      "
     depends_on:
       - js-backend
     networks:

@@ -1,5 +1,5 @@
 # 90% AI generated
-# 10% bug fixing
+# 10% manual bug fixing
 
 
 # Use Debian (not Alpine) so Expo/Metro deps are available & easy to install
@@ -22,10 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY package*.json ./
 COPY babel.config.js ./
 COPY eslint.config.js ./
-RUN npm install
-
-# (Optional) global expo; you can rely on npx instead if you prefer
-RUN npm install -g expo@latest
+RUN --mount=type=cache,target=/root/.npm npm ci || true
 
 # Bring in the app
 COPY . .
@@ -33,7 +30,4 @@ COPY . .
 # Typical Expo/Metro ports
 EXPOSE 8081 19000 19001 19002 19006
 
-# Bind to 0.0.0.0 so you can reach Metro/DevTools from host
-# --dev-client enables native client flows; --web starts the web server too
-# --non-interactive avoids prompts that can hang in Docker
-CMD ["bash", "-lc", "expo start --dev-client --web --host 0.0.0.0 --non-interactive"]
+CMD ["bash", "-lc", "npx expo start --dev-client --web --host lan"]
