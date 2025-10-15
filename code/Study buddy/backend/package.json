@@ -29,15 +29,6 @@
     "cross-env": "^7.0.3",
     "jest": "^30.2.0",
     "nodemon": "^3.1.10",
-    "supertest": "^7.1.4"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "testTimeout": 20000,
-    "clearMocks": true,
-    "restoreMocks": true,
-    "setupFiles": ["<rootDir>/__tests__/setupEnv.js"],
-    "testMatch": ["**/__tests__/**/*.test.js"],
     "supertest": "^7.1.4",
     "eslint": "^9.37.0",
     "@eslint/js": "^9.37.0",
