@@ -1,3 +1,6 @@
+# 80% AI
+# 20% manual
+
 # Use Debian (not Alpine) so Expo/Metro deps are available & easy to install
 FROM node:22-bullseye
 
