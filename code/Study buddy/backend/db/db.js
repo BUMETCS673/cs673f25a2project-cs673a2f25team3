@@ -14,6 +14,15 @@ if (dbPath !== ":memory:") {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
+// added in for testing
+const isTest = process.env.NODE_ENV === "test";
+
+// For tests: default to in-memory. You can override with SQLITE_DB=<path>.
+const resolvedDbPath = isTest
+  ? (process.env.SQLITE_DB || ":memory:")
+  : path.resolve(__dirname, "./database.sqlite");
+
+const dbPath = path.resolve(__dirname, "./database.sqlite");
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) console.error("❌ DB Connection Error:", err.message);
   else console.log("✅ Connected to SQLite database");
@@ -114,5 +123,25 @@ db.serialize(() => {
     )
   `);
 });
+
+
+db.reset = function reset(cb) {
+  db.exec(
+    `
+      DELETE FROM study_sessions;
+      DELETE FROM study_buddies;
+      DELETE FROM settings;
+      DELETE FROM profiles;
+      DELETE FROM users;
+    `,
+    cb
+  );
+};
+
+db.closeAsync = function closeAsync() {
+  return new Promise((resolve, reject) => {
+    db.close((err) => (err ? reject(err) : resolve()));
+  });
+};
 
 module.exports = db;
