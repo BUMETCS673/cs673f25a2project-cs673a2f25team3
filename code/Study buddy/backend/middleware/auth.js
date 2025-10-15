@@ -1,5 +1,9 @@
 const jwt = require("jsonwebtoken");
 
+/*
+  100% HUman
+*/
+
 /**
  * Middleware to authenticate requests using JWT.
  * - Looks for a Bearer token in the "Authorization" header.

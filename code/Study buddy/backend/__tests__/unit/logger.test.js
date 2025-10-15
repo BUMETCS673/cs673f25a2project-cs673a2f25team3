@@ -1,3 +1,7 @@
+/*
+  100% HUman
+*/
+
 const logger = require("../../middleware/logger");
 
 describe("Logger Middleware Unit Tests", () => {

@@ -1,5 +1,10 @@
 const db = require("../db/db");
 
+/*
+  20% AI
+  80% HUman
+*/
+
 /**
  * Retrieve a user's settings from the database by userId.
  *
@@ -8,7 +13,8 @@ const db = require("../db/db");
  */
 function getSettings(userId, callback) {
   db.get("SELECT * FROM settings WHERE user_id = ?", [userId], (err, row) => {
-    callback(err, row);
+    if (err) return callback(err);
+    callback(null, row || null);
   });
 }
 
