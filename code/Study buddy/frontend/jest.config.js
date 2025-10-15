@@ -1,4 +1,5 @@
-// jest.config.js
+// 100% AI generated to get CI working for tests
+
 module.exports = {
   preset: "react-native",
   testEnvironment: "jsdom",

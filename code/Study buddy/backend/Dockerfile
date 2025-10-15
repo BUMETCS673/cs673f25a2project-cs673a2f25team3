@@ -1,3 +1,6 @@
+# 90% AI generated
+# 10% bug fixing
+
 # Use a modern LTS Node version
 FROM node:22-alpine
 

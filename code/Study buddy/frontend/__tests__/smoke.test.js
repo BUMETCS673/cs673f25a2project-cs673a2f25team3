@@ -1,4 +1,4 @@
-// 100% AI generated to ensure frontend tests to work on CI setup
+// 100% AI generated to ensure frontend tests work on CI setup
 
 // Minimal smoke test
 describe('Smoke Test', () => {
