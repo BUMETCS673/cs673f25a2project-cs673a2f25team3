@@ -1,3 +1,8 @@
+/*
+  50% AI help with Swagger
+  50% Human
+*/
+
 require('dotenv').config();
 const express = require("express");
 const cors = require("cors");

@@ -1,3 +1,9 @@
+/*
+  20% AI
+  70% Human
+  10% Framework
+*/
+
 require('dotenv').config();
 const express = require("express");
 const bcrypt = require("bcrypt");

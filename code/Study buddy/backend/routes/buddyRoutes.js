@@ -1,3 +1,9 @@
+/*
+  20% AI
+  70% Human
+  10% Framework
+*/
+
 const express = require("express");
 const auth = require("../middleware/auth");
 const Buddy = require("../models/buddyModel");

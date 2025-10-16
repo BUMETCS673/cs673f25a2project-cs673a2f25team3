@@ -1,3 +1,8 @@
+/*
+  50% AI
+  50% Human
+*/
+
 const request = require("supertest");
 const app = require("../server");
 const db = require("../db/db");
