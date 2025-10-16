@@ -1,3 +1,7 @@
+/*
+  100% human
+*/
+
 /**
  * Simple request logger middleware.
  *

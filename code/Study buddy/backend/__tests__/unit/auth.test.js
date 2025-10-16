@@ -1,3 +1,8 @@
+/*
+  50% AI
+  50% Human
+*/
+
 const jwt = require("jsonwebtoken");
 const auth = require("../../middleware/auth");
 

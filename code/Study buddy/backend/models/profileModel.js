@@ -1,3 +1,8 @@
+/*
+  20% AI
+  80% human
+*/
+
 const db = require("../db/db");
 
 /**

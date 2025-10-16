@@ -1,3 +1,8 @@
+/*
+  50% AI
+  50% Human
+*/
+
 const db = require("../db/db");
 const Buddy = require("../models/buddyModel");
 

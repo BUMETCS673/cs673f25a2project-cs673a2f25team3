@@ -1,3 +1,7 @@
+/*
+  100% human
+*/
+
 const db = require("../db/db");
 
 /**
