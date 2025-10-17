@@ -1,18 +1,18 @@
 import {
-    BookOpen,
-    Calendar,
-    Gamepad2,
-    Home,
-    Settings,
+  BookOpen,
+  Calendar,
+  Gamepad2,
+  Home,
+  Settings,
 } from "lucide-react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-    Dimensions,
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function HomePage() {
@@ -26,7 +26,7 @@ export default function HomePage() {
         <TouchableOpacity onPress={() => console.log("Avatar clicked")}>
           <Image
             source={{
-              uri: "https://images.unsplash.com/photo-1599566147214-ce487862ea4f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBwb3J0cmFpdCUyMGF2YXRhcnxlbnwxfHx8fDE3NjA1NjU3NTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+              uri: "https://images.unsplash.com/photo-1701497856652-abfc7db0d444?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdXRlJTIwa2l0dGVuJTIwY2F0fGVufDF8fHx8MTc2MDY4Njk2MHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
             }}
             style={styles.avatar}
           />
