@@ -85,7 +85,6 @@ export default function HomePage() {
   );
 }
 
-/* 单个导航按钮组件 */
 function NavButton({
   label,
   icon: Icon,
@@ -118,7 +117,7 @@ const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F3FF", // 类似 from-purple-50 to-blue-50 的浅色背景
+    backgroundColor: "#F5F3FF",
   },
   header: {
     flexDirection: "row",

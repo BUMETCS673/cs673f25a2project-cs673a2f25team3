@@ -1,4 +1,4 @@
-import { Eye, EyeOff, Lock, Mail } from "lucide-react-native"; // ✅ 注意这里换成 lucide-react-native
+import { Eye, EyeOff, Lock, Mail } from "lucide-react-native"; 
 import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
@@ -23,15 +23,12 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={styles.container}
     >
-      {/* 卡片容器 */}
       <View style={styles.card}>
-        {/* 标题 */}
         <View style={styles.header}>
           <Text style={styles.title}>Welcome Back</Text>
           <Text style={styles.subtitle}>Sign in to continue</Text>
         </View>
 
-        {/* 邮箱输入框 */}
         <View style={styles.field}>
           <Text style={styles.label}>Email Address</Text>
           <View style={styles.inputWrapper}>
@@ -47,7 +44,6 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           </View>
         </View>
 
-        {/* 密码输入框 */}
         <View style={styles.field}>
           <Text style={styles.label}>Password</Text>
           <View style={styles.inputWrapper}>
@@ -73,12 +69,12 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           </View>
         </View>
 
-        {/* 忘记密码 */}
+
         <TouchableOpacity onPress={() => console.log("Forgot password clicked")}>
           <Text style={styles.forgotPassword}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        {/* 登录按钮 */}
+
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Sign In</Text>
         </TouchableOpacity>
@@ -103,7 +99,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.25,
     shadowRadius: 12,
-    backdropFilter: "blur(20px)", // iOS 有效
+    backdropFilter: "blur(20px)", 
   },
   header: {
     alignItems: "center",
