@@ -119,7 +119,6 @@ This project uses Docker Compose to run both the backend (Node.js/Express) and f
   ```
 2. The backend will be available at [http://localhost:3000](http://localhost:3000)
 3. The frontend (Expo) will:
-  - Show a QR code for Expo Go (scan with your mobile device)
   - Serve the web app at [http://localhost:19006](http://localhost:19006)
 
 ### Service Ports
@@ -156,17 +155,105 @@ For more details, see the Dockerfiles and `compose.yaml` in the repository. If y
 
 ## Project Structure
 ```bash
-backend/
-├─ __tests__/      # Supertest API tests
-├─ routes/         # API route files
-├─ models/         # Database model logic
-├─ db/             # SQlite database file
-├─ server.js       # Express server entry point
-├─ package.json
-├─ .env            # Environment variables
-frontend/
-├─ App.js
-├─ package.json
+cs673f25a2project-cs673a2f25team3/
+├── code/
+│   └── Study buddy/
+│       ├── backend/
+│       │   ├── __tests__/
+│       │   │   ├── unit/
+│       │   │   │   ├── auth.test.js
+│       │   │   │   ├── logger.test.js
+│       │   │   ├── acceptance.test.js
+│       │   │   ├── api.test.js
+│       │   │   ├── energyDecay.test.js
+│       │   ├── db/
+│       │   │   ├── database.sqlite
+│       │   │   ├── db.js
+│       │   ├── middleware/
+│       │   │   ├── auth.js
+│       │   │   ├── logger.js
+│       │   ├── models/
+│       │   │   ├── buddyModel.js
+│       │   │   ├── profileModel.js
+│       │   │   ├── settingsModel.js
+│       │   │   ├── studyModel.js
+│       │   │   ├── userModel.js
+│       │   ├── routes/
+│       │   │   ├── buddyRoutes.js
+│       │   │   ├── profileRoutes.js
+│       │   │   ├── settingsRoutes.js
+│       │   │   ├── studyRoutes.js
+│       │   │   ├── userRoutes.js
+│       │   ├── .gitignore
+│       │   ├── Dockerfile
+│       │   ├── eslint.config.js
+│       │   ├── jest.config.js
+│       │   ├── jest.setup.js
+│       │   ├── package.json
+│       │   ├── server.js
+│       │
+│       └── frontend/
+│           ├── .expo/
+│           ├── .npm/
+│           ├── __tests__/
+│           │   ├── smoke.test.js
+│           ├── assets/
+│           │   ├── images/
+│           │   │   ├── Terrier.png
+│           │   │   ├── adaptive-icon.png
+│           │   │   ├── favicon.png
+│           │   │   ├── icon.png
+│           │   │   ├── splash-icon.png
+│           │   ├── sounds/
+│           │   │   ├── Click sound.mp3
+│           ├── components/
+│           │   ├── Background.js
+│           │   ├── Checkbox.js
+│           │   ├── NavigationButton.js
+│           ├── screens/
+│           │   ├── GameMenu.js
+│           │   ├── Home.js
+│           │   ├── Login.js
+│           │   ├── SelectStudyTime.js
+│           │   ├── Settings.js
+│           │   ├── Statistics.js
+│           │   ├── Studying.js
+│           ├── styles/
+│           │   ├── base.js
+│           │   ├── style.js
+│           │   ├── styles.css
+│           ├── util/
+│           │   ├── formatString.js
+│           ├── .dockerignore
+│           ├── App.js
+│           ├── Dockerfile
+│           ├── app.json
+│           ├── babel.config.js
+│           ├── eslint.config.js
+│           ├── index.js
+│           ├── package-lock.json
+│           ├── package.json
+│
+├── demo/
+│   ├── CS673_iteration1_demo_team3.mp4
+├── doc/
+│   ├── CS673_MeetingMinutes_team3.docx
+│   ├── CS673_presentation1_team3.pptx
+│   ├── CS673_ProgressReport_team3.xlsx
+│   ├── CS673_SDD_team3.docx
+│   ├── CS673_SPPP_RiskManagement.xlsx
+│   ├── CS673_SPPP_team3.docx
+│   ├── CS673_STD_team3.docx
+├── misc/
+│   ├── .gitkeep
+├── tests/
+│   ├── .gitkeep
+├── .dockerignore
+├── .gitignore
+├── README.md
+├── compose.yaml
+├── package.json
+├── team.md
 ...
 ```
 
