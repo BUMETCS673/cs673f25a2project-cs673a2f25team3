@@ -1,0 +1,9 @@
+# 100% manual
+
+node_modules
+npm-debug.log
+.git
+.expo
+.web-build
+android
+ios
