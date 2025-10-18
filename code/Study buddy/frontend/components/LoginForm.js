@@ -7,19 +7,51 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react-native";
+import { API_BASE_URL } from "@env";
 
 export default function LoginForm() {
   const navigation = useNavigation();
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState(""); 
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
-    console.log("Login attempt:", { email, password });
-    navigation.replace("Home"); 
+  const handleLogin = async () => {
+    if (!username || !password) {
+      Alert.alert("Error", "Please enter username and password");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Login failed");
+
+      await AsyncStorage.setItem("token", data.token);
+      await AsyncStorage.setItem("user", JSON.stringify(data.user));
+
+      Alert.alert("Success", "Login successful!", [
+        { text: "OK", onPress: () => navigation.replace("Home", { user: data.user }) },
+      ]);
+    } catch (err) {
+      console.error("Login error:", err);
+      Alert.alert("Error", err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -28,29 +60,28 @@ export default function LoginForm() {
       style={styles.container}
     >
       <View style={styles.card}>
-        {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>Welcome Back</Text>
           <Text style={styles.subtitle}>Sign in to continue</Text>
         </View>
 
-        {/* Email */}
+        {/* Username Field */}
         <View style={styles.field}>
-          <Text style={styles.label}>Email Address</Text>
+          <Text style={styles.label}>Username</Text>
           <View style={styles.inputWrapper}>
             <Mail color="rgba(255,255,255,0.5)" size={20} style={styles.iconLeft} />
             <TextInput
-              placeholder="Enter your email"
+              placeholder="Enter your username"
               placeholderTextColor="rgba(255,255,255,0.4)"
-              keyboardType="email-address"
-              value={email}
-              onChangeText={setEmail}
+              value={username}
+              onChangeText={setUsername}
               style={[styles.input, { paddingLeft: 36 }]}
+              autoCapitalize="none"
             />
           </View>
         </View>
 
-        {/* Password */}
+        {/* Password Field */}
         <View style={styles.field}>
           <Text style={styles.label}>Password</Text>
           <View style={styles.inputWrapper}>
@@ -76,15 +107,13 @@ export default function LoginForm() {
           </View>
         </View>
 
-        {/* Forgot Password */}
-        <TouchableOpacity onPress={() => console.log("Forgot password clicked")}>
-          <Text style={styles.forgotPassword}>Forgot Password?</Text>
-        </TouchableOpacity>
-
-        {/* Button */}
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Sign In</Text>
-        </TouchableOpacity>
+        {loading ? (
+          <ActivityIndicator size="large" color="#fff" style={{ marginTop: 16 }} />
+        ) : (
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Sign In</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
@@ -150,13 +179,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 10,
     zIndex: 1,
-  },
-  forgotPassword: {
-    textAlign: "right",
-    color: "rgba(255,255,255,0.7)",
-    fontSize: 13,
-    marginTop: 4,
-    marginBottom: 20,
   },
   button: {
     backgroundColor: "rgba(255,255,255,0.2)",
