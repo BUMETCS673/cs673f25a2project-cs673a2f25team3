@@ -14,11 +14,12 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react-native";
 import { API_BASE_URL } from "@env";
+console.log("Loaded API_BASE_URL:", API_BASE_URL);
 
 export default function LoginForm() {
   const navigation = useNavigation();
   const [showPassword, setShowPassword] = useState(false);
-  const [username, setUsername] = useState(""); 
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -37,14 +38,20 @@ export default function LoginForm() {
       });
 
       const data = await res.json();
+      console.log("Login response:", data);
 
-      if (!res.ok) throw new Error(data.error || "Login failed");
+      if (!res.ok || !data.user) {
+        throw new Error(data.error || "Invalid response from server");
+      }
 
       await AsyncStorage.setItem("token", data.token);
       await AsyncStorage.setItem("user", JSON.stringify(data.user));
-
+      
       Alert.alert("Success", "Login successful!", [
-        { text: "OK", onPress: () => navigation.replace("Home", { user: data.user }) },
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Home", { user: data.user }),
+        },
       ]);
     } catch (err) {
       console.error("Login error:", err);
@@ -65,7 +72,7 @@ export default function LoginForm() {
           <Text style={styles.subtitle}>Sign in to continue</Text>
         </View>
 
-        {/* Username Field */}
+        {/* Username */}
         <View style={styles.field}>
           <Text style={styles.label}>Username</Text>
           <View style={styles.inputWrapper}>
@@ -81,7 +88,7 @@ export default function LoginForm() {
           </View>
         </View>
 
-        {/* Password Field */}
+        {/* Password */}
         <View style={styles.field}>
           <Text style={styles.label}>Password</Text>
           <View style={styles.inputWrapper}>
