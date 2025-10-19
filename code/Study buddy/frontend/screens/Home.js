@@ -16,7 +16,6 @@ export default function Home({ }) {
     <Background>
       <View style={styles.card}>
         <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
-        <Text style={styles.cardH2}>Goal per day - {createClock(getGoal())}</Text>
         <NavigationButton text="Start Studying!" link="SelectStudyTime" />
         <NavigationButton text="Game Menu" link="GameMenu" />
         <NavigationButton text="Statistics" link="Statistics" />
