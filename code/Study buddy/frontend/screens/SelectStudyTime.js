@@ -2,9 +2,8 @@ import { View, Text } from 'react-native';
 import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
-import { useState } from 'react';
 import { createClock } from '../util/formatString';
-import { padding } from '../styles/base';
+import { getGoal, getTimeStudied } from '../util/getValuesFromDatabase';
 
 /*
   30% framework
@@ -13,7 +12,7 @@ import { padding } from '../styles/base';
 
 // Page for selecting the time studying
 export default function SelectStudyTime() {
-  const timeLeftInGoal = calculateTimeLeftInGoal();
+  const timeLeftInGoal = getGoal() - getTimeStudied(Date.now());
   return (
     <Background>
       <View style={styles.card}>
@@ -28,8 +27,4 @@ export default function SelectStudyTime() {
       </View>
     </Background>
   );
-}
-
-function calculateTimeLeftInGoal() {
-  return 5005000;
 }
