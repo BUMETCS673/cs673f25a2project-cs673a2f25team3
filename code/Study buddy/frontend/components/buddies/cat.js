@@ -1,4 +1,4 @@
-export function Cat({outlineColor = "black", insideColor = "white", size = 200, outlineWidth = 4, health = "happy"}) {
+export function Cat({outlineColor = "black", insideColor = "orange", size = 200, outlineWidth = 4, health = "happy"}) {
 	const width = size * 0.9 + outlineWidth;
 	const height = size;
 
