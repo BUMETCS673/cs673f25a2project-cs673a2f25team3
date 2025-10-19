@@ -100,8 +100,15 @@ checkbox: {
 },
 
 // input
-input: {
-
+inputBox: {
+},
+inputText: {
+  fontSize: fonts.md,
+  color:'white'
+},
+inputOutline: {
+  flexDirection: 'row',
+  alignItems: 'center',
 }
 
 });
