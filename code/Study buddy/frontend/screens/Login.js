@@ -12,7 +12,7 @@ export default function Login() {
       blurRadius={4} 
     >
       <View style={styles.overlay}>
-        <LoginForm />a
+        <LoginForm />
       </View>
     </ImageBackground>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -10,56 +10,93 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react-native";
 import { API_BASE_URL } from "@env";
-console.log("Loaded API_BASE_URL:", API_BASE_URL);
 
-export default function LoginForm() {
-  const navigation = useNavigation();
+export default function LoginForm({ navigation }) {
+  const [mode, setMode] = useState("login"); // login | register
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(null);
 
-  const handleLogin = async () => {
+  useEffect(() => {
+    const checkUser = async () => {
+      const user = await AsyncStorage.getItem("user");
+      if (user) setLoggedInUser(JSON.parse(user));
+    };
+    checkUser();
+  }, []);
+
+  const handleAuth = async () => {
     if (!username || !password) {
-      Alert.alert("Error", "Please enter username and password");
+      Alert.alert("Error", "Please enter both username and password.");
       return;
     }
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/login`, {
+      const endpoint =
+        mode === "login" ? `${API_BASE_URL}/login` : `${API_BASE_URL}/register`;
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
-
       const data = await res.json();
-      console.log("Login response:", data);
+      if (!res.ok) throw new Error(data.error || "Request failed");
 
-      if (!res.ok || !data.user) {
-        throw new Error(data.error || "Invalid response from server");
+      if (mode === "register") {
+        Alert.alert("✅ Success", "Registration successful! Please log in.", [
+          { text: "OK", onPress: () => setMode("login") },
+        ]);
+      } else {
+        await AsyncStorage.setItem("token", data.token);
+        await AsyncStorage.setItem("user", JSON.stringify(data.user));
+        setLoggedInUser(data.user);
+        Alert.alert("Success", "Login successful!", [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("Home", { user: data.user }),
+          },
+        ]);
       }
-
-      await AsyncStorage.setItem("token", data.token);
-      await AsyncStorage.setItem("user", JSON.stringify(data.user));
-      
-      Alert.alert("Success", "Login successful!", [
-        {
-          text: "OK",
-          onPress: () => navigation.navigate("Home", { user: data.user }),
-        },
-      ]);
     } catch (err) {
-      console.error("Login error:", err);
       Alert.alert("Error", err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("user");
+    setLoggedInUser(null);
+    setMode("login");
+    setUsername("");
+    setPassword("");
+    Alert.alert("Logged out", "You have been logged out.");
+  };
+
+  if (loggedInUser) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.card}>
+          <Text style={[styles.title, { fontSize: 24 }]}>
+            Welcome, {loggedInUser.username}
+          </Text>
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: "#ff758c", paddingVertical: 14, width: 200 }]}
+            onPress={handleLogout}
+          >
+            <Text style={styles.buttonText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView
@@ -67,10 +104,7 @@ export default function LoginForm() {
       style={styles.container}
     >
       <View style={styles.card}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Welcome Back</Text>
-          <Text style={styles.subtitle}>Sign in to continue</Text>
-        </View>
+        <Text style={styles.title}>{mode === "login" ? "Login" : "Register"}</Text>
 
         {/* Username */}
         <View style={styles.field}>
@@ -78,11 +112,11 @@ export default function LoginForm() {
           <View style={styles.inputWrapper}>
             <Mail color="rgba(255,255,255,0.5)" size={20} style={styles.iconLeft} />
             <TextInput
+              style={[styles.input, { paddingLeft: 36 }]}
               placeholder="Enter your username"
               placeholderTextColor="rgba(255,255,255,0.4)"
               value={username}
               onChangeText={setUsername}
-              style={[styles.input, { paddingLeft: 36 }]}
               autoCapitalize="none"
             />
           </View>
@@ -94,12 +128,12 @@ export default function LoginForm() {
           <View style={styles.inputWrapper}>
             <Lock color="rgba(255,255,255,0.5)" size={20} style={styles.iconLeft} />
             <TextInput
+              style={[styles.input, { paddingLeft: 36, paddingRight: 36 }]}
               placeholder="Enter your password"
               placeholderTextColor="rgba(255,255,255,0.4)"
               secureTextEntry={!showPassword}
               value={password}
               onChangeText={setPassword}
-              style={[styles.input, { paddingLeft: 36, paddingRight: 36 }]}
             />
             <TouchableOpacity
               onPress={() => setShowPassword(!showPassword)}
@@ -117,10 +151,18 @@ export default function LoginForm() {
         {loading ? (
           <ActivityIndicator size="large" color="#fff" style={{ marginTop: 16 }} />
         ) : (
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Sign In</Text>
+          <TouchableOpacity style={styles.button} onPress={handleAuth}>
+            <Text style={styles.buttonText}>{mode === "login" ? "Login" : "Register"}</Text>
           </TouchableOpacity>
         )}
+
+        <TouchableOpacity onPress={() => setMode(mode === "login" ? "register" : "login")} style={{ marginTop: 14 }}>
+          <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 13 }}>
+            {mode === "login"
+              ? "Don't have an account? Register"
+              : "Already have an account? Login"}
+          </Text>
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
@@ -133,7 +175,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   card: {
-    width: "100%",
+    width: "90%",
     padding: 24,
     borderRadius: 20,
     backgroundColor: "rgba(255,255,255,0.1)",
@@ -142,20 +184,14 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.25,
     shadowRadius: 12,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 24,
+    marginTop: 60,
   },
   title: {
     fontSize: 22,
     fontWeight: "600",
     color: "#fff",
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.7)",
+    marginBottom: 12,
+    textAlign: "center",
   },
   field: {
     marginBottom: 16,
