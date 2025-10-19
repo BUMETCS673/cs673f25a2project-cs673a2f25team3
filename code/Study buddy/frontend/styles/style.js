@@ -51,8 +51,24 @@ timer: {
   marginBottom: padding.md
 },
 
-// button
+// buttons
 navigationButton: {
+  backgroundColor: 'white', 
+  color: 'black',
+  fontWeight: 'bold', 
+  borderWidth: 2,
+  borderColor: 'transparent',
+  paddingVertical: padding.sm,
+  paddingHorizontal: padding.md,
+  borderRadius: borderRadius.sm,
+  cursor: 'pointer',
+  fontSize: fonts.lg,
+  textAlign: 'center',
+  textAlignVertical: 'center',
+  margin: padding.xs
+},
+
+submitButton: {
   backgroundColor: 'white', 
   color: 'black',
   fontWeight: 'bold', 
@@ -82,5 +98,10 @@ checkbox: {
   fontSize: fonts.md,
   color:'white'
 },
+
+// input
+input: {
+
+}
 
 });
