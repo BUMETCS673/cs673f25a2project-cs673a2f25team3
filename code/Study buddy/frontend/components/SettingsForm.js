@@ -34,7 +34,7 @@ export default function SettingsForm() {
   return (
     <>
 			<CustomCheckbox text="Sound On" isChecked={isChecked} setChecked={setChecked} />
-			<NumericalInput text="Goal in minutes" value={goal} setValue={setGoal} />
+			<NumericalInput text="Goal in minutes per week" value={goal} setValue={setGoal} />
 			<SubmitButton text="Save" submit={submit} />
     </>
   );

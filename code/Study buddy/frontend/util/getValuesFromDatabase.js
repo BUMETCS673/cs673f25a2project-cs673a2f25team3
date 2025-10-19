@@ -1,6 +1,5 @@
-
 import { daysToMs, minutesToMs } from './calculateMs';
-import { isSameDay } from './compareDays';
+import { isSameWeek } from './compareTimes';
 
 /*
 	100% manual
@@ -11,7 +10,7 @@ export function getTimeStudied(date) {
 	const studySessions = getStudySessions();
 
 	studySessions.forEach(studySession => {
-	if (isSameDay(date, studySession.created_at)) timeStudied += studySession.duration
+	if (isSameWeek(date, studySession.created_at)) timeStudied += studySession.duration
 	});
 
 	return timeStudied;
