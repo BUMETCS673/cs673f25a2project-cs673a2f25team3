@@ -23,6 +23,7 @@ export default function SettingsForm() {
       allIsValid = false;
     }
     if (allIsValid) {
+      // currently console.logs values. Change to add values to database
       console.log('Form start');
 			console.log('Sound is ' + (isChecked ? "on" : "off"))
 			console.log('Goal is ' + goal);
