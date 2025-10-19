@@ -1,3 +1,7 @@
+/*
+	100% manual
+*/
+
 export function Cat({outlineColor = "black", insideColor = "orange", size = 200, outlineWidth = 4, health = "happy"}) {
 	const width = size * 0.9 + outlineWidth;
 	const height = size;
@@ -9,13 +13,14 @@ export function Cat({outlineColor = "black", insideColor = "orange", size = 200,
 			<path d={getEarString(false, width, height, outlineWidth)} fill={insideColor} stroke={outlineColor} stroke-width={outlineWidth} />
 			{getEyes(health, width, height, outlineColor, outlineWidth)}
 			<path d={noseString(width, height, outlineWidth)} fill={outlineColor} stroke={outlineColor} stroke-width={outlineWidth} />
-			{whiskers(width, height, outlineColor, outlineWidth)}
+			{getWhiskers(width, height, outlineColor, outlineWidth)}
 		</svg>
 	);
 }
 
 function getEyes(health, width, height, outlineColor, outlineWidth) {
 	if (health == "happy") {
+		// eyes look like n
 		return (
 			<>
 				<path d={getEyeString(true, width, height)} fill="none" stroke={outlineColor} stroke-width={outlineWidth} />
@@ -23,6 +28,7 @@ function getEyes(health, width, height, outlineColor, outlineWidth) {
 			</>
 		)
 	} else {
+		// need to add eyes for other health levels
 		return <></>;
 	}
 }
@@ -48,7 +54,7 @@ function getEarString(left, width, height, outlineWidth) {
 	return "M " + x1 + " " + y1 + " L " + x2 + " " + y2 + ", " + x3 + " " + y3;
 }
 
-function whiskers(width, height, outlineColor, outlineWidth) {
+function getWhiskers(width, height, outlineColor, outlineWidth) {
 	function singleWhisker(x1, y1, x2, y2) {
 		return <path d={"M " + x1 + " " + y1 + " L " + x2 + " " + y2} fill="none" stroke={outlineColor} stroke-width={outlineWidth} />
 	}
