@@ -36,6 +36,13 @@ cardH1: {
   fontWeight: 'bold',
   marginBottom: padding.md
 },
+cardH2: {
+  color: 'white',
+  textAlign: 'center',
+  fontSize: fonts.md,
+  fontWeight: 'bold',
+  marginBottom: padding.md
+},
 
 // general text
 paragraph: {
