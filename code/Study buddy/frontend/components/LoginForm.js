@@ -1,3 +1,8 @@
+/*
+  20% AI
+  80% Human
+*/
+
 import React, { useState, useEffect } from "react";
 import {
   KeyboardAvoidingView,
@@ -22,6 +27,7 @@ export default function LoginForm({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState(null);
 
+  // check if user is already logged in 
   useEffect(() => {
     const checkUser = async () => {
       const user = await AsyncStorage.getItem("user");
@@ -30,6 +36,7 @@ export default function LoginForm({ navigation }) {
     checkUser();
   }, []);
 
+  // handle login or registration
   const handleAuth = async () => {
     if (!username || !password) {
       Alert.alert("Error", "Please enter both username and password.");
@@ -38,8 +45,9 @@ export default function LoginForm({ navigation }) {
 
     setLoading(true);
     try {
+      // based on the mode to use the endpoint API
       const endpoint =
-        mode === "login" ? `${API_BASE_URL}/login` : `${API_BASE_URL}/register`;
+        mode === "login" ? `${API_BASE_URL}/users/login` : `${API_BASE_URL}/users/register`;
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -53,6 +61,7 @@ export default function LoginForm({ navigation }) {
           { text: "OK", onPress: () => setMode("login") },
         ]);
       } else {
+        // save token and user info
         await AsyncStorage.setItem("token", data.token);
         await AsyncStorage.setItem("user", JSON.stringify(data.user));
         setLoggedInUser(data.user);

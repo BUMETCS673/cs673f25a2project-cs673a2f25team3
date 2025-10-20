@@ -1,3 +1,8 @@
+/*
+  20% AI
+  80% Human
+*/
+
 import React from "react";
 import { StyleSheet, View, ImageBackground } from "react-native";
 import LoginForm from "../components/LoginForm"; 
