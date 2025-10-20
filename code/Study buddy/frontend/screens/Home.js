@@ -2,8 +2,7 @@ import { View, Text } from 'react-native';
 import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
-import { Cat } from '../components/buddies/cat';
-import { Deer } from '../components/buddies/deer';
+import { HomeBuddy } from '../components/buddies/buddy';
 
 /*
   40% framework
@@ -15,8 +14,7 @@ export default function Home({ }) {
   return (
     <Background>
       <View style={styles.card}>
-        <Deer />
-        <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
+        <HomeBuddy />
         <NavigationButton text="Start Studying!" link="SelectStudyTime" />
         <NavigationButton text="Game Menu" link="GameMenu" />
         <NavigationButton text="Statistics" link="Statistics" />
