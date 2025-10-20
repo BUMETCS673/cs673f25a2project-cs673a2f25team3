@@ -148,6 +148,21 @@ export default function LoginForm({ navigation }) {
           </View>
         </View>
 
+        <View style={styles.bottomRow}>
+          <TouchableOpacity onPress={() => { /* Forgot password button, add later */ }}>
+            <Text style={styles.forgotText}>Forgot Password?</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setMode(mode === "login" ? "register" : "login")}>
+            <Text style={styles.switchText}>
+              {mode === "login"
+                ? "Register"
+                : "Login"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        
         {loading ? (
           <ActivityIndicator size="large" color="#fff" style={{ marginTop: 16 }} />
         ) : (
@@ -156,13 +171,7 @@ export default function LoginForm({ navigation }) {
           </TouchableOpacity>
         )}
 
-        <TouchableOpacity onPress={() => setMode(mode === "login" ? "register" : "login")} style={{ marginTop: 14 }}>
-          <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 13 }}>
-            {mode === "login"
-              ? "Don't have an account? Register"
-              : "Already have an account? Login"}
-          </Text>
-        </TouchableOpacity>
+
       </View>
     </KeyboardAvoidingView>
   );
@@ -235,5 +244,29 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+  },
+
+  // Additional styles for bottom row
+  bottomRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    marginTop: 10,
+    marginBottom: 20,
+  },
+
+  forgotText: {
+    color: "rgba(255,255,255,0.75)",
+    fontSize: 13,
+    textAlign: "left",
+    textDecorationLine: "underline",
+  },
+
+  switchText: {
+    color: "rgba(255,255,255,0.75)",
+    fontSize: 13,
+    textAlign: "right",
+    textDecorationLine: "underline",
   },
 });
