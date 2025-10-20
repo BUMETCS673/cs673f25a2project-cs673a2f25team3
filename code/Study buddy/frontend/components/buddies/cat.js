@@ -5,7 +5,7 @@
 import { buddyEye } from "../../util/buddyEyes";
 import { statusToString } from "../../util/status";
 
-export function Cat({outlineColor = "black", insideColor = "orange", size = 200, outlineWidth = 4, status = 4}) {
+export function Cat({outlineColor = "black", insideColor = "orange", size = 200, outlineWidth = 4, status = 0}) {
 	const frameWidth = size * 0.9 + outlineWidth;
 	const frameHeight = size;
 
@@ -32,14 +32,14 @@ function ears(frameWidth, frameHeight, outlineWidth, insideColor, outlineColor) 
 	);
 }
 function eyes(status, frameWidth, frameHeight, outlineColor, outlineWidth) {
-	const eyeWidth = frameWidth * 0.15;
-	const distFromSide = 0.25;
-	const startY = frameHeight * 0.5;
+	const eyeWidth = frameWidth * 0.1;
+	const distFromSide = 0.3;
+	const startY = frameHeight * 0.48;
 
 	return (
 		<>
 			{buddyEye(status, eyeWidth, frameWidth * distFromSide, startY, outlineColor, outlineWidth)}
-			{buddyEye(status, eyeWidth, frameWidth * (1 - distFromSide) - eyeWidth, startY, outlineColor, outlineWidth)}
+			{buddyEye(status, eyeWidth, frameWidth * (1 - distFromSide) - eyeWidth, startY, outlineColor, outlineWidth, true)}
 		</>
 	)
 }
