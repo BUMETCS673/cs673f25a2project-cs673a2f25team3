@@ -2,6 +2,7 @@
 	100% manual
 */
 
+import { eye } from "../../util/buddyEyes";
 import { statusToString } from "../../util/status";
 
 export function Cat({outlineColor = "black", insideColor = "orange", size = 200, outlineWidth = 4, status = 4}) {
@@ -31,17 +32,16 @@ function ears(frameWidth, frameHeight, outlineWidth, insideColor, outlineColor) 
 	);
 }
 function eyes(status, frameWidth, frameHeight, outlineColor, outlineWidth) {
-	switch (status) {
-		// eyes look like n
-		case 4: return (
-			<>
-				<path d={getEyeString(true, frameWidth, frameHeight)} fill="none" stroke={outlineColor} stroke-width={outlineWidth} />
-				<path d={getEyeString(false, frameWidth, frameHeight)} fill="none" stroke={outlineColor} stroke-width={outlineWidth} />
-			</>
-		)
-		// need to add eyes for 0-3
-		default: return <></>
-	}
+	const eyeWidth = frameWidth * 0.15;
+	const distFromSide = 0.25;
+	const startY = frameHeight * 0.5;
+
+	return (
+		<>
+			{eye(status, eyeWidth, frameWidth * distFromSide, startY, outlineColor, outlineWidth)}
+			{eye(status, eyeWidth, frameWidth * (1 - distFromSide) - eyeWidth, startY, outlineColor, outlineWidth)}
+		</>
+	)
 }
 function nose(frameWidth, frameHeight, outlineWidth, outlineColor) {
 	return <path d={getNoseString(frameWidth, frameHeight, outlineWidth)} fill={outlineColor} stroke={outlineColor} stroke-width={outlineWidth} />
@@ -63,17 +63,6 @@ function whiskers(frameWidth, frameHeight, outlineColor, outlineWidth) {
 	)
 }
 
-function getEyeString(left, frameWidth, frameHeight) {
-	const eyeWidth = frameWidth * 0.15;
-	const distFromSide = 0.25;
-	const startY = frameHeight * 0.5;
-	const yChange = eyeWidth / -2;
-	const xChange = eyeWidth / 4;
-
-	const startX = left ? frameWidth * distFromSide : frameWidth * (1 - distFromSide) - eyeWidth;
-	
-	return "M " + startX + " " + startY + " C " + (startX + xChange) + " " + (startY + yChange) + ", " + (startX + eyeWidth - xChange) + " " + (startY + yChange) + ", " + (startX + eyeWidth) + " " + startY;
-}
 function getEarString(left, frameWidth, frameHeight, outlineWidth) {
 	const x1 = left ? frameWidth * 0.054 : frameWidth -  frameWidth * 0.054;
 	const y1 = frameHeight * 0.345 + outlineWidth;
