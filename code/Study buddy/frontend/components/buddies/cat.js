@@ -2,7 +2,7 @@
 	100% manual
 */
 
-import { eye } from "../../util/buddyEyes";
+import { buddyEye } from "../../util/buddyEyes";
 import { statusToString } from "../../util/status";
 
 export function Cat({outlineColor = "black", insideColor = "orange", size = 200, outlineWidth = 4, status = 4}) {
@@ -38,8 +38,8 @@ function eyes(status, frameWidth, frameHeight, outlineColor, outlineWidth) {
 
 	return (
 		<>
-			{eye(status, eyeWidth, frameWidth * distFromSide, startY, outlineColor, outlineWidth)}
-			{eye(status, eyeWidth, frameWidth * (1 - distFromSide) - eyeWidth, startY, outlineColor, outlineWidth)}
+			{buddyEye(status, eyeWidth, frameWidth * distFromSide, startY, outlineColor, outlineWidth)}
+			{buddyEye(status, eyeWidth, frameWidth * (1 - distFromSide) - eyeWidth, startY, outlineColor, outlineWidth)}
 		</>
 	)
 }
@@ -70,7 +70,7 @@ function getEarString(left, frameWidth, frameHeight, outlineWidth) {
 	const y2 = (outlineWidth / 2);
 	const x3 = left ? frameWidth * 0.27 : frameWidth - frameWidth * 0.27;
 	const y3 = frameHeight * 0.15;
-	return "M " + x1 + " " + y1 + " L " + x2 + " " + y2 + ", " + x3 + " " + y3;
+	return `M ${x1} ${y1} L ${x2} ${y2}, ${x3} ${y3}`;
 }
 function getNoseString(frameWidth, frameHeight, outlineWidth) {
 	const noseHeight = frameHeight * 0.07;
@@ -83,6 +83,6 @@ function getNoseString(frameWidth, frameHeight, outlineWidth) {
 	const left = noseCenterX - noseWidth / 2;
 	const right = noseCenterX + noseWidth / 2;
 
-	return "M " + left + " " + top + " L " + right + " " + top + ", " + noseCenterX + " " + bottom + " Z";
+	return `M ${left} ${top} L ${right} ${top}, ${noseCenterX} ${bottom} Z`;
 }
 
