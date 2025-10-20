@@ -1,9 +1,10 @@
-/*
-	100% manual
-*/
-
 import { buddyEye } from "../../util/buddyEyes";
 import { statusToString } from "../../util/status";
+
+/*
+	5% framework
+	95% manual
+*/
 
 export function Cat({outlineColor = "black", insideColor = "orange", size = 200, outlineWidth = 4, status = 4}) {
 	const frameWidth = size * 0.9 + outlineWidth;
@@ -21,13 +22,13 @@ export function Cat({outlineColor = "black", insideColor = "orange", size = 200,
 }
 
 function headBase(frameWidth, frameHeight, outlineWidth, insideColor, outlineColor) {
-	return <circle cx={frameWidth * 0.5} cy={frameHeight * 0.55 - outlineWidth / 2} r={frameWidth * 0.49} stroke={outlineColor} stroke-width={outlineWidth} fill={insideColor} />
+	return <circle cx={frameWidth * 0.5} cy={frameHeight * 0.55 - outlineWidth / 2} r={frameWidth * 0.49} stroke={outlineColor} strokeWidth={outlineWidth} fill={insideColor} />
 }
 function ears(frameWidth, frameHeight, outlineWidth, insideColor, outlineColor) {
 	return (
 		<>
-			<path d={getEarString(true, frameWidth, frameHeight, outlineWidth)} fill={insideColor} stroke={outlineColor} stroke-width={outlineWidth} />
-			<path d={getEarString(false, frameWidth, frameHeight, outlineWidth)} fill={insideColor} stroke={outlineColor} stroke-width={outlineWidth} />
+			<path d={getEarString(true, frameWidth, frameHeight, outlineWidth)} fill={insideColor} stroke={outlineColor} strokeWidth={outlineWidth} />
+			<path d={getEarString(false, frameWidth, frameHeight, outlineWidth)} fill={insideColor} stroke={outlineColor} strokeWidth={outlineWidth} />
 		</>
 	);
 }
@@ -44,11 +45,11 @@ function eyes(status, frameWidth, frameHeight, outlineColor, outlineWidth) {
 	)
 }
 function nose(frameWidth, frameHeight, outlineWidth, outlineColor) {
-	return <path d={getNoseString(frameWidth, frameHeight, outlineWidth)} fill={outlineColor} stroke={outlineColor} stroke-width={outlineWidth} />
+	return <path d={getNoseString(frameWidth, frameHeight, outlineWidth)} fill={outlineColor} stroke={outlineColor} strokeWidth={outlineWidth} />
 }
 function whiskers(frameWidth, frameHeight, outlineColor, outlineWidth) {
 	function singleWhisker(x1, y1, x2, y2) {
-		return <path d={"M " + x1 + " " + y1 + " L " + x2 + " " + y2} fill="none" stroke={outlineColor} stroke-width={outlineWidth} />
+		return <path d={"M " + x1 + " " + y1 + " L " + x2 + " " + y2} fill="none" stroke={outlineColor} strokeWidth={outlineWidth} />
 	}
 
 	return (

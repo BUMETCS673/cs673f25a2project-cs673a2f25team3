@@ -3,6 +3,7 @@ import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
 import { Cat } from '../components/buddies/cat';
+import { Deer } from '../components/buddies/deer';
 
 /*
   40% framework
@@ -14,6 +15,7 @@ export default function Home({ }) {
   return (
     <Background>
       <View style={styles.card}>
+        <Deer />
         <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
         <NavigationButton text="Start Studying!" link="SelectStudyTime" />
         <NavigationButton text="Game Menu" link="GameMenu" />
