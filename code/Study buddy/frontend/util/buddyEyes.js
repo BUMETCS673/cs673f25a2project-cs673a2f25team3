@@ -1,3 +1,7 @@
+/*
+	100% manual
+*/
+
 export function buddyEye(status, eyeWidth, startX, startY, outlineColor, outlineWidth, reverse = false) {
 	switch (status) {
 		case 4: {

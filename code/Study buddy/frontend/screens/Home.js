@@ -14,7 +14,6 @@ export default function Home({ }) {
   return (
     <Background>
       <View style={styles.card}>
-        <Cat />
         <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
         <NavigationButton text="Start Studying!" link="SelectStudyTime" />
         <NavigationButton text="Game Menu" link="GameMenu" />

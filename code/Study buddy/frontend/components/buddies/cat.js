@@ -5,7 +5,7 @@
 import { buddyEye } from "../../util/buddyEyes";
 import { statusToString } from "../../util/status";
 
-export function Cat({outlineColor = "black", insideColor = "orange", size = 200, outlineWidth = 4, status = 0}) {
+export function Cat({outlineColor = "black", insideColor = "orange", size = 200, outlineWidth = 4, status = 4}) {
 	const frameWidth = size * 0.9 + outlineWidth;
 	const frameHeight = size;
 

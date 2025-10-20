@@ -1,3 +1,7 @@
+/*
+	100% manual
+*/
+
 export function statusToString(status) {
     switch (status) {
         case 4: return "Happy";
