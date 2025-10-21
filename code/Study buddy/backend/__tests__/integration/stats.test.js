@@ -10,10 +10,11 @@ let userId;
 
 beforeAll((done) => {
   db.serialize(() => {
-    // clear table
+    // clear db
     db.run("DELETE FROM users");
     db.run("DELETE FROM study_sessions");
 
+    // insert test user
     db.run(
       "INSERT INTO users (username, password) VALUES (?, ?)",
       ["testuser", "123456"],
@@ -28,72 +29,70 @@ beforeAll((done) => {
 
 describe("Stats Model Integration Tests", () => {
 
-  test("should return 0 stats for a new user with no sessions", (done) => {
-    Stats.getTotalStudyDuration(userId, (err, totalDuration) => {
+  test("should return 0 stats and empty recentSessions for a new user", (done) => {
+    Stats.getStats(userId, (err, stats) => {
       expect(err).toBeNull();
-      expect(totalDuration).toBe(0);
+      expect(stats.totalDuration).toBe(0);
+      expect(stats.totalSessions).toBe(0);
+      expect(stats.weeklyDuration).toBe(0);
+      expect(stats.monthlyDuration).toBe(0);
 
-      Stats.getTotalSessions(userId, (err, totalSessions) => {
+      Stats.getRecentSessions(userId, (err, recent) => {
         expect(err).toBeNull();
-        expect(totalSessions).toBe(0);
-
-        Stats.getWeeklyStudyDuration(userId, (err, weekly) => {
-          expect(err).toBeNull();
-          expect(weekly).toBe(0);
-
-          Stats.getMonthlyStudyDuration(userId, (err, monthly) => {
-            expect(err).toBeNull();
-            expect(monthly).toBe(0);
-
-            Stats.getRecentSessions(userId, (err, sessions) => {
-              expect(err).toBeNull();
-              expect(Array.isArray(sessions)).toBe(true);
-              expect(sessions.length).toBe(0);
-              done();
-            });
-          });
-        });
+        expect(Array.isArray(recent)).toBe(true);
+        expect(recent.length).toBe(0);
+        done();
       });
     });
   });
 
   test("should return correct stats after inserting sessions", (done) => {
-    db.serialize(() => {
-      const insert = db.prepare(`
-        INSERT INTO study_sessions (user_id, duration, start_time, end_time)
-        VALUES (?, ?, ?, ?)
-      `);
+    const now = new Date().toISOString();
+    const insert = db.prepare(`
+      INSERT INTO study_sessions (user_id, duration, start_time, end_time)
+      VALUES (?, ?, ?, ?)
+    `);
 
-      const now = new Date().toISOString();
-      insert.run(userId, 30, now, now); // 30 mins
-      insert.run(userId, 45, now, now); // 45 mins
-      insert.finalize();
+    // insert two sessions
+    insert.run(userId, 30, now, now); // 30
+    insert.run(userId, 45, now, now); // 45
+    insert.finalize(() => {
 
-      Stats.getTotalStudyDuration(userId, (err, totalDuration) => {
+      Stats.getStats(userId, (err, stats) => {
         expect(err).toBeNull();
-        expect(totalDuration).toBe(75); // 30 + 45
+        expect(stats.totalDuration).toBe(75);
+        expect(stats.totalSessions).toBe(2);
+        expect(stats.weeklyDuration).toBe(75);
+        expect(stats.monthlyDuration).toBe(75);
 
-        Stats.getTotalSessions(userId, (err, count) => {
+        Stats.getRecentSessions(userId, (err, recent) => {
           expect(err).toBeNull();
-          expect(count).toBe(2);
-
-          Stats.getWeeklyStudyDuration(userId, (err, weekly) => {
-            expect(err).toBeNull();
-            expect(weekly).toBe(75);
-
-            Stats.getMonthlyStudyDuration(userId, (err, monthly) => {
-              expect(err).toBeNull();
-              expect(monthly).toBe(75);
-
-              Stats.getRecentSessions(userId, (err, sessions) => {
-                expect(err).toBeNull();
-                expect(sessions.length).toBeGreaterThan(0);
-                expect(sessions[0]).toHaveProperty("duration");
-                done();
-              });
-            });
-          });
+          expect(Array.isArray(recent)).toBe(true);
+          expect(recent.length).toBe(2);
+          expect(recent[0]).toHaveProperty("duration");
+          done();
         });
+      });
+    });
+  });
+
+  test("should correctly handle more than 10 sessions for recentSessions", (done) => {
+    const insert = db.prepare(`
+      INSERT INTO study_sessions (user_id, duration, start_time, end_time)
+      VALUES (?, ?, ?, ?)
+    `);
+
+    const now = new Date();
+    for (let i = 0; i < 12; i++) {
+      const time = new Date(now.getTime() + i * 60000).toISOString(); // one per minute
+      insert.run(userId, 10 + i, time, time);
+    }
+    insert.finalize(() => {
+      Stats.getRecentSessions(userId, (err, recent) => {
+        expect(err).toBeNull();
+        expect(Array.isArray(recent)).toBe(true);
+        expect(recent.length).toBe(10); // return latest 10
+        done();
       });
     });
   });

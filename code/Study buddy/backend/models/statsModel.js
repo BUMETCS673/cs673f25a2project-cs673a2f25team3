@@ -6,22 +6,48 @@
 const db = require("../db/db");
 
 /**
- * Get total study duration for a user (in minutes or seconds depending on your db)
+ * Get multiple study statistics for a user in one query.
+ * Returns:
+ *   totalDuration: total minutes/seconds of all sessions
+ *   totalSessions: total count of sessions
+ *   weeklyDuration: total duration for current week
+ *   monthlyDuration: total duration for current month
+ * 
+ * Note for frontend: if totalDuration === 0 or recentSessions.length === 0,
+ * display "Start your first study session!" to motivate the user.
  */
-function getTotalStudyDuration(userId, callback) {
+function getStats(userId, callback) {
   const query = `
-    SELECT SUM(duration) AS totalDuration
+    SELECT 
+      COALESCE(SUM(duration), 0) AS totalDuration,
+      COUNT(*) AS totalSessions,
+      COALESCE(SUM(CASE 
+        WHEN STRFTIME('%W', start_time) = STRFTIME('%W', 'now')
+         AND STRFTIME('%Y', start_time) = STRFTIME('%Y', 'now')
+        THEN duration ELSE 0 END), 0) AS weeklyDuration,
+      COALESCE(SUM(CASE 
+        WHEN STRFTIME('%m', start_time) = STRFTIME('%m', 'now')
+         AND STRFTIME('%Y', start_time) = STRFTIME('%Y', 'now')
+        THEN duration ELSE 0 END), 0) AS monthlyDuration
     FROM study_sessions
     WHERE user_id = ?
   `;
+
   db.get(query, [userId], (err, row) => {
     if (err) return callback(err);
-    callback(null, row?.totalDuration || 0);
+    callback(null, {
+      totalDuration: row.totalDuration || 0,
+      totalSessions: row.totalSessions || 0,
+      weeklyDuration: row.weeklyDuration || 0,
+      monthlyDuration: row.monthlyDuration || 0,
+    });
   });
 }
 
 /**
- * Get recent 10 study sessions
+ * Get the most recent 10 study sessions for a user.
+ * Returns empty array if user has no sessions.
+ * Frontend should display "Start your first study session!" if array is empty.
  */
 function getRecentSessions(userId, callback) {
   const query = `
@@ -36,61 +62,7 @@ function getRecentSessions(userId, callback) {
   });
 }
 
-/**
- * Get total session count for a user
- */
-function getTotalSessions(userId, callback) {
-  const query = `
-    SELECT COUNT(*) AS totalSessions
-    FROM study_sessions
-    WHERE user_id = ?
-  `;
-  db.get(query, [userId], (err, row) => {
-    if (err) return callback(err);
-    callback(null, row?.totalSessions || 0);
-  });
-}
-
-
-/**
- * Get weekly study duration
- * SQLite: %W gives the week number of the year
- */
-function getWeeklyStudyDuration(userId, callback) {
-  const query = `
-    SELECT SUM(duration) AS weeklyDuration
-    FROM study_sessions
-    WHERE user_id = ?
-    AND STRFTIME('%W', start_time) = STRFTIME('%W', 'now')
-    AND STRFTIME('%Y', start_time) = STRFTIME('%Y', 'now')
-  `;
-  db.get(query, [userId], (err, row) => {
-    if (err) return callback(err);
-    callback(null, row?.weeklyDuration || 0);
-  });
-}
-
-/**
- * Get monthly study duration
- */
-function getMonthlyStudyDuration(userId, callback) {
-  const query = `
-    SELECT SUM(duration) AS monthlyDuration
-    FROM study_sessions
-    WHERE user_id = ?
-    AND STRFTIME('%m', start_time) = STRFTIME('%m', 'now')
-    AND STRFTIME('%Y', start_time) = STRFTIME('%Y', 'now')
-  `;
-  db.get(query, [userId], (err, row) => {
-    if (err) return callback(err);
-    callback(null, row?.monthlyDuration || 0);
-  });
-}
-
 module.exports = {
-  getTotalStudyDuration,
+  getStats,
   getRecentSessions,
-  getTotalSessions,
-  getWeeklyStudyDuration,
-  getMonthlyStudyDuration,
 };

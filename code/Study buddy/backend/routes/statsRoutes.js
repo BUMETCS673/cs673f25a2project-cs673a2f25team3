@@ -65,30 +65,21 @@ router.use(auth);
 router.get("/me", (req, res) => {
   const userId = req.user.id;
 
-  Stats.getTotalStudyDuration(userId, (err, totalDuration) => {
+  // Use optimized getStats to get total/weekly/monthly/count in one query
+  Stats.getStats(userId, (err, stats) => {
     if (err) return res.status(500).json({ error: err.message });
 
-    Stats.getTotalSessions(userId, (err, totalSessions) => {
+    // Get recent 10 study sessions
+    Stats.getRecentSessions(userId, (err, recentSessions) => {
       if (err) return res.status(500).json({ error: err.message });
 
-      Stats.getWeeklyStudyDuration(userId, (err, weeklyDuration) => {
-        if (err) return res.status(500).json({ error: err.message });
-
-        Stats.getMonthlyStudyDuration(userId, (err, monthlyDuration) => {
-          if (err) return res.status(500).json({ error: err.message });
-
-          Stats.getRecentSessions(userId, (err, recentSessions) => {
-            if (err) return res.status(500).json({ error: err.message });
-
-            res.json({
-              totalDuration,
-              totalSessions,
-              weeklyDuration,
-              monthlyDuration,
-              recentSessions,
-            });
-          });
-        });
+      // Send combined response
+      res.json({
+        totalDuration: stats.totalDuration,
+        totalSessions: stats.totalSessions,
+        weeklyDuration: stats.weeklyDuration,
+        monthlyDuration: stats.monthlyDuration,
+        recentSessions: recentSessions || [], // empty array if none
       });
     });
   });
