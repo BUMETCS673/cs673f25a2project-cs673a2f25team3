@@ -90,6 +90,7 @@ npx expo start
    * `GET /api/study/me` - Get all study sessions
 * **Stats**
    * `GET /api/stats/me` - Get study statistics for logged in user
+
 All routes except registration and login require **Authorization** header with a Bearer token
 
 ---
