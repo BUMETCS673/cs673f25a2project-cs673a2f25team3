@@ -1,4 +1,3 @@
-// frontend/styles/style.js
 import { StyleSheet } from "react-native";
 import { borderRadius, fonts, padding } from "./base";
 

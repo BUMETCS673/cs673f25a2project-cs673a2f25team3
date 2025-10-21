@@ -1,4 +1,8 @@
-// AuthContext.js
+/*
+  80% AI generate
+  20% Human
+*/
+
 import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
