@@ -1,53 +1,42 @@
 /*
-  20% AI
-  80% Human
+  50% AI
+  50% Human
 */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  Alert,
   ActivityIndicator,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react-native";
 import { API_BASE_URL } from "@env";
+import { AuthContext } from "../AuthContext";
+import { styles } from "../styles/style";
+import { useNavigation } from "@react-navigation/native";
 
-export default function LoginForm({ navigation }) {
+export default function LoginForm() {
+  const navigation = useNavigation();
+  const { user, login, logout } = useContext(AuthContext);
   const [mode, setMode] = useState("login"); // login | register
-  const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState(null);
 
-  // check if user is already logged in 
-  useEffect(() => {
-    const checkUser = async () => {
-      const user = await AsyncStorage.getItem("user");
-      if (user) setLoggedInUser(JSON.parse(user));
-    };
-    checkUser();
-  }, []);
-
-  // handle login or registration
   const handleAuth = async () => {
-    if (!username || !password) {
-      Alert.alert("Error", "Please enter both username and password.");
-      return;
-    }
+    if (!username || !password) return;
 
     setLoading(true);
     try {
-      // based on the mode to use the endpoint API
       const endpoint =
-        mode === "login" ? `${API_BASE_URL}/users/login` : `${API_BASE_URL}/users/register`;
+        mode === "login"
+          ? `${API_BASE_URL}/users/login`
+          : `${API_BASE_URL}/users/register`;
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -57,54 +46,26 @@ export default function LoginForm({ navigation }) {
       if (!res.ok) throw new Error(data.error || "Request failed");
 
       if (mode === "register") {
-        Alert.alert("✅ Success", "Registration successful! Please log in.", [
-          { text: "OK", onPress: () => setMode("login") },
-        ]);
+        setMode("login"); // change to login after register
       } else {
-        // save token and user info
-        await AsyncStorage.setItem("token", data.token);
-        await AsyncStorage.setItem("user", JSON.stringify(data.user));
-        setLoggedInUser(data.user);
-        Alert.alert("Success", "Login successful!", [
-          {
-            text: "OK",
-            onPress: () => navigation.navigate("Home", { user: data.user }),
-          },
-        ]);
+        await login(data.user, data.token);
+        // successfully login, direct to Home
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
       }
     } catch (err) {
-      Alert.alert("Error", err.message);
+      console.log(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem("token");
-    await AsyncStorage.removeItem("user");
-    setLoggedInUser(null);
-    setMode("login");
-    setUsername("");
-    setPassword("");
-    Alert.alert("Logged out", "You have been logged out.");
-  };
 
-  if (loggedInUser) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.card}>
-          <Text style={[styles.title, { fontSize: 24 }]}>
-            Welcome, {loggedInUser.username}
-          </Text>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: "#ff758c", paddingVertical: 14, width: 200 }]}
-            onPress={handleLogout}
-          >
-            <Text style={styles.buttonText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
+  if (user) {
+    // if logged in
+    return null;
   }
 
   return (
@@ -113,11 +74,11 @@ export default function LoginForm({ navigation }) {
       style={styles.container}
     >
       <View style={styles.card}>
-        <Text style={styles.title}>{mode === "login" ? "Login" : "Register"}</Text>
+        <Text style={styles.cardH1}>{mode === "login" ? "Login" : "Register"}</Text>
 
         {/* Username */}
         <View style={styles.field}>
-          <Text style={styles.label}>Username</Text>
+          <Text style={styles.paragraph}>Username</Text>
           <View style={styles.inputWrapper}>
             <Mail color="rgba(255,255,255,0.5)" size={20} style={styles.iconLeft} />
             <TextInput
@@ -133,7 +94,7 @@ export default function LoginForm({ navigation }) {
 
         {/* Password */}
         <View style={styles.field}>
-          <Text style={styles.label}>Password</Text>
+          <Text style={styles.paragraph}>Password</Text>
           <View style={styles.inputWrapper}>
             <Lock color="rgba(255,255,255,0.5)" size={20} style={styles.iconLeft} />
             <TextInput
@@ -148,134 +109,27 @@ export default function LoginForm({ navigation }) {
               onPress={() => setShowPassword(!showPassword)}
               style={styles.iconRight}
             >
-              {showPassword ? (
-                <EyeOff color="rgba(255,255,255,0.6)" size={20} />
-              ) : (
-                <Eye color="rgba(255,255,255,0.6)" size={20} />
-              )}
+              {showPassword ? <EyeOff color="rgba(255,255,255,0.6)" size={20} /> : <Eye color="rgba(255,255,255,0.6)" size={20} />}
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.bottomRow}>
-          <TouchableOpacity onPress={() => { /* Forgot password button, add later */ }}>
-            <Text style={styles.forgotText}>Forgot Password?</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => setMode(mode === "login" ? "register" : "login")}>
-            <Text style={styles.switchText}>
-              {mode === "login"
-                ? "Register"
-                : "Login"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        
         {loading ? (
           <ActivityIndicator size="large" color="#fff" style={{ marginTop: 16 }} />
         ) : (
-          <TouchableOpacity style={styles.button} onPress={handleAuth}>
-            <Text style={styles.buttonText}>{mode === "login" ? "Login" : "Register"}</Text>
+          <TouchableOpacity style={styles.loginFormButton} onPress={handleAuth}>
+            <Text style={styles.loginFormButtonText}>
+              {mode === "login" ? "Login" : "Register"}
+            </Text>
           </TouchableOpacity>
         )}
 
-
+        <TouchableOpacity onPress={() => setMode(mode === "login" ? "register" : "login")} style={{ marginTop: 12 }}>
+          <Text style={{ color: "#888", textAlign: "center" }}>
+            {mode === "login" ? "Switch to Register" : "Switch to Login"}
+          </Text>
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    maxWidth: 400,
-    alignItems: "center",
-  },
-  card: {
-    width: "90%",
-    padding: 24,
-    borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-    shadowColor: "#000",
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    marginTop: 60,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "600",
-    color: "#fff",
-    marginBottom: 12,
-    textAlign: "center",
-  },
-  field: {
-    marginBottom: 16,
-  },
-  label: {
-    color: "rgba(255,255,255,0.9)",
-    marginBottom: 6,
-  },
-  inputWrapper: {
-    position: "relative",
-    justifyContent: "center",
-  },
-  input: {
-    height: 44,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-    color: "#fff",
-    backgroundColor: "rgba(255,255,255,0.1)",
-    paddingHorizontal: 12,
-  },
-  iconLeft: {
-    position: "absolute",
-    left: 10,
-    zIndex: 1,
-  },
-  iconRight: {
-    position: "absolute",
-    right: 10,
-    zIndex: 1,
-  },
-  button: {
-    backgroundColor: "rgba(255,255,255,0.2)",
-    paddingVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-
-  // Additional styles for bottom row
-  bottomRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    marginTop: 10,
-    marginBottom: 20,
-  },
-
-  forgotText: {
-    color: "rgba(255,255,255,0.75)",
-    fontSize: 13,
-    textAlign: "left",
-    textDecorationLine: "underline",
-  },
-
-  switchText: {
-    color: "rgba(255,255,255,0.75)",
-    fontSize: 13,
-    textAlign: "right",
-    textDecorationLine: "underline",
-  },
-});
