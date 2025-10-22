@@ -45,7 +45,7 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS study_sessions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
-      duration INTEGER NOT NULL,
+      duration INTEGER NOT NULL, --in mins
       start_time TIMESTAMP NOT NULL,
       end_time TIMESTAMP NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
