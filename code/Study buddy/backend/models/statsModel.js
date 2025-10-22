@@ -8,26 +8,21 @@ const db = require("../db/db");
 /**
  * Get multiple study statistics for a user in one query.
  * Returns:
- *   totalDuration: total minutes/seconds of all sessions
- *   totalSessions: total count of sessions
- *   weeklyDuration: total duration for current week
+ *   totalDuration: total minutes of all valid sessions
+ *   totalSessions: total count of valid sessions
  *   monthlyDuration: total duration for current month
- * 
- * Note for frontend: if totalDuration === 0 or recentSessions.length === 0,
- * display "Start your first study session!" to motivate the user.
  */
 function getStats(userId, callback) {
   const query = `
     SELECT 
-      COALESCE(SUM(duration), 0) AS totalDuration,
-      COUNT(*) AS totalSessions,
       COALESCE(SUM(CASE 
-        WHEN STRFTIME('%W', start_time) = STRFTIME('%W', 'now')
+        WHEN duration > 0 AND start_time <= end_time THEN duration ELSE 0 END), 0) AS totalDuration,
+      COUNT(CASE 
+        WHEN duration > 0 AND start_time <= end_time THEN 1 ELSE NULL END) AS totalSessions,
+      COALESCE(SUM(CASE
+        WHEN duration > 0 AND start_time <= end_time
          AND STRFTIME('%Y', start_time) = STRFTIME('%Y', 'now')
-        THEN duration ELSE 0 END), 0) AS weeklyDuration,
-      COALESCE(SUM(CASE 
-        WHEN STRFTIME('%m', start_time) = STRFTIME('%m', 'now')
-         AND STRFTIME('%Y', start_time) = STRFTIME('%Y', 'now')
+         AND STRFTIME('%m', start_time) = STRFTIME('%m', 'now')
         THEN duration ELSE 0 END), 0) AS monthlyDuration
     FROM study_sessions
     WHERE user_id = ?
@@ -38,7 +33,6 @@ function getStats(userId, callback) {
     callback(null, {
       totalDuration: row.totalDuration || 0,
       totalSessions: row.totalSessions || 0,
-      weeklyDuration: row.weeklyDuration || 0,
       monthlyDuration: row.monthlyDuration || 0,
     });
   });
@@ -46,8 +40,6 @@ function getStats(userId, callback) {
 
 /**
  * Get the most recent 10 study sessions for a user.
- * Returns empty array if user has no sessions.
- * Frontend should display "Start your first study session!" if array is empty.
  */
 function getRecentSessions(userId, callback) {
   const query = `

@@ -10,11 +10,11 @@ let userId;
 
 beforeAll((done) => {
   db.serialize(() => {
-    // clear db
+    // Clear database
     db.run("DELETE FROM users");
     db.run("DELETE FROM study_sessions");
 
-    // insert test user
+    // Insert a test user
     db.run(
       "INSERT INTO users (username, password) VALUES (?, ?)",
       ["testuser", "123456"],
@@ -34,7 +34,6 @@ describe("Stats Model Integration Tests", () => {
       expect(err).toBeNull();
       expect(stats.totalDuration).toBe(0);
       expect(stats.totalSessions).toBe(0);
-      expect(stats.weeklyDuration).toBe(0);
       expect(stats.monthlyDuration).toBe(0);
 
       Stats.getRecentSessions(userId, (err, recent) => {
@@ -53,16 +52,15 @@ describe("Stats Model Integration Tests", () => {
       VALUES (?, ?, ?, ?)
     `);
 
-    // insert two sessions
-    insert.run(userId, 30, now, now); // 30
-    insert.run(userId, 45, now, now); // 45
+    // Insert two sessions
+    insert.run(userId, 30, now, now); // 30 minutes
+    insert.run(userId, 45, now, now); // 45 minutes
     insert.finalize(() => {
 
       Stats.getStats(userId, (err, stats) => {
         expect(err).toBeNull();
         expect(stats.totalDuration).toBe(75);
         expect(stats.totalSessions).toBe(2);
-        expect(stats.weeklyDuration).toBe(75);
         expect(stats.monthlyDuration).toBe(75);
 
         Stats.getRecentSessions(userId, (err, recent) => {
@@ -76,7 +74,7 @@ describe("Stats Model Integration Tests", () => {
     });
   });
 
-  test("should correctly handle more than 10 sessions for recentSessions", (done) => {
+  test("should return only the latest 10 sessions in recentSessions", (done) => {
     const insert = db.prepare(`
       INSERT INTO study_sessions (user_id, duration, start_time, end_time)
       VALUES (?, ?, ?, ?)

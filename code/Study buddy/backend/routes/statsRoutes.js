@@ -38,8 +38,6 @@ router.use(auth);
  *                   type: integer
  *                 totalSessions:
  *                   type: integer
- *                 weeklyDuration:
- *                   type: integer
  *                 monthlyDuration:
  *                   type: integer
  *                 recentSessions:
@@ -65,21 +63,17 @@ router.use(auth);
 router.get("/me", (req, res) => {
   const userId = req.user.id;
 
-  // Use optimized getStats to get total/weekly/monthly/count in one query
   Stats.getStats(userId, (err, stats) => {
     if (err) return res.status(500).json({ error: err.message });
 
-    // Get recent 10 study sessions
     Stats.getRecentSessions(userId, (err, recentSessions) => {
       if (err) return res.status(500).json({ error: err.message });
 
-      // Send combined response
       res.json({
         totalDuration: stats.totalDuration,
         totalSessions: stats.totalSessions,
-        weeklyDuration: stats.weeklyDuration,
         monthlyDuration: stats.monthlyDuration,
-        recentSessions: recentSessions || [], // empty array if none
+        recentSessions: recentSessions || [],
       });
     });
   });
