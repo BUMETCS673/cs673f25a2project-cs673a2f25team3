@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import { homesStyles } from "../../styles/homeStyle";
 import { getBuddyValues } from "../../util/buddyValues";
-import { Cat } from "./cat";
+import { Cat } from "./cat/cat";
 import { Deer } from "./deer";
 
 export function HomeBuddy() {
