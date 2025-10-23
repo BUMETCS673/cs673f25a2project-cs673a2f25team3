@@ -72,6 +72,12 @@ npx expo start
 
 2. Open the app on your mobile device using the Expo Go app or an emulator or open on web.
 
+Another easier way to install all the dependencies in frontend and backend in the root directory and then run the frontend and the backend is:
+```bash
+npm run install-all
+npm run dev
+```
+
 ---
 
 ## API Endpoints
