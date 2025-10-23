@@ -10,20 +10,12 @@ import { Whiskers } from "./whiskers";
 	95% manual
 */
 
-export function Cat({outlineColor = "black", insideColor = "orange", size = 200, outlineWidth = 4, status = 4}) {
-	const frameWidth = size * 0.9 + outlineWidth;
-	const frameHeight = size;
-	const buddyDetails = {
-		outlineColor: outlineColor,
-		insideColor: insideColor,
-		frameWidth: frameWidth,
-		frameHeight: frameHeight,
-		outlineWidth: outlineWidth,
-		status: status
-	}
+export function Cat({buddyDetails}) {
+	buddyDetails.frameWidth = size * 0.9 + outlineWidth;
+	buddyDetails.frameHeight = size;
 
 	return (
-		<svg width={frameWidth} height={frameHeight} xmlns="http://www.w3.org/2000/svg" role="img" aria-label={statusToString(status) + " cat buddy"}>
+		<svg width={buddyDetails.frameWidth} height={buddyDetails.frameHeight} xmlns="http://www.w3.org/2000/svg" role="img" aria-label={statusToString(buddyDetails.status) + " cat buddy"}>
 			<HeadBase buddyDetails={buddyDetails} />
 			<Ears buddyDetails={buddyDetails} />
 			<Eyes buddyDetails={buddyDetails} />
