@@ -44,20 +44,6 @@ const router = express.Router();
  *     responses:
  *       201:
  *         description: User registered successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                     username:
- *                       type: string
  *       400:
  *         description: Bad request, e.g., missing username/password
  */
@@ -105,22 +91,6 @@ router.post("/register", (req, res) => {
  *     responses:
  *       200:
  *         description: Login successful, returns token
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                     username:
- *                       type: string
- *                 token:
- *                   type: string
  *       400:
  *         description: User not found or bad request
  *       401:
@@ -139,11 +109,23 @@ router.post("/login", (req, res) => {
     const valid = bcrypt.compareSync(password, user.password);
     if (!valid) return res.status(401).json({ error: "Invalid credentials" });
 
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
-    );
+    // make sure jwt secret exists
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is missing in .env!");
+      return res.status(500).json({ error: "Internal server error: JWT secret missing" });
+    }
+
+    let token;
+    try {
+      token = jwt.sign(
+        { id: user.id, username: user.username },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+      );
+    } catch (err) {
+      console.error("JWT generation failed:", err);
+      return res.status(500).json({ error: "Internal server error: JWT generation failed" });
+    }
 
     res.json({
       message: "Login successful",
@@ -164,15 +146,6 @@ router.post("/login", (req, res) => {
  *     responses:
  *       200:
  *         description: Current user info
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: integer
- *                 username:
- *                   type: string
  *       401:
  *         description: Unauthorized (invalid or missing token)
  */
