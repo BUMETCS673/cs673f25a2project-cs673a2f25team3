@@ -7,6 +7,12 @@ import { borderRadius, fonts, padding } from "./base";
 */
 
 export const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   // ====== Containers ======
   container: {
     flex: 1,

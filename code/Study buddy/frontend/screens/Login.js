@@ -6,6 +6,7 @@
 import React from "react";
 import { StyleSheet, View, ImageBackground } from "react-native";
 import LoginForm from "../components/LoginForm"; 
+import { styles } from "../styles/style";
 
 export default function Login() {
   return (
@@ -23,19 +24,3 @@ export default function Login() {
   );
 }
 
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  overlay: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.4)", 
-    paddingHorizontal: 20,
-  },
-});
