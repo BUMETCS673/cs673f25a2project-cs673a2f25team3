@@ -3,6 +3,13 @@
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.3.3",
     "jest-expo": "^54.0.12",
+    "npm-run-all": "^4.1.5",
     "react-test-renderer": "^19.1.0"
+  },
+  "scripts": {
+    "install-all": "cd code/Study buddy/frontend && npm install && cd ../backend && npm install",
+    "frontend": "cd code/Study buddy/frontend && npm start",
+    "backend": "cd code/Study buddy/backend && npm start",
+    "dev": "npm-run-all --parallel frontend backend"
   }
 }
