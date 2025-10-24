@@ -5,6 +5,9 @@ import { hoursToMs, msToHours } from '../util/calculateMs';
 import { AuthContext } from "../AuthContext";
 import React, { useState, useContext } from "react";
 import { API_BASE_URL } from "@env";
+export const exportForTesting = {
+  isGoalValid
+}
 
 /*
   25% framework
@@ -75,7 +78,7 @@ function isGoalValid(goal) {
   if (
     goal == "" ||
     isNaN(goal) ||
-    goal < 0
+    goal <= 0
   ) {
     return false;
   }
