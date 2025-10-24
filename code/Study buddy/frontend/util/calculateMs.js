@@ -13,3 +13,7 @@ export function hoursToMs(hours) {
 export function daysToMs(days) {
     return days * 24 * 3600 * 1000;
 }
+
+export function msToHours(ms) {
+    return ms / 1000 / 3600;
+}
