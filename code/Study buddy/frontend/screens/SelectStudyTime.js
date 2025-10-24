@@ -3,7 +3,7 @@ import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
 import { createClock } from '../util/formatString';
-import { getGoal, getTimeStudied } from '../util/getValuesFromDatabase';
+import { getTimeLeftInGoal } from '../util/databaseInterface';
 
 /*
   30% framework
@@ -12,12 +12,11 @@ import { getGoal, getTimeStudied } from '../util/getValuesFromDatabase';
 
 // Page for selecting the time studying
 export default function SelectStudyTime() {
-  const timeLeftInGoal = getGoal() - getTimeStudied(Date.now());
   return (
     <Background>
       <View style={styles.card}>
         <Text style={styles.cardH1} accessibilityRole='header'>Select Study Time</Text>
-        <Text style={styles.cardH2} accessibilityRole='header'>Time left in goal: {createClock(timeLeftInGoal)}</Text>
+        <Text style={styles.cardH2} accessibilityRole='header'>Time left in goal: {createClock(getTimeLeftInGoal())}</Text>
         <NavigationButton text="15 Minutes" link="Studying" params={{minutes: 15}} />
         <NavigationButton text="30 Minutes" link="Studying" params={{minutes: 30}} />
         <NavigationButton text="60 Minutes" link="Studying" params={{minutes: 60}} />
