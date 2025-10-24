@@ -1,6 +1,11 @@
 import { describe, it, expect } from '@jest/globals';
 import { exportForTesting } from '../../components/SettingsForm';
 
+/* 
+  95% AI
+  5% manual
+*/
+
 describe('isGoalValid', () => {
   it('returns false for an empty string', () => {
     expect(exportForTesting.isGoalValid("")).toBe(false);

@@ -2,7 +2,7 @@ import { isSameWeek } from '../util/compareTimes';
 import { getStudySessions } from './studySessions';
 
 /*
-    20% AI
+    20% framework
     80% manual
 */
 

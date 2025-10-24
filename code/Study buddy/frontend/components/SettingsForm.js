@@ -15,7 +15,6 @@ export const exportForTesting = {
   70% manual
 */
 
-// Settings page - used to change font, style, and other important settings
 // Implimented settings: goal
 export default function SettingsForm() {
   const [goalInHours, setGoalInHours] = useState(0);

@@ -10,7 +10,6 @@ import SettingsForm from '../components/SettingsForm';
 */
 
 // Settings page - used to change font, style, and other important settings
-// Implimented settings: none
 export default function Settings() {
   return (
     <Background>

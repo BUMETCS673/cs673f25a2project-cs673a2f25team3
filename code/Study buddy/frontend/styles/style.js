@@ -2,6 +2,11 @@ import { StyleSheet } from "react-native";
 import { borderRadius, fonts, padding } from "./base";
 
 /*
+  50% AI
+  50% Manual
+*/
+
+/*
   100% unified styles for the app
   - combines original style.js + LoginForm styles
 */

@@ -3,6 +3,10 @@ import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthContext";
 import { hoursToMs } from "../util/calculateMs";
 
+/*
+  50% AI
+  50% Manual
+*/
 
 export function getGoal() {
   const [goalMs, setGoalMs] = useState(null);
