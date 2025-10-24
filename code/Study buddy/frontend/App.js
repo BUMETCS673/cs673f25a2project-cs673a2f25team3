@@ -40,9 +40,9 @@ function AppNavigator() {
 export default function App() {
   return (
     <AuthProvider>
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
     </AuthProvider>
   );
 }
