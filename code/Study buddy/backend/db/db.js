@@ -36,10 +36,15 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL UNIQUE,
       theme TEXT DEFAULT 'light',
-      daily_goal INTEGER DEFAULT 25,
+      goal INTEGER DEFAULT 18000000,
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
+
+  db.run(`
+    ALTER TABLE settings RENAME COLUMN daily_goal TO goal
+  `, (err) => {
+  });
 
   db.run(`
     CREATE TABLE IF NOT EXISTS study_sessions (

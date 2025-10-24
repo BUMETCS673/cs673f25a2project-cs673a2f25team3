@@ -2,6 +2,8 @@ import { View, Text } from 'react-native';
 import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
+import { getGoal } from '../dataInterface/goal';
+import { createClock } from '../util/formatString';
 import { useContext } from 'react';
 import { AuthContext } from '../AuthContext'; 
 import { useNavigation } from '@react-navigation/native';
