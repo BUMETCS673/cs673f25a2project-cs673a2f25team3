@@ -15,6 +15,7 @@ import Statistics from "./screens/Statistics";
 import Settings from "./screens/Settings";
 import Login from "./screens/Login";
 import Studying from "./screens/Studying";
+import { LocalStorageProvider } from "./LocalStorage";
 
 const Stack = createNativeStackNavigator();
 
@@ -40,9 +41,11 @@ function AppNavigator() {
 export default function App() {
   return (
     <AuthProvider>
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
+      <LocalStorageProvider>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+      </LocalStorageProvider>
     </AuthProvider>
   );
 }

@@ -3,7 +3,7 @@ import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
 import { createClock } from '../util/formatString';
-import { getTimeLeftInGoal } from '../util/databaseInterface';
+import { getTimeLeftInGoal } from '../dataInterface/timeLeft';
 
 /*
   30% framework
