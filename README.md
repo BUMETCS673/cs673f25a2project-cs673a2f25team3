@@ -9,6 +9,7 @@ Study Buddy is a mobile and web application for tracking study sessions, user pr
 - [Technologies](#technologies)
 - [Installation](#installation)
 - [Backend Setup](#backend-setup)
+- [Frontend Setup](#frontend-setup)
 - [Running the App](#running-the-app)
 - [API Endpoints](#api-endpoints)
 - [Testing](#testing)
@@ -59,6 +60,12 @@ npm start
 ```
 
 The backend will run at `http://localhost:3000`. Swagger documentation is available at `http://localhost:3000/api-docs`.
+
+---
+
+## Frontend Setup
+
+Make sure you have the `.env` file in frontend folder. Inside `.env` file, put in `API_BASE_URL=http://localhost:3000/api`, where localhost should be your IPv4 address. This supports you to run the code locally but not for docker.
 
 ---
 
