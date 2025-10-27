@@ -27,13 +27,17 @@ export function getBuddyValues() {
       });
   }, []);
 
+	const size = 200;
+	const outlineWidth = 4;
   if (data !== null) {
     return {
 			buddyType: "deer",
 			outlineColor: "black",
 			insideColor: "#8B4513",
-			status: data.status
+			status: data.status,
+			size: size,
+			outlineWidth: outlineWidth
     }
   };
-  return {buddyType: "deer", outlineColor: "black", insideColor: "#8B4513", status: 4};
+  return {buddyType: "deer", outlineColor: "black", insideColor: "#8B4513", status: 4, size: size, outlineWidth: outlineWidth};
 }
