@@ -27,8 +27,6 @@ export function getBuddyValues() {
       });
   }, []);
 
-  console.log(data);
-
   if (data !== null) {
     return {
 			buddyType: "deer",
