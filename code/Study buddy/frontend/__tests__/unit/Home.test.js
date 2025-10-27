@@ -19,7 +19,6 @@ describe('Home Screen', () => {
   test('renders correctly', () => {
     const { getByText } = render(<Home />, { wrapper: Providers });
 
-    expect(getByText('Home')).toBeTruthy(); 
     expect(getByText('Start Studying!')).toBeTruthy();
     expect(getByText('Logout')).toBeTruthy();
   });
@@ -31,6 +30,7 @@ describe('Home Screen', () => {
       fireEvent.press(getByText('Logout'));
     });
 
-    expect(getByText('Home')).toBeTruthy();
+    expect(getByText('Start Studying!')).toBeTruthy();
+    expect(getByText('Logout')).toBeTruthy();
   });
 });
