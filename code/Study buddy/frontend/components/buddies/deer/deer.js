@@ -1,4 +1,3 @@
-import { buddyEye } from "../../../util/buddyEyes";
 import { statusToString } from "../../../util/status";
 import { Ears } from "./ears";
 import { Eyes } from "./eyes";

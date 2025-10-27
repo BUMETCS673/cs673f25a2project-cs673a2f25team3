@@ -1,4 +1,4 @@
-import { BuddyEye } from "../../../util/buddyEyes";
+import { BuddyEye } from "../buddyEyes";
 
 /* 100% manual */
 
