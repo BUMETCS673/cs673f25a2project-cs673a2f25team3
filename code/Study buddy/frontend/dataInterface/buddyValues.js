@@ -3,8 +3,7 @@ import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthContext";
 
 /*
-  50% AI
-  50% Manual
+  100% Manual
 */
 
 export function getBuddyValues() {

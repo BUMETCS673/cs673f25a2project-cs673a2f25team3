@@ -4,6 +4,11 @@ import { getBuddyValues } from "../../dataInterface/buddyValues";
 import { Cat } from "./cat";
 import { Deer } from "./deer";
 
+/*
+    10% framework
+    90% manual
+*/
+
 export function HomeBuddy() {
     const buddyDetails = {...getBuddyValues()};
 
