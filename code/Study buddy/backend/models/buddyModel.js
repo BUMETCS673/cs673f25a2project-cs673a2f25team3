@@ -15,6 +15,23 @@ function createBuddy(userId, name, callback) {
   });
 }
 
+// shim
+function updateExp(userId, exp, callback) {
+  const last_updated = Date.now();
+  const query = `UPDATE study_buddies SET exp = ? WHERE user_id = ?`;
+  db.run(query, [exp, userId], function(err) {
+    callback(err);
+  });
+}
+
+// shim
+function updateStatus(userId, status, callback) {
+  const query = `UPDATE study_buddies SET status = ? WHERE user_id = ?`;
+  db.run(query, [status, userId], function(err) {
+    callback(err);
+  });
+}
+
 function updateEnergy(userId, energy, callback) {
   const status = getStatusByEnergy(energy);
   const query = `UPDATE study_buddies SET energy = ?, status = ? WHERE user_id = ?`;
@@ -31,4 +48,4 @@ function getStatusByEnergy(energy) {
   return 0;
 }
 
-module.exports = { getBuddy, createBuddy, updateEnergy, getStatusByEnergy };
+module.exports = { getBuddy, createBuddy, updateEnergy, getStatusByEnergy, updateExp, updateStatus };
