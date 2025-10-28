@@ -39,7 +39,7 @@ describe("Buddy Model Integration Tests", () => {
       expect(buddy.name).toBe("Buddy");
       expect(buddy.exp).toBe(0);
       expect(buddy.status).toBe(4);
-      expect(buddy.last_updated).toBeGreaterThan(0);
+      expect(buddy.last_updated).not.toBeNull();
       done();
     });
   });
@@ -48,7 +48,7 @@ describe("Buddy Model Integration Tests", () => {
     var origionalLastUpdated = 0;
     BuddyModel.getBuddy(userId, (err, buddy) => {
       expect(err).toBeNull();
-      origionalLastUpdated = buddy.last_updated;
+      origionalLastUpdated = new Date(buddy.last_updated).getTime();
     });
 
     BuddyModel.updateExp(userId, 5, (err) => {
@@ -57,7 +57,7 @@ describe("Buddy Model Integration Tests", () => {
 
     BuddyModel.getBuddy(userId, (err, buddy) => {
       expect(err).toBeNull();
-      expect(buddy.last_updated).not.toBe(origionalLastUpdated);
+      expect(new Date(buddy.last_updated).getTime()).not.toBe(origionalLastUpdated);
       done();
     });
   });
@@ -66,7 +66,7 @@ describe("Buddy Model Integration Tests", () => {
     var origionalLastUpdated = 0;
     BuddyModel.getBuddy(userId, (err, buddy) => {
       expect(err).toBeNull();
-      origionalLastUpdated = buddy.last_updated;
+      origionalLastUpdated = new Date(buddy.last_updated).getTime();
     });
 
     BuddyModel.updateStatus(userId, 1, (err) => {
@@ -75,7 +75,7 @@ describe("Buddy Model Integration Tests", () => {
 
     BuddyModel.getBuddy(userId, (err, buddy) => {
       expect(err).toBeNull();
-      expect(buddy.last_updated).not.toBe(origionalLastUpdated);
+      expect(new Date(buddy.last_updated).getTime()).not.toBe(origionalLastUpdated);
       done();
     });
   });

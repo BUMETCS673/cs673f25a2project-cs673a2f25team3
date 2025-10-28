@@ -76,6 +76,7 @@ db.serialize(() => {
       energy INTEGER DEFAULT 100,
       exp INTEGER DEFAULT 0,
       status INTEGER DEFAULT 4,
+      last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY(user_id) REFERENCES users(id)
     )
   `)

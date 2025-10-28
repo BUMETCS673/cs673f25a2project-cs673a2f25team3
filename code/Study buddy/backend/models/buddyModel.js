@@ -15,19 +15,18 @@ function createBuddy(userId, name, callback) {
   });
 }
 
-// shim
 function updateExp(userId, exp, callback) {
   const last_updated = Date.now();
-  const query = `UPDATE study_buddies SET exp = ? WHERE user_id = ?`;
-  db.run(query, [exp, userId], function(err) {
+  const query = `UPDATE study_buddies SET exp = ?, last_updated = ? WHERE user_id = ?`;
+  db.run(query, [exp, last_updated, userId], function(err) {
     callback(err);
   });
 }
 
-// shim
 function updateStatus(userId, status, callback) {
-  const query = `UPDATE study_buddies SET status = ? WHERE user_id = ?`;
-  db.run(query, [status, userId], function(err) {
+  const last_updated = Date.now();
+  const query = `UPDATE study_buddies SET status = ?, last_updated = ? WHERE user_id = ?`;
+  db.run(query, [status, last_updated, userId], function(err) {
     callback(err);
   });
 }
