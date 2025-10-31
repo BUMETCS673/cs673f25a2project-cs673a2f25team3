@@ -111,13 +111,41 @@ All routes except registration and login require **Authorization** header with a
 ---
 
 ## Testing
-We use **Jest** and **Supertest** for backend API testing.
+We rely on **ESLint** for linting and **Jest/Supertest** for unit and integration tests.
 
-Run tests from the backend folder:
+- **Backend**
+  ```bash
+  cd backend
+  npm run lint
+  npm test
+  ```
+- **Frontend**
+  ```bash
+  cd frontend
+  npm run lint
+  npm test -- --watchAll=false
+  ```
+
+To mirror the CI workflow inside containers:
 ```bash
-cd backend
-npm test
+docker compose build
+docker compose run --rm -w /app studybuddy-backend:ci npm test
+docker compose run --rm -w /app -e CI=true studybuddy-frontend:ci npm test
 ```
+
+Lint warnings are acceptable during development, but lint errors (e.g. `no-undef`) should be resolved before merging.
+
+---
+
+## Continuous Integration
+
+GitHub Actions runs on every push/PR that touches backend/frontend code:
+
+1. **Frontend job** – `npm ci`, lint (`npm run lint`), unit tests (`npm test`).
+2. **Backend job** – `npm ci`, lint (`npm run lint`), unit/integration tests (`npm test`).
+3. **Docker job** – builds both images and reruns the same Jest suites inside the containers to ensure the shipped images work.
+
+Address failing lint/test steps before merging. Dependabot alerts (see the repository’s *Security → Dependabot* tab) should also be resolved promptly.
 
 ---
 
