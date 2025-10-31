@@ -3,10 +3,9 @@
 */
 
 module.exports = {
-  preset: 'jest-expo',
-  setupFiles: ['<rootDir>/jest.setup.native.js'],
+  preset: 'react-native',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'], 
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   transformIgnorePatterns: [
     "node_modules/(?!((jest-)?react-native|expo-linear-gradient|expo-modules-core|react-native-reanimated|@react-native|react-navigation|@react-navigation)/)"
   ],
