@@ -1,4 +1,8 @@
 /*
+  global fetchMock 
+*/
+
+/*
   100% AI generate
 */
 
