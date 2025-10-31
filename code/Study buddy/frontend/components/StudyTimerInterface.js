@@ -1,6 +1,6 @@
 /*
-  55% AI
-  45% Human
+  90% AI
+  10% Human
 */
 
 import React, { useState, useEffect, useContext, useCallback, useRef } from "react";

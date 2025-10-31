@@ -1,6 +1,6 @@
 ﻿/*
-  50% AI
-  50% Human
+  90% AI
+  10% Human
 */
 
 import React from "react";
