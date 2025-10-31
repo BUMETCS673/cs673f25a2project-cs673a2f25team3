@@ -1,18 +1,26 @@
-import { View, Text } from 'react-native';
-import { styles } from '../styles/style';
-import { NavigationButton } from '../components/NavigationButton';
-import { Background } from '../components/Background';
+/*
+  20% AI
+  80% Human
+*/
 
-// this page is not finished
+import React from "react";
+import { StyleSheet, View, ImageBackground } from "react-native";
+import LoginForm from "../components/LoginForm"; 
+import { styles } from "../styles/style";
 
-// Login page - this page handles login and redirects to home once logged in. If another page is visited without logging in first, it will redirect here
-export default function Login({ navigation }) {
+export default function Login() {
   return (
-    <Background>
-      <View style={styles.card}>
-        <Text h1 style={styles.cardH1}>Login</Text>
-        <NavigationButton text="Login" link="Home" />
+    <ImageBackground
+      source={{
+        uri: "https://images.unsplash.com/photo-1673526759317-be71a1243e3d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGdyYWRpZW50JTIwcHVycGxlJTIwYmx1ZXxlbnwxfHx8fDE3NjA2NzEyNTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      }}
+      style={styles.background}
+      blurRadius={4} 
+    >
+      <View style={styles.overlay}>
+        <LoginForm />
       </View>
-    </Background>
+    </ImageBackground>
   );
 }
+

@@ -1,17 +1,100 @@
-const express = require("express");
-const Profile = require("../models/profileModel");
-const router = express.Router();
+/*
+  20% AI
+  70% Human
+  10% Framework
+*/
 
-router.get("/:userId", (req, res) => {
-  Profile.getProfile(req.params.userId, (err, profile) => {
+const express = require("express");
+const auth = require("../middleware/auth");
+const Profile = require("../models/profileModel");
+
+const router = express.Router();
+router.use(auth);
+
+/**
+ * @swagger
+ * tags:
+ *   name: Profiles
+ *   description: User profile management
+ */
+
+/**
+ * @swagger
+ * /api/profiles/me:
+ *   get:
+ *     summary: Get the profile of the logged-in user
+ *     tags: [Profiles]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Profile data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 user_id:
+ *                   type: integer
+ *                 bio:
+ *                   type: string
+ *                 avatar_url:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized (invalid or missing token)
+ *       500:
+ *         description: Internal server error
+ */
+router.get("/me", (req, res) => {
+  Profile.getProfile(req.user.id, (err, profile) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(profile);
   });
 });
 
-router.post("/:userId", (req, res) => {
+/**
+ * @swagger
+ * /api/profiles/me:
+ *   post:
+ *     summary: Update the profile of the logged-in user
+ *     tags: [Profiles]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               bio:
+ *                 type: string
+ *               avatar_url:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user_id:
+ *                   type: integer
+ *                 bio:
+ *                   type: string
+ *                 avatar_url:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized (invalid or missing token)
+ *       500:
+ *         description: Internal server error
+ */
+router.post("/me", (req, res) => {
   const { bio, avatar_url } = req.body;
-  Profile.updateProfile(req.params.userId, bio, avatar_url, (err, updated) => {
+  Profile.updateProfile(req.user.id, bio, avatar_url, (err, updated) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(updated);
   });

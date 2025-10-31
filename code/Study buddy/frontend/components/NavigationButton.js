@@ -2,27 +2,37 @@ import { TouchableOpacity, Text } from 'react-native';
 import { styles } from '../styles/style';
 import { useNavigation } from '@react-navigation/native';
 
-// purpose: button that redirects to a different page
+/*
+  10% framework
+  90% manual
+*/
+
+// purpose: button that redirects to a different page or executes custom onPress
 // parameters: 
 //    text: text on the button
-//    link: routing name - see App.js
-//    params (optional): parameters to send with link
+//    link: routing name (optional)
+//    onPress: custom function (optional)
+//    params: parameters to send with link (optional)
 // example: <NavigationButton text="15 Minutes" link="Studying" params={{minutes: "10"}} />
-export const NavigationButton = (props) => {
-    const navigation = useNavigation();
+// example: <NavigationButton text="Logout" onPress={handleLogout} />
+export const NavigationButton = ({ text, link, onPress, params }) => {
+  const navigation = useNavigation();
 
-    if (Object.hasOwn(props, 'params')) {
-        return(
-            <TouchableOpacity onPress={() => navigation.navigate(props.link, props.params)} as="a">
-                <Text style={styles.navigationButton}>{props.text}</Text>
-            </TouchableOpacity>
-        );
-    } else {
-        return(
-            <TouchableOpacity onPress={() => navigation.navigate(props.link)} as="a">
-                <Text style={styles.navigationButton}>{props.text}</Text>
-            </TouchableOpacity>
-        );
+  const handlePress = () => {
+    if (onPress) {
+      onPress();
+    } else if (link) {
+      if (params) {
+        navigation.navigate(link, params);
+      } else {
+        navigation.navigate(link);
+      }
     }
-    
-}
+  };
+
+  return (
+    <TouchableOpacity onPress={handlePress} accessibilityRole="link">
+      <Text style={styles.navigationButton}>{text}</Text>
+    </TouchableOpacity>
+  );
+};

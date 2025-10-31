@@ -2,6 +2,11 @@ import { styles } from '../styles/style';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../styles/base';
 
+/*
+  30% framework
+  70% manual
+*/
+
 // purpose: a standardized background for every page
 // parameters: 
 //    children: put all components inside the background component
