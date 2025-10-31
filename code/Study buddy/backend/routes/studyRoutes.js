@@ -1,12 +1,13 @@
 /*
-  20% AI
-  70% Human
+  40% AI
+  50% Human
   10% Framework
 */
 
 const express = require("express");
 const auth = require("../middleware/auth");
 const Study = require("../models/studyModel");
+const StudyProgress = require("../models/studyProgressModel");
 
 const router = express.Router();
 router.use(auth);
@@ -99,6 +100,57 @@ router.get("/me", (req, res) => {
   Study.getSessions(req.user.id, (err, sessions) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(sessions);
+  });
+});
+
+// Return any persisted in-progress timer for the authenticated user so the client can resume.
+router.get("/progress", (req, res) => {
+  StudyProgress.getProgress(req.user.id, (err, row) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (!row) return res.status(204).send();
+    res.json(row);
+  });
+});
+
+// Upsert the current timer snapshot; the client periodically sends this while running/paused.
+router.put("/progress", (req, res) => {
+  const { target_minutes, elapsed_seconds, session_start, status } = req.body || {};
+  if (
+    typeof target_minutes !== "number" ||
+    typeof elapsed_seconds !== "number" ||
+    !session_start ||
+    typeof status !== "string"
+  ) {
+    return res.status(400).json({ error: "Invalid progress payload" });
+  }
+
+  if (target_minutes <= 0 || elapsed_seconds < 0) {
+    return res.status(400).json({ error: "Progress values must be positive" });
+  }
+
+  const normalizedStatus = status.toLowerCase();
+  if (!["running", "paused", "complete"].includes(normalizedStatus)) {
+    return res.status(400).json({ error: "Unsupported progress status" });
+  }
+
+  StudyProgress.upsertProgress(
+    req.user.id,
+    Math.round(target_minutes),
+    Math.round(elapsed_seconds),
+    session_start,
+    normalizedStatus,
+    (err, row) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(row);
+    }
+  );
+});
+
+// Clear the stored snapshot once the timer is complete or reset.
+router.delete("/progress", (req, res) => {
+  StudyProgress.clearProgress(req.user.id, (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(204).send();
   });
 });
 

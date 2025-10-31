@@ -1,3 +1,8 @@
+/*
+  30% AI
+  70% Human
+*/
+
 import { View, Text } from 'react-native';
 import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
@@ -28,7 +33,8 @@ export default function Home() {
     <Background>
       <View style={styles.card}>
         <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
-        <NavigationButton text="Start Studying!" link="SelectStudyTime" />
+        {/* Jump straight to the timer so the refreshed StudyTimerInterface is shown immediately */}
+        <NavigationButton text="Start Studying!" link="Studying" />
         <NavigationButton text="Game Menu" link="GameMenu" />
         <NavigationButton text="Statistics" link="Statistics" />
         <NavigationButton text="Settings" link="Settings" />
