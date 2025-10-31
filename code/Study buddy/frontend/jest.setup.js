@@ -1,3 +1,5 @@
+/* global jest */
+
 /*
   100% AI generate
 */
