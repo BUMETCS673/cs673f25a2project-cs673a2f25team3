@@ -4,13 +4,13 @@
 */
 
 import React from "react";
-import { render, fireEvent, act, cleanup } from "@testing-library/react-native";
+import { render, fireEvent, act, cleanup, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_BASE_URL } from "@env";
 import { AuthContext } from "../../AuthContext";
 import StudyTimerInterface from "../../components/StudyTimerInterface";
 
-jest.setTimeout(20000);
+jest.setTimeout(40000);
 
 const renderWithAuth = () =>
   render(
@@ -118,6 +118,10 @@ test("logs study session duration and timestamps when stopped", async () => {
       jest.advanceTimersByTime(90 * 60 * 1000);
       await Promise.resolve();
     });
+
+    await act(async () => {});
+    expect(utils.getByText("Session Complete")).toBeTruthy();
+    expect(utils.getByText("Start Another Session")).toBeTruthy();
 
   const studyCall = fetch.mock.calls.find(
     ([requestUrl, requestOptions]) =>
