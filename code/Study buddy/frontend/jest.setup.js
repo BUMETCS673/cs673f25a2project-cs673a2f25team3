@@ -7,6 +7,10 @@ import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/asy
 // Mock AsyncStorage globally
 jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
 
+// React Native Fast Refresh stubs (used by React Navigation in tests)
+global.$RefreshReg$ = () => {};
+global.$RefreshSig$ = () => (type) => type;
+
 // Mock expo-linear-gradient
 jest.mock('expo-linear-gradient', () => {
   return {
