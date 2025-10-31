@@ -7,7 +7,7 @@ import React, { useState, useEffect, useContext, useCallback, useRef } from "rea
 import {
   View,
   Text,
-  TouchableOpacity,
+  Pressable,
   TextInput,
   StyleSheet,
   ActivityIndicator,
@@ -41,9 +41,48 @@ export default function StudyTimerInterface() {
   const [accumulatedSeconds, setAccumulatedSeconds] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
-  const progressIntervalRef = useRef(null);
+const [isSubmitting, setIsSubmitting] = useState(false);
+const [hydrated, setHydrated] = useState(false);
+const progressIntervalRef = useRef(null);
+
+const totalTargetSeconds = targetMinutes ? targetMinutes * 60 : null;
+const minutesRemaining = totalTargetSeconds
+  ? Math.max(totalTargetSeconds - elapsedSeconds, 0)
+  : null;
+const progress = totalTargetSeconds
+  ? Math.min(elapsedSeconds / totalTargetSeconds, 1)
+  : 0;
+const circleAngle = progress * 2 * Math.PI - Math.PI / 2;
+const circleDiameter = 220;
+const circleRadius = circleDiameter / 2 - 12;
+const markerSize = 16;
+const markerOffsetX =
+  circleRadius * Math.cos(circleAngle) + circleDiameter / 2 - markerSize / 2;
+const markerOffsetY =
+  circleRadius * Math.sin(circleAngle) + circleDiameter / 2 - markerSize / 2;
+
+const isIdle = status === "idle";
+const isRunning = status === "running";
+const isPaused = status === "paused";
+const isComplete = status === "complete";
+
+const statusLabel = isComplete
+  ? "Session Complete"
+  : isPaused
+  ? "Session Paused"
+  : "Study Session Active";
+
+const statusMessage = isComplete
+  ? "Great job! Session logged successfully."
+  : isPaused
+  ? "Take a breath and come back when you're ready."
+  : "Stay focused and keep going!";
+
+const footerMessage = isComplete
+  ? "All set - start another session when you'd like."
+  : isPaused
+  ? "Paused - take a breath and come back when ready."
+  : "Timer is running. Your progress is saved automatically.";
 
   const calculateElapsedSeconds = useCallback(
     (now = Date.now()) => {
@@ -68,7 +107,7 @@ export default function StudyTimerInterface() {
     async (statusOverride) => {
       if (!token || !targetMinutes || !sessionStartISO) return;
       try {
-        await fetch(`${API_BASE_URL}/study/progress`, {
+        const response = await fetch(`${API_BASE_URL}/study/progress`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -81,6 +120,11 @@ export default function StudyTimerInterface() {
             status: statusOverride || status,
           }),
         });
+        if (response.status === 404) return;
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data?.error || "Failed to store progress snapshot.");
+        }
       } catch (err) {
         console.log("Failed to persist study progress", err);
       }
@@ -93,14 +137,19 @@ export default function StudyTimerInterface() {
     stopProgressInterval();
     if (!token) return;
     try {
-      await fetch(`${API_BASE_URL}/study/progress`, {
+      const response = await fetch(`${API_BASE_URL}/study/progress`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      if (response.status === 404) return;
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || "Failed to clear progress snapshot.");
+      }
     } catch (err) {
-      console.log("Failed to clear study progress", err);
+        console.log("Failed to clear study progress", err);
     }
   }, [token, stopProgressInterval]);
 
@@ -173,28 +222,6 @@ export default function StudyTimerInterface() {
   }, [calculateElapsedSeconds, hydrated]);
 
   useEffect(() => {
-    if (status !== "running") return;
-
-    const tick = () => {
-      const next = calculateElapsedSeconds();
-      setElapsedSeconds(next);
-
-      if (
-        totalTargetSeconds &&
-        next >= totalTargetSeconds &&
-        !isSubmitting
-      ) {
-        handleStop();
-      }
-    };
-
-    tick();
-    const interval = setInterval(tick, 1000);
-
-    return () => clearInterval(interval);
-  }, [status, calculateElapsedSeconds, totalTargetSeconds, isSubmitting, handleStop]);
-
-  useEffect(() => {
     if (status !== "running") {
       setElapsedSeconds(calculateElapsedSeconds());
     }
@@ -214,7 +241,7 @@ export default function StudyTimerInterface() {
           },
         });
         if (cancelled) return;
-        if (response.status === 204) return;
+        if (response.status === 204 || response.status === 404) return;
         if (!response.ok) throw new Error("Failed to fetch study progress");
 
         const data = await response.json();
@@ -265,45 +292,6 @@ export default function StudyTimerInterface() {
       cancelled = true;
     };
   }, [hydrated, token, status, targetMinutes]);
-
-  const totalTargetSeconds = targetMinutes ? targetMinutes * 60 : null;
-  const minutesRemaining = totalTargetSeconds
-    ? Math.max(totalTargetSeconds - elapsedSeconds, 0)
-    : null;
-  const progress = totalTargetSeconds
-    ? Math.min(elapsedSeconds / totalTargetSeconds, 1)
-    : 0;
-  const circleAngle = progress * 2 * Math.PI - Math.PI / 2;
-  const circleDiameter = 220;
-  const circleRadius = circleDiameter / 2 - 12;
-  const markerSize = 16;
-  const markerOffsetX =
-    circleRadius * Math.cos(circleAngle) + circleDiameter / 2 - markerSize / 2;
-  const markerOffsetY =
-    circleRadius * Math.sin(circleAngle) + circleDiameter / 2 - markerSize / 2;
-
-  const isIdle = status === "idle";
-  const isRunning = status === "running";
-  const isPaused = status === "paused";
-  const isComplete = status === "complete";
-
-  const statusLabel = isComplete
-    ? "Session Complete"
-    : isPaused
-    ? "Session Paused"
-    : "Study Session Active";
-
-  const statusMessage = isComplete
-    ? "Great job! Session logged successfully."
-    : isPaused
-    ? "Take a breath and come back when you're ready."
-    : "Stay focused and keep going!";
-
-  const footerMessage = isComplete
-    ? "All set - start another session when you'd like."
-    : isPaused
-    ? "Paused - take a breath and come back when ready."
-    : "Timer is running. Your progress is saved automatically.";
 
   useEffect(() => {
     if (!token || !hydrated) return;
@@ -446,6 +434,28 @@ export default function StudyTimerInterface() {
     }
   }, [calculateElapsedSeconds, sessionStartISO, token, clearProgressRecord]);
 
+  useEffect(() => {
+    if (status !== "running") return;
+
+    const tick = () => {
+      const next = calculateElapsedSeconds();
+      setElapsedSeconds(next);
+
+      if (
+        totalTargetSeconds &&
+        next >= totalTargetSeconds &&
+        !isSubmitting
+      ) {
+        handleStop();
+      }
+    };
+
+    tick();
+    const interval = setInterval(tick, 1000);
+
+    return () => clearInterval(interval);
+  }, [status, calculateElapsedSeconds, totalTargetSeconds, isSubmitting, handleStop]);
+
 
   const isCustomValid = () => {
     const value = parseInt(customMinutes, 10);
@@ -468,13 +478,13 @@ export default function StudyTimerInterface() {
           <Text style={styles.title}>Set Study Duration</Text>
           <View style={styles.presetRow}>
             {PRESET_MINUTES.map((preset) => (
-              <TouchableOpacity
+              <Pressable
                 key={preset}
                 style={styles.presetButton}
                 onPress={() => handleStartTimer(preset)}
               >
                 <Text style={styles.presetButtonText}>{preset} min</Text>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </View>
           <TextInput
@@ -488,7 +498,7 @@ export default function StudyTimerInterface() {
             }}
           />
 
-          <TouchableOpacity
+          <Pressable
             testID="startTimerButton"
             onPress={handleCustomStart}
             disabled={!isCustomValid()}
@@ -498,7 +508,7 @@ export default function StudyTimerInterface() {
             ]}
           >
             <Text style={styles.buttonText}>Start Study Session</Text>
-          </TouchableOpacity>
+          </Pressable>
           <Text style={styles.tip}>Tip: Aim for 25-60 minute focus blocks.</Text>
           <Text style={styles.tip}>Maximum session length is 180 minutes.</Text>
         </>
@@ -552,7 +562,7 @@ export default function StudyTimerInterface() {
 
           <View style={styles.actionsRow}>
             {(isRunning || isPaused) && (
-              <TouchableOpacity
+              <Pressable
                 testID="pauseResumeButton"
                 onPress={handlePauseResume}
                 disabled={isSubmitting}
@@ -565,11 +575,11 @@ export default function StudyTimerInterface() {
                 <Text style={styles.primaryActionText}>
                   {isRunning ? "Pause" : "Resume"}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             )}
 
             {(isRunning || isPaused) && (
-              <TouchableOpacity
+              <Pressable
                 testID="stopTimerButton"
                 onPress={handleStop}
                 disabled={isSubmitting}
@@ -584,27 +594,27 @@ export default function StudyTimerInterface() {
                 ) : (
                   <Text style={styles.stopButtonText}>Stop &amp; Log</Text>
                 )}
-              </TouchableOpacity>
+              </Pressable>
             )}
           </View>
 
           {isComplete && (
-            <TouchableOpacity
+            <Pressable
               onPress={handleReset}
               style={[styles.button, styles.wideButton]}
             >
               <Text style={styles.buttonText}>Start Another Session</Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
 
           {!isComplete && (
-            <TouchableOpacity
+            <Pressable
               onPress={handleReset}
               disabled={isSubmitting}
               style={[styles.secondaryButton, styles.wideButton]}
             >
               <Text style={styles.secondaryButtonText}>Reset</Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
 
           <View style={[styles.footerBanner, isPaused && styles.footerPaused]}>
@@ -881,3 +891,5 @@ const styles = StyleSheet.create({
     color: "#2B67A2",
   },
 });
+
+

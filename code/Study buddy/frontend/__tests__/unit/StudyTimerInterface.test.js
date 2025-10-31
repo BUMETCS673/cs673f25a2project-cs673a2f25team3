@@ -3,6 +3,20 @@
   50% Human
 */
 
+jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper", () => ({
+  __esModule: true,
+  default: {
+    addListener: jest.fn(),
+    removeListeners: jest.fn(),
+  },
+  API: {
+    connectAnimatedView: jest.fn(),
+    connectAnimatedNodes: jest.fn(),
+    disconnectAnimatedView: jest.fn(),
+    disconnectAnimatedNodes: jest.fn(),
+  },
+}));
+
 import React from "react";
 import { render, fireEvent, act, cleanup, waitFor } from "@testing-library/react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
