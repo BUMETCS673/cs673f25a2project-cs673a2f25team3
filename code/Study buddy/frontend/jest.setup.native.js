@@ -1,21 +1,19 @@
 /* 100% AI generate */
 
 const resolveNativeAnimatedHelper = () => {
-  const candidates = [
-    'react-native/Libraries/Animated/NativeAnimatedHelper',
-    'react-native/Libraries/Animated/NativeAnimatedHelper.js',
-    'react-native/Libraries/Animated/src/NativeAnimatedHelper',
-  ];
-
-  for (const candidate of candidates) {
+  try {
+    return require('react-native/Libraries/Animated/NativeAnimatedHelper');
+  } catch {
     try {
-      // eslint-disable-next-line global-require, import/no-dynamic-require
-      return require(candidate);
-    } catch (err) {
-      // ignore and try next path
+      return require('react-native/Libraries/Animated/NativeAnimatedHelper.js');
+    } catch {
+      try {
+        return require('react-native/Libraries/Animated/src/NativeAnimatedHelper');
+      } catch {
+        return null;
+      }
     }
   }
-  return null;
 };
 
 const NativeAnimatedHelper = resolveNativeAnimatedHelper();
@@ -31,14 +29,13 @@ if (NativeAnimatedHelper && NativeAnimatedHelper.API) {
 }
 
 // TouchableOpacity uses Animated APIs internally; swap to Pressable to avoid native animation hooks.
-const ReactNative = require('react-native'); // eslint-disable-line global-require
+const ReactNative = require('react-native');
 if (ReactNative.TouchableOpacity && ReactNative.Pressable) {
   ReactNative.TouchableOpacity = ReactNative.Pressable;
 }
 
 // Ensure Animated.createAnimatedComponent returns the base component in tests.
 try {
-  // eslint-disable-next-line global-require
   const Animated = require('react-native/Libraries/Animated/Animated');
   if (Animated && typeof Animated.createAnimatedComponent === 'function') {
     Animated.createAnimatedComponent = (Component) => Component;
@@ -56,6 +53,6 @@ try {
       stop: () => {},
     });
   }
-} catch (err) {
+} catch {
   // ignore loading failures; not all environments expose this path
 }
