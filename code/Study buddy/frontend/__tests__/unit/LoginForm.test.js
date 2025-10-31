@@ -3,51 +3,69 @@
 */
 
 import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
+import { Text } from 'react-native';
+import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthProvider } from '../../AuthContext';
 import LoginForm from '../../components/LoginForm';
-import { act } from 'react-test-renderer';
+const Stack = createNativeStackNavigator();
 
+const HomeScreen = () => <Text testID="home-screen">Home Screen</Text>;
 
-const Wrapper = ({ children }) => (
+const AppWithNavigation = () => (
   <NavigationContainer>
-    <AuthProvider>{children}</AuthProvider>
+    <AuthProvider>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login" component={LoginForm} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+      </Stack.Navigator>
+    </AuthProvider>
   </NavigationContainer>
 );
 
 describe('LoginForm', () => {
-  test('renders login form correctly', () => {
-    const { getByPlaceholderText, getByTestId } = render(<LoginForm />, {
-      wrapper: Wrapper,
-    });
+  beforeEach(() => {
+    fetchMock.resetMocks();
+  });
 
-    expect(getByPlaceholderText('Enter your username')).toBeTruthy();
+  test('renders login form correctly', async () => {
+    const { getByPlaceholderText, getByTestId } = render(<AppWithNavigation />);
+
+    await waitFor(() => expect(getByPlaceholderText('Enter your username')).toBeTruthy());
     expect(getByPlaceholderText('Enter your password')).toBeTruthy();
     expect(getByTestId('loginButton')).toBeTruthy();
   });
 
   test('login updates context and navigates', async () => {
-    const { getByPlaceholderText, getByTestId } = render(<LoginForm />, {
-      wrapper: Wrapper,
-    });
+    const { getByPlaceholderText, getByTestId, queryByPlaceholderText, findByTestId } = render(<AppWithNavigation />);
+
+    await waitFor(() => expect(getByPlaceholderText('Enter your username')).toBeTruthy());
+
+    fetchMock.mockResponseOnce(
+      JSON.stringify({
+        message: 'Login successful',
+        user: { username: 'testuser' },
+        token: 'fake-token'
+      })
+    );
 
     // input user name and password
     fireEvent.changeText(getByPlaceholderText('Enter your username'), 'testuser');
     fireEvent.changeText(getByPlaceholderText('Enter your password'), 'password');
 
-    // 
     await act(async () => {
       fireEvent.press(getByTestId('loginButton'));
     });
 
-    // check input
-    expect(getByPlaceholderText('Enter your username').props.value).toBe('testuser');
-    expect(getByPlaceholderText('Enter your password').props.value).toBe('password');
+    await waitFor(() => expect(queryByPlaceholderText('Enter your username')).toBeNull());
+    await findByTestId('home-screen');
   });
 
   test('switches to register mode', async () => {
-    const { getByText, getByTestId } = render(<LoginForm />, { wrapper: Wrapper });
+    const { getByText, getByTestId } = render(<AppWithNavigation />);
+
+    await waitFor(() => expect(getByTestId('loginButton')).toBeTruthy());
 
     // change to register
     await act(async () => {

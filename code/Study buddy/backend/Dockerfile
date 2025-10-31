@@ -10,7 +10,7 @@ ENV NODE_ENV=development
 # Set working directory
 WORKDIR /app
 
-# Install native dependencies
+# Install native dexpo ependencies
 RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ libsqlite3-dev && \
     rm -rf /var/lib/apt/lists/*
 

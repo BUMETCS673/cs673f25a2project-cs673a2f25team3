@@ -25,9 +25,6 @@ COPY eslint.config.js ./
 # Install deps reproducibly
 RUN npm ci
 
-# Run expo’s version alignments during build
-RUN npx expo install --fix && npx expo install expo@latest || true
-
 # Copy the rest of the app
 COPY . .
 
