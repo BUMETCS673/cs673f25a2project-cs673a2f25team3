@@ -30,6 +30,8 @@ jest.mock('expo-modules-core', () => {
   };
 });
 
+jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper', () => ({}), { virtual: true });
+
 // Mock fetch globally
 import fetchMock from 'jest-fetch-mock';
 fetchMock.enableMocks();

@@ -116,11 +116,8 @@ test("logs study session duration and timestamps when stopped", async () => {
     const stopTime = new Date(start.getTime() + 90 * 60 * 1000);
     await act(async () => {
       jest.advanceTimersByTime(90 * 60 * 1000);
+      await Promise.resolve();
     });
-
-  await act(async () => {
-    fireEvent.press(getByTestId("stopTimerButton"));
-  });
 
   const studyCall = fetch.mock.calls.find(
     ([requestUrl, requestOptions]) =>
@@ -138,6 +135,9 @@ test("logs study session duration and timestamps when stopped", async () => {
   expect(payload.duration).toBe(90);
   expect(payload.start_time).toBe(start.toISOString());
   expect(payload.end_time).toBe(stopTime.toISOString());
+  expect(utils.getByText("Session Complete")).toBeTruthy();
+  expect(utils.getByText("Start Another Session")).toBeTruthy();
+
 });
 
 test("continues timing while app is closed and resumes on reopen", async () => {

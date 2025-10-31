@@ -175,12 +175,24 @@ export default function StudyTimerInterface() {
   useEffect(() => {
     if (status !== "running") return;
 
-    const interval = setInterval(() => {
-      setElapsedSeconds(calculateElapsedSeconds());
-    }, 1000);
+    const tick = () => {
+      const next = calculateElapsedSeconds();
+      setElapsedSeconds(next);
+
+      if (
+        totalTargetSeconds &&
+        next >= totalTargetSeconds &&
+        !isSubmitting
+      ) {
+        handleStop();
+      }
+    };
+
+    tick();
+    const interval = setInterval(tick, 1000);
 
     return () => clearInterval(interval);
-  }, [status, calculateElapsedSeconds]);
+  }, [status, calculateElapsedSeconds, totalTargetSeconds, isSubmitting, handleStop]);
 
   useEffect(() => {
     if (status !== "running") {
@@ -254,6 +266,45 @@ export default function StudyTimerInterface() {
     };
   }, [hydrated, token, status, targetMinutes]);
 
+  const totalTargetSeconds = targetMinutes ? targetMinutes * 60 : null;
+  const minutesRemaining = totalTargetSeconds
+    ? Math.max(totalTargetSeconds - elapsedSeconds, 0)
+    : null;
+  const progress = totalTargetSeconds
+    ? Math.min(elapsedSeconds / totalTargetSeconds, 1)
+    : 0;
+  const circleAngle = progress * 2 * Math.PI - Math.PI / 2;
+  const circleDiameter = 220;
+  const circleRadius = circleDiameter / 2 - 12;
+  const markerSize = 16;
+  const markerOffsetX =
+    circleRadius * Math.cos(circleAngle) + circleDiameter / 2 - markerSize / 2;
+  const markerOffsetY =
+    circleRadius * Math.sin(circleAngle) + circleDiameter / 2 - markerSize / 2;
+
+  const isIdle = status === "idle";
+  const isRunning = status === "running";
+  const isPaused = status === "paused";
+  const isComplete = status === "complete";
+
+  const statusLabel = isComplete
+    ? "Session Complete"
+    : isPaused
+    ? "Session Paused"
+    : "Study Session Active";
+
+  const statusMessage = isComplete
+    ? "Great job! Session logged successfully."
+    : isPaused
+    ? "Take a breath and come back when you're ready."
+    : "Stay focused and keep going!";
+
+  const footerMessage = isComplete
+    ? "All set - start another session when you'd like."
+    : isPaused
+    ? "Paused - take a breath and come back when ready."
+    : "Timer is running. Your progress is saved automatically.";
+
   useEffect(() => {
     if (!token || !hydrated) return;
     stopProgressInterval();
@@ -283,7 +334,6 @@ export default function StudyTimerInterface() {
     clearProgressRecord,
     stopProgressInterval,
   ]);
-
   useEffect(() => {
     return () => {
       stopProgressInterval();
@@ -340,7 +390,7 @@ export default function StudyTimerInterface() {
     await clearProgressRecord();
   };
 
-  const handleStop = async () => {
+  const handleStop = useCallback(async () => {
     const now = Date.now();
     const totalSeconds = calculateElapsedSeconds(now);
     const endISO = new Date(now).toISOString();
@@ -394,46 +444,8 @@ export default function StudyTimerInterface() {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [calculateElapsedSeconds, sessionStartISO, token, clearProgressRecord]);
 
-  const totalTargetSeconds = targetMinutes ? targetMinutes * 60 : null;
-  const minutesRemaining = totalTargetSeconds
-    ? Math.max(totalTargetSeconds - elapsedSeconds, 0)
-    : null;
-  const progress = totalTargetSeconds
-    ? Math.min(elapsedSeconds / totalTargetSeconds, 1)
-    : 0;
-  const circleAngle = progress * 2 * Math.PI - Math.PI / 2;
-  const circleDiameter = 220;
-  const circleRadius = circleDiameter / 2 - 12;
-  const markerSize = 16;
-  const markerOffsetX =
-    circleRadius * Math.cos(circleAngle) + circleDiameter / 2 - markerSize / 2;
-  const markerOffsetY =
-    circleRadius * Math.sin(circleAngle) + circleDiameter / 2 - markerSize / 2;
-
-  const isIdle = status === "idle";
-  const isRunning = status === "running";
-  const isPaused = status === "paused";
-  const isComplete = status === "complete";
-
-  const statusLabel = isComplete
-    ? "Session Complete"
-    : isPaused
-    ? "Session Paused"
-    : "Study Session Active";
-
-  const statusMessage = isComplete
-    ? "Great job! Session logged successfully."
-    : isPaused
-    ? "Take a breath and come back when you're ready."
-    : "Stay focused and keep going!";
-
-  const footerMessage = isComplete
-    ? "All set - start another session when you'd like."
-    : isPaused
-    ? "Paused - take a breath and come back when ready."
-    : "Timer is running. Your progress is saved automatically.";
 
   const isCustomValid = () => {
     const value = parseInt(customMinutes, 10);
