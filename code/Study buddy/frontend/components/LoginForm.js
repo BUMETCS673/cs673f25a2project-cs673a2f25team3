@@ -15,6 +15,8 @@ import {
 } from "react-native";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react-native";
 import { API_BASE_URL } from "@env";
+// TEMP debug: verify API base URL is wired correctly
+console.log("[LoginForm] API_BASE_URL:", API_BASE_URL);
 import { AuthContext } from "../AuthContext";
 import { styles } from "../styles/style";
 import { useNavigation } from "@react-navigation/native";
@@ -27,23 +29,28 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleAuth = async () => {
     if (!username || !password) return;
 
     setLoading(true);
+    setErrorMsg("");
     try {
       const endpoint =
         mode === "login"
           ? `${API_BASE_URL}/users/login`
           : `${API_BASE_URL}/users/register`;
+      // TEMP debug: log the endpoint being called
+      console.log("[LoginForm] Auth endpoint:", endpoint);
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Request failed");
+      console.log("[LoginForm] Auth status:", res.status);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || `Request failed (${res.status})`);
 
       if (mode === "register") {
         setMode("login"); // change to login after register
@@ -57,6 +64,7 @@ export default function LoginForm() {
       }
     } catch (err) {
       console.log(err);
+      setErrorMsg(err?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -123,6 +131,12 @@ export default function LoginForm() {
             </Text>
           </TouchableOpacity>
         )}
+
+        {errorMsg ? (
+          <Text style={{ color: "#ff6b6b", marginTop: 12, textAlign: "center" }}>
+            {errorMsg}
+          </Text>
+        ) : null}
 
         <TouchableOpacity onPress={() => setMode(mode === "login" ? "register" : "login")} style={{ marginTop: 12 }}>
           <Text style={{ color: "#888", textAlign: "center" }}>

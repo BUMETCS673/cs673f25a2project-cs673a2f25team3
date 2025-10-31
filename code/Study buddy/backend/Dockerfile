@@ -1,35 +1,28 @@
 # 90% AI generated
 # 10% bug fixing
 
-# Use a modern LTS Node version
-FROM node:22-alpine
+# Use a modern LTS Node version (slim for smaller image)
+FROM node:22-slim
 
-# Install minimal build deps for native modules (bcrypt, sharp, etc.)
-RUN apk add --no-cache python3 make g++ bash tzdata
+# Set environment variables
+ENV NODE_ENV=development
 
+# Set working directory
 WORKDIR /app
 
-# Copy only package manifests first for caching
+# Install native dexpo ependencies
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ libsqlite3-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy package files and install dependencies
 COPY package*.json ./
-COPY eslint.config.js ./
+RUN npm ci
 
-# Install dependencies cleanly
-RUN npm install  # install all dependencies including devDependencies
-
-# Copy source code
+# Copy the rest of the application code
 COPY . .
 
-# Environment variables
-ENV NODE_ENV=production \
-    PORT=3000 \
-    TZ=UTC
-
-# Expose API port
+# Expose the application port
 EXPOSE 3000
 
-# Health check (optional)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:3000/health || exit 1
-
-# Start the backend
+# Start the application
 CMD ["npm", "start"]

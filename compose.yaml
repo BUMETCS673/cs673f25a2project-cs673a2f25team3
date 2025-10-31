@@ -2,16 +2,10 @@
 # 10% Bug fixing
 
 # compose.yaml
-version: "3.9"
 
 networks:
   studybuddy:
     driver: bridge
-
-volumes:
-  backend_node_modules:
-  frontend_node_modules:
-  npm_cache:               # optional (speeds up npm installs)
 
 services:
   js-backend:
@@ -22,13 +16,14 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
-    volumes:
-      - "./code/Study buddy/backend:/app"
-      - "backend_node_modules:/app/node_modules"
+    environment:
+      NODE_ENV: development
+      PORT: "3000"
+      JWT_SECRET: "change-me"
+      JWT_EXPIRES_IN: "1h"
     working_dir: /app
     command: npm start
-    networks:
-      - studybuddy
+    networks: [studybuddy]
 
   js-frontend:
     build:
@@ -40,29 +35,27 @@ services:
     stdin_open: true
     tty: true
     ports:
-      - "8081:8081"   # Metro bundler
+      - "8081:8081"   # Metro
       - "19000:19000" # Expo dev server
       - "19001:19001" # Metro WS
-      - "19002:19002" # Expo DevTools
-      - "19006:19006" # Expo Web
+      - "19002:19002" # DevTools
+      - "19006:19006" # Web
     environment:
-      CI: "1"  # replaces --non-interactive
+      HOME: "/app"
+      NPM_CONFIG_CACHE: "/app/.npm"
       EXPO_DEVTOOLS_LISTEN_ADDRESS: "0.0.0.0"
       CHOKIDAR_USEPOLLING: "true"
       WATCHPACK_POLLING: "true"
-      HOME: "/app"
+      TERM: "xterm-256color"
+      FORCE_COLOR: "1"
+      CI: "false"
     volumes:
-      - "./code/Study buddy/frontend:/app"      # your source (hot reload)
-      - "frontend_node_modules:/app/node_modules" # deps live in a separate volume
-      - "npm_cache:/root/.npm"                  # optional cache
+      - "./code/Study buddy/frontend/.env:/app/.env:ro"
     working_dir: /app
-    # Install AFTER volumes are mounted, then start Expo with a valid host
     command: >
       bash -lc "
-      ([ -d node_modules ] && [ -f package-lock.json ] && [ -d node_modules/.bin ]) || npm install;
-      npx expo start --dev-client --web --host lan
+        exec npx expo start --host tunnel
       "
     depends_on:
-      - js-backend
-    networks:
-      - studybuddy
+      [js-backend]
+    networks: [studybuddy]

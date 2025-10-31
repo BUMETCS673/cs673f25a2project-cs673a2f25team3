@@ -65,7 +65,15 @@ The backend will run at `http://localhost:3000`. Swagger documentation is availa
 
 ## Frontend Setup
 
-Make sure you have the `.env` file in frontend folder. Inside `.env` file, put in `API_BASE_URL=http://localhost:3000/api`, where localhost should be your IPv4 address. This supports you to run the code locally but not for docker.
+Create `code/Study buddy/frontend/.env` with the API base URL.
+
+- Docker-based dev (phone and web):
+  - `API_BASE_URL=http://<YOUR_LAN_IP>:3000/api` (example: `http://192.168.99.27:3000/api`)
+  - Your phone must be on the same Wi‑Fi and able to reach your PC on port 3000.
+- Non‑Docker local dev (both services on host):
+  - `API_BASE_URL=http://127.0.0.1:3000/api`
+
+Note: The app reads this file at bundle time via `react-native-dotenv` (importing from `@env`). If you change it, restart Expo with cache clear.
 
 ---
 
@@ -103,13 +111,41 @@ All routes except registration and login require **Authorization** header with a
 ---
 
 ## Testing
-We use **Jest** and **Supertest** for backend API testing.
+We rely on **ESLint** for linting and **Jest/Supertest** for unit and integration tests.
 
-Run tests from the backend folder:
+- **Backend**
+  ```bash
+  cd backend
+  npm run lint
+  npm test
+  ```
+- **Frontend**
+  ```bash
+  cd frontend
+  npm run lint
+  npm test -- --watchAll=false
+  ```
+
+To mirror the CI workflow inside containers:
 ```bash
-cd backend
-npm test
+docker compose build
+docker compose run --rm -w /app studybuddy-backend:ci npm test
+docker compose run --rm -w /app -e CI=true studybuddy-frontend:ci npm test
 ```
+
+Lint warnings are acceptable during development, but lint errors (e.g. `no-undef`) should be resolved before merging.
+
+---
+
+## Continuous Integration
+
+GitHub Actions runs on every push/PR that touches backend/frontend code:
+
+1. **Frontend job** – `npm ci`, lint (`npm run lint`), unit tests (`npm test`).
+2. **Backend job** – `npm ci`, lint (`npm run lint`), unit/integration tests (`npm test`).
+3. **Docker job** – builds both images and reruns the same Jest suites inside the containers to ensure the shipped images work.
+
+Address failing lint/test steps before merging. Dependabot alerts (see the repository’s *Security → Dependabot* tab) should also be resolved promptly.
 
 ---
 
@@ -122,24 +158,46 @@ This project uses Docker Compose to run both the backend (Node.js/Express) and f
 - **Node.js 22** is used in both backend and frontend containers
 
 ### Quick Start
-1. From the project root, run:
-  ```sh
-  docker compose build --no-cache
-  docker compose up
-  ```
-2. The backend will be available at [http://localhost:3000](http://localhost:3000)
-3. The frontend (Expo) will:
-  - Serve the web app at [http://localhost:19006](http://localhost:19006)
+1) Ensure Docker Desktop is running.
+
+2) Frontend `.env` set for LAN access (see Frontend Setup above).
+
+3) Build services from the repo root (where `compose.yaml` is):
+   ```sh
+   docker compose build
+   ```
+
+4) Start backend in background and Expo interactively (recommended for mobile):
+   - Backend: `docker compose up -d js-backend`
+   - Frontend (Tunnel):
+     ```sh
+     docker compose run --rm --service-ports js-frontend \
+       bash -lc "exec npx expo start --host tunnel --clear"
+     ```
+     Tunnel avoids LAN/firewall issues on Windows. Open DevTools at `http://localhost:19002` and scan the QR with Expo Go.
+
+   - Frontend (LAN) alternative (open ports 19000/19001/19002/19006/8081 on Windows firewall first):
+     ```sh
+     docker compose run --rm --service-ports js-frontend \
+       bash -lc "exec npx expo start --host lan --clear"
+     ```
+
+5) Web version is available via Expo DevTools ("Run in web") or directly on `http://localhost:19006` if enabled.
 
 ### Service Ports
 - **Backend (`js-backend`)**: 3000
 - **Frontend (`js-frontend`)**: 8081 (Metro), 19000-19002 (Expo DevTools), 19006 (Web)
 
 ### Common Issues & Troubleshooting
-- **Port Already in Use**: If you see an error about port 8081, another process is using it. Stop any other Expo/Metro servers or change the port mapping in `compose.yaml`.
+- **Port Already in Use**: If 8081 is busy, stop other Expo/Metro servers or change port mapping in `compose.yaml`.
 - **Missing Dependencies**: If Expo reports missing modules (e.g., `expo-dev-client`, `react-dom`, `react-native-web`), ensure they are listed in `package.json` and rebuild with `docker compose build --no-cache`.
 - **node_modules Issues**: Do not mount `node_modules` from your host. Let Docker install dependencies inside the container.
-- **Health Check Failures**: The backend includes a `/health` endpoint for Docker health checks.
+- **Frontend can’t reach API on phone**: Use your LAN IP in `.env` and keep Expo on Tunnel or open the firewall ports for LAN. Verify from phone browser: `http://<YOUR_LAN_IP>:3000/api-docs`.
+- **Stale API_BASE_URL in app**: Clear Metro cache and ensure container sees your `.env`.
+  - Restart: `docker compose rm -sf js-frontend`
+  - Run: `docker compose run --rm --service-ports js-frontend bash -lc "cat /app/.env && exec npx expo start --host tunnel --clear"`
+  - Expect `API_BASE_URL=http://<YOUR_LAN_IP>:3000/api` echoed.
+- **JWT secret required**: Backend needs `JWT_SECRET`. It’s set in `compose.yaml`. Check inside container: `docker compose exec js-backend bash -lc "echo $JWT_SECRET"`.
 
 ### File Locations
 - **Backend Dockerfile**: `code/Study buddy/backend/Dockerfile`
@@ -147,8 +205,16 @@ This project uses Docker Compose to run both the backend (Node.js/Express) and f
 - **Compose file**: `compose.yaml`
 
 ### Environment Variables
-- Set in `compose.yaml` for frontend: `EXPO_DEVTOOLS_LISTEN_ADDRESS`, `CHOKIDAR_USEPOLLING`, `WATCHPACK_POLLING`, `HOME`, etc.
-- You can add more via the `environment` section in `compose.yaml`.
+- Backend env (in `compose.yaml`): `JWT_SECRET`, `JWT_EXPIRES_IN`, `PORT`.
+- Frontend reads `.env` mounted at `/app/.env` (see `compose.yaml` volume for `js-frontend`).
+- Expo/Metro settings (in `compose.yaml`): `EXPO_DEVTOOLS_LISTEN_ADDRESS`, `CHOKIDAR_USEPOLLING`, `WATCHPACK_POLLING`, `TERM`, etc.
+
+Diagnostic logs
+- The login form logs helpful messages during auth to aid debugging:
+  - `[LoginForm] API_BASE_URL: ...`
+  - `[LoginForm] Auth endpoint: ...`
+  - `[LoginForm] Auth status: ...`
+  These logs are intentional for development and can be removed later.
 
 ### Updating Dependencies
 If you add or update dependencies in `package.json`, always rebuild your containers:

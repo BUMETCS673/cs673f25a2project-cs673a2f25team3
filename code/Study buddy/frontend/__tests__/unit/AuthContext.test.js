@@ -3,7 +3,7 @@
  */
 
 import React from "react";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import { AuthProvider, AuthContext } from "../../AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -20,13 +20,14 @@ describe("AuthContext", () => {
     AsyncStorage.removeItem.mockClear();
   });
 
-  it("provides default values", () => {
+  it("provides default values", async () => {
     const { result } = renderHook(() => React.useContext(AuthContext), {
       wrapper: AuthProvider,
     });
     expect(result.current.user).toBeNull();
     expect(result.current.token).toBeNull();
     expect(result.current.loading).toBe(true);
+    await waitFor(() => expect(result.current.loading).toBe(false));
   });
 
   it("login sets user and token", async () => {
@@ -34,6 +35,8 @@ describe("AuthContext", () => {
       () => React.useContext(AuthContext),
       { wrapper: AuthProvider }
     );
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
     await act(async () => {
       await result.current.login({ username: "testuser" }, "fake-token");
@@ -52,6 +55,8 @@ describe("AuthContext", () => {
     const { result } = renderHook(() => React.useContext(AuthContext), {
       wrapper: AuthProvider,
     });
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
     await act(async () => {
       await result.current.login({ username: "testuser" }, "fake-token");
