@@ -6,7 +6,7 @@ import { AuthContext } from "../AuthContext";
   100% Manual
 */
 
-export function getBuddyValues() {
+export function useBuddyValues() {
   const [data, setData] = useState(null);
   const { token } = useContext(AuthContext);
   React.useEffect(() => {

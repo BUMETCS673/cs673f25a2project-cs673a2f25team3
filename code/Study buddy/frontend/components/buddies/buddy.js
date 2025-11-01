@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import { homesStyles } from "../../styles/homeStyle";
-import { getBuddyValues } from "../../dataInterface/buddyValues";
+import { useBuddyValues } from "../../dataInterface/buddyValues";
 import { Cat } from "./cat";
 import { Deer } from "./deer";
 
@@ -10,7 +10,7 @@ import { Deer } from "./deer";
 */
 
 export function HomeBuddy() {
-    const buddyDetails = {...getBuddyValues()};
+    const buddyDetails = {...useBuddyValues()};
 
     var buddy;
     switch (buddyDetails.buddyType) {
