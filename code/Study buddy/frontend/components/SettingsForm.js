@@ -17,7 +17,7 @@ export const exportForTesting = {
 
 // Implimented settings: goal
 export default function SettingsForm() {
-  const [goalInHours, setGoalInHours] = useState(0);
+  const [goalInMinutes, setGoalInMinutes] = useState(0);
 	const [isChecked, setChecked] = useState("true");
   const { token } = useContext(AuthContext);
 
@@ -31,7 +31,7 @@ export default function SettingsForm() {
     })
     .then(res => res.json())
     .then(data => {
-      setGoalInHours(msToHours(data.goal));
+      setGoalInMinutes(data.goal);
     })
     .catch(err => {
       console.error("Failed to fetch goal", err);
@@ -41,7 +41,7 @@ export default function SettingsForm() {
   const submit = () => {
     // use this function to move useState variables into backend / local storage
     var allIsValid = true;
-    if (!isGoalValid(goalInHours)) {
+    if (!isGoalValid(goalInMinutes)) {
       console.log('Goal is not valid value');
       allIsValid = false;
     }
@@ -55,7 +55,7 @@ export default function SettingsForm() {
         },
         body: JSON.stringify({
           theme: 'light',
-          goal: hoursToMs(goalInHours)
+          goal: goalInMinutes
         })
       })
       .catch(err => {
@@ -67,7 +67,7 @@ export default function SettingsForm() {
   return (
     <>
 			<CustomCheckbox text="Sound On" isChecked={isChecked} setChecked={setChecked} />
-			<NumericalInput text="Goal in hours per week" value={goalInHours} setValue={setGoalInHours} />
+			<NumericalInput text="Goal in minutes per week" value={goalInMinutes} setValue={setGoalInMinutes} />
 			<SubmitButton text="Save" submit={submit} />
     </>
   );

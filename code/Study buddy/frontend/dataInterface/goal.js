@@ -1,7 +1,6 @@
 import { API_BASE_URL } from "@env";
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthContext";
-import { hoursToMs } from "../util/calculateMs";
 
 /*
   50% AI
@@ -9,7 +8,7 @@ import { hoursToMs } from "../util/calculateMs";
 */
 
 export function getGoal() {
-  const [goalMs, setGoalMs] = useState(null);
+  const [goalMin, setGoalMin] = useState(null);
   const { token } = useContext(AuthContext);
   React.useEffect(() => {
     fetch(`${API_BASE_URL}/settings/me`, {
@@ -21,13 +20,13 @@ export function getGoal() {
     })
       .then(res => res.json())
       .then(data => {
-        setGoalMs(data.goal);
+        setGoalMin(data.goal);
       })
       .catch(err => {
         console.error("Failed to fetch goal", err);
       });
   }, []);
 
-  if (goalMs !== null) return goalMs;
-  return hoursToMs(5);
+  if (goalMin !== null) return goalMin;
+  return 5*60;
 }
