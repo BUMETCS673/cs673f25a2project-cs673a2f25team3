@@ -28,6 +28,7 @@ export default function Home() {
   return (
     <Background>
       <View style={styles.card}>
+        <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
         <HomeBuddy />
         <NavigationButton text="Start Studying!" link="SelectStudyTime" />
         <NavigationButton text="Game Menu" link="GameMenu" />

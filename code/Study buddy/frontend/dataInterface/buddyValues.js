@@ -7,7 +7,10 @@ import { AuthContext } from "../AuthContext";
 */
 
 export function useBuddyValues() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({
+          status: 4,
+          exp: 0
+        });
   const { token } = useContext(AuthContext);
   React.useEffect(() => {
     fetch(`${API_BASE_URL}/buddy/me`, {
@@ -22,18 +25,14 @@ export function useBuddyValues() {
         setData(data);
       })
       .catch(err => {
-        console.error("Failed to fetch buddy", err);
       });
   }, []);
 
-  if (data !== null) {
-    return {
+  return {
 			buddyType: "deer",
 			outlineColor: "black",
 			insideColor: "#8B4513",
 			status: data.status,
 			size: 100 + data.exp / 2
     }
-  };
-  return {buddyType: "deer", outlineColor: "black", insideColor: "#8B4513", status: 4, size: 200};
 }
