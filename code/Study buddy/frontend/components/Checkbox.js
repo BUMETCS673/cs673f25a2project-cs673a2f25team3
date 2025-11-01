@@ -4,7 +4,8 @@ import { Checkbox } from 'react-native-paper';
 import { useState } from 'react';
 
 /*
-  30% framework
+  25% framework
+  5% AI
   70% manual
 */
 
@@ -12,21 +13,19 @@ import { useState } from 'react';
 // parameters: 
 //    text: text next to the checkbox
 // example: <CustomCheckbox text="Sound On" />
-export const CustomCheckbox = (props) => {
-    const [isChecked, setChecked] = useState(false);
-    
+export const CustomCheckbox = ({text, isChecked, setChecked}) => {
     return(
         <View style={styles.checkboxOutline}>
             <Checkbox.Item 
                 style={styles.checkbox} 
                 status={isChecked ? 'checked' : 'unchecked'}
                 onPress={() => {
-                    setChecked(!isChecked);
+                    setChecked(prev => !prev);
                 }}
                 color='white'
                 uncheckedColor='white'
 
-                label={props.text}
+                label={text}
                 labelStyle={styles.checkboxText}
                 position='leading'
             />

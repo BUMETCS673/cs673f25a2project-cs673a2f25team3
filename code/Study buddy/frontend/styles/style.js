@@ -2,6 +2,11 @@ import { StyleSheet } from "react-native";
 import { borderRadius, fonts, padding } from "./base";
 
 /*
+  50% AI
+  50% Manual
+*/
+
+/*
   100% unified styles for the app
   - combines original style.js + LoginForm styles
 */
@@ -47,6 +52,13 @@ export const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     marginBottom: padding.md,
+  },
+  cardH2: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: fonts.md,
+    fontWeight: 'bold',
+    marginBottom: padding.md
   },
   paragraph: {
     fontSize: fonts.md,
@@ -102,6 +114,16 @@ export const styles = StyleSheet.create({
     right: 10,
     zIndex: 1,
   },
+  inputBox: {
+  },
+  inputText: {
+    fontSize: fonts.md,
+    color:'white'
+  },
+  inputOutline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 
   // ====== Buttons ======
   button: {
@@ -125,6 +147,21 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     textAlignVertical: "center",
     margin: padding.xs,
+  },
+  submitButton: {
+    backgroundColor: 'white', 
+    color: 'black',
+    fontWeight: 'bold', 
+    borderWidth: 2,
+    borderColor: 'transparent',
+    paddingVertical: padding.sm,
+    paddingHorizontal: padding.md,
+    borderRadius: borderRadius.sm,
+    cursor: 'pointer',
+    fontSize: fonts.lg,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    margin: padding.xs
   },
 
   // ====== Bottom Row ======
@@ -167,5 +204,5 @@ export const styles = StyleSheet.create({
     margin: padding.sm,
     fontSize: fonts.md,
     color: "white",
-  },
+  }
 });
