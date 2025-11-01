@@ -36,7 +36,7 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL UNIQUE,
       theme TEXT DEFAULT 'light',
-      goal INTEGER DEFAULT 18000000,
+      goal INTEGER DEFAULT 300, --in mins
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
