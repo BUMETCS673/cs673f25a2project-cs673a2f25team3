@@ -1,29 +1,64 @@
 /*
-  100% AI generate
+  Jest setup for Expo + React Native
 */
+require('jest-fetch-mock').enableMocks();
 
-import mockAsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock';
+// Provide a default API base to avoid 'API_BASE_URL is not defined' in tests
+if (typeof globalThis.API_BASE_URL === 'undefined') {
+  globalThis.API_BASE_URL = 'http://localhost:3000';
+}
 
-// Mock AsyncStorage globally
-jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+);
 
-// Mock expo-linear-gradient
-jest.mock('expo-linear-gradient', () => {
+jest.mock('expo-linear-gradient', () => ({
+  LinearGradient: ({ children }) => children,
+}));
+
+jest.mock('expo-modules-core', () => ({
+  EventEmitter: class {
+    addListener() {}
+    removeAllListeners() {}
+  },
+}));
+
+// React Navigation helpers: include reset()
+jest.mock('@react-navigation/native', () => {
+  const actualNav = jest.requireActual('@react-navigation/native');
   return {
-    LinearGradient: ({ children }) => children,
+    ...actualNav,
+    useNavigation: () => ({
+      navigate: jest.fn(),
+      goBack: jest.fn(),
+      reset: jest.fn(),   // <- add reset to fix Home test
+    }),
+    useRoute: () => ({ params: {} }),
   };
 });
 
-// Mock expo-modules-core EventEmitter
-jest.mock('expo-modules-core', () => {
-  return {
-    EventEmitter: class {
-      addListener() {}
-      removeAllListeners() {}
-    },
-  };
-});
+// Silence RN Animated warnings (RN ≥0.81 compatible)
+try {
+  const helperPath = require.resolve('react-native/Libraries/Animated/NativeAnimatedHelper');
+  jest.mock(helperPath);
+} catch (e) {
+  try {
+    const altPath = require.resolve('react-native/Libraries/Animated/NativeAnimatedModule');
+    jest.mock(altPath);
+  } catch (e2) {
+    // ignore if none exist
+  }
+}
 
-// Mock fetch globally
-import fetchMock from 'jest-fetch-mock';
-fetchMock.enableMocks();
+// Optional: mute act() warning noise in console.error to keep CI logs clean
+const origError = console.error;
+console.error = (...args) => {
+  const msg = args[0];
+  if (typeof msg === 'string' && msg.includes('not wrapped in act(')) return;
+  origError(...args);
+};
+
+afterEach(() => {
+  jest.clearAllMocks();
+  jest.useRealTimers();
+});
