@@ -7,7 +7,7 @@ import { AuthContext } from '../AuthContext';
   50% manual
 */
 
-export function getStudySessions() {
+export function useStudySessions() {
   const [studySessions, setStudySessions] = useState(null);
   const { token } = useContext(AuthContext);
   React.useEffect(() => {

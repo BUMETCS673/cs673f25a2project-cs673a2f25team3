@@ -1,12 +1,11 @@
-import { minutesToMs } from '../util/calculateMs';
-import { getGoal } from './goal';
-import { getTimeStudiedInWeek } from './timeStudied';
+import { useGoal } from './goal';
+import { useTimeStudiedInWeek } from './timeStudied';
 
 /*
 	50% framework
 	50% manual
 */
 
-export function getTimeLeftInGoal() {
-	return Math.max(0, getGoal() - getTimeStudiedInWeek(Date.now()));
+export function useTimeLeftInGoal() {
+	return Math.max(0, useGoal() - useTimeStudiedInWeek(Date.now()));
 }

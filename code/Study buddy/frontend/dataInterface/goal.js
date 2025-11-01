@@ -7,7 +7,7 @@ import { AuthContext } from "../AuthContext";
   50% Manual
 */
 
-export function getGoal() {
+export function useGoal() {
   const [goalMin, setGoalMin] = useState(null);
   const { token } = useContext(AuthContext);
   React.useEffect(() => {
