@@ -38,4 +38,4 @@ function updateEnergy(userId, energy, callback) {
   });
 }
 
-module.exports = { getBuddy, createBuddy, updateEnergy, getStatusByEnergy, updateExp, updateStatus };
+module.exports = { getBuddy, createBuddy, updateEnergy, updateExp, updateStatus };
