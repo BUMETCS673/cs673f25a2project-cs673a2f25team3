@@ -38,12 +38,4 @@ function updateEnergy(userId, energy, callback) {
   });
 }
 
-function getStatusByEnergy(energy) {
-  if (energy >= 75) return 4;
-  if (energy >= 50) return 3;
-  if (energy >= 25) return 2;
-  if (energy >= 1) return 1;
-  return 0;
-}
-
 module.exports = { getBuddy, createBuddy, updateEnergy, getStatusByEnergy, updateExp, updateStatus };
