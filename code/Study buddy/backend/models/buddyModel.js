@@ -16,9 +16,8 @@ function createBuddy(userId, name, callback) {
 }
 
 function updateExp(userId, exp, callback) {
-  const last_updated = Date.now();
-  const query = `UPDATE study_buddies SET exp = ?, last_updated = ? WHERE user_id = ?`;
-  db.run(query, [exp, last_updated, userId], function(err) {
+  const query = `UPDATE study_buddies SET exp = exp + ? WHERE user_id = ?`;
+  db.run(query, [exp, userId], function(err) {
     callback(err);
   });
 }

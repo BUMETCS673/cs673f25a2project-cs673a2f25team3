@@ -423,6 +423,21 @@ const footerMessage = isComplete
         throw new Error(data?.error || "Failed to record study session.");
       }
 
+      const expResponse = await fetch(`${API_BASE_URL}/buddy/exp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        // update to correct exp
+        body: JSON.stringify({exp: payload.duration}),
+      });
+
+      if (!expResponse.ok) {
+        const expData = await expResponse.json().catch(() => ({}));
+        throw new Error(expData?.error || "Failed to record study session.");
+      }
+      
       setStatus("complete");
       await clearProgressRecord();
     } catch (err) {

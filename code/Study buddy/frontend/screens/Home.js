@@ -7,11 +7,11 @@ import { View, Text } from 'react-native';
 import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
-import { getGoal } from '../dataInterface/goal';
-import { createClock } from '../util/formatString';
-import { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { AuthContext } from '../AuthContext'; 
 import { useNavigation } from '@react-navigation/native';
+import { API_BASE_URL } from "@env";
+
 
 /*
   40% framework
@@ -22,6 +22,21 @@ import { useNavigation } from '@react-navigation/native';
 export default function Home() {
   const { logout } = useContext(AuthContext);
   const navigation = useNavigation();
+  const { token } = useContext(AuthContext);
+
+  React.useEffect(() => {
+    fetch(`${API_BASE_URL}/buddy/me`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`, 
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({name: "buddy"})
+    })
+    .catch(err => {
+      console.error("Failed to fetch goal", err);
+    });
+  }, []);
 
   const handleLogout = () => {
     logout(); // clear login state
