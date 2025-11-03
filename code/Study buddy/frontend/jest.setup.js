@@ -1,3 +1,5 @@
+/* global jest */
+
 /*
   Jest setup for Expo + React Native
 */
