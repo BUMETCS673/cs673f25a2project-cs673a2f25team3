@@ -24,7 +24,7 @@ function updateExp(userId, exp, callback) {
 
 function updateStatus(userId, status, callback) {
   const last_updated = Date.now();
-  const query = `UPDATE study_buddies SET status = ?, last_updated = ? WHERE user_id = ?`;
+  const query = `UPDATE study_buddies SET status = status + ?, last_updated = ? WHERE user_id = ?`;
   db.run(query, [status, last_updated, userId], function(err) {
     callback(err);
   });

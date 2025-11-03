@@ -7,6 +7,6 @@ import { getTimeStudiedInWeek } from './timeStudied';
 	50% manual
 */
 
-export function getTimeLeftInGoal() {
-	return Math.max(0, getGoal() - getTimeStudiedInWeek(Date.now()));
+export async function getTimeLeftInGoal(token) {
+	return Math.max(0, await getGoal(token) - await getTimeStudiedInWeek(Date.now(), token));
 }
