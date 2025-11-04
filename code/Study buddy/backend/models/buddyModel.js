@@ -30,12 +30,4 @@ function updateStatus(userId, status, callback) {
   });
 }
 
-function updateEnergy(userId, energy, callback) {
-  const status = getStatusByEnergy(energy);
-  const query = `UPDATE study_buddies SET energy = ?, status = ? WHERE user_id = ?`;
-  db.run(query, [energy, status, userId], function(err) {
-    callback(err);
-  });
-}
-
-module.exports = { getBuddy, createBuddy, updateEnergy, updateExp, updateStatus };
+module.exports = { getBuddy, createBuddy, updateExp, updateStatus };
