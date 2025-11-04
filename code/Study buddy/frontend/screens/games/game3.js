@@ -12,60 +12,52 @@ import { Background } from "../../components/Background";
 
 const { width: W, height: H } = Dimensions.get("window");
 
-// Constants
+// CONSTANTS
 const PLAYER_SIZE = 25;
 const ENEMY_SIZE = 14;
 const ENEMY_SPEED = 1;
-const DIRECTION_SPAN = Math.PI / 12;
+const DIRECTION_SPAN = Math.PI / 12; // ±15°
 const FPS = 60;
-const MIN_DELAY = 2 * FPS;
-const MAX_DELAY = 4 * FPS;
+const MIN_DELAY = 2 * FPS; // 2s between waves
+const MAX_DELAY = 4 * FPS; // 4s between waves
 const MIN_ENEMIES = 1;
 const MAX_ENEMIES = 12;
-
-// Visual
+const MIN_ENEMY_INTERVAL = 0.1 * FPS; // 0.1s between enemies
+const MAX_ENEMY_INTERVAL = 0.4 * FPS; // 0.4s between enemies
 const ROTATION_SPEED = 0.07;
 const BASE_RADIUS = 50;
 const MAX_RADIUS = 270;
 const MIN_RADIUS = 90;
-const ARC_LIMIT = (150 * Math.PI) / 180;
+const ARC_LIMIT = (150 * Math.PI) / 180; // 150° attack limit
+const FRAME_INTERVAL = 1000 / FPS;
 
-// Wave spawn timing
-const MIN_ENEMY_INTERVAL = 0.1 * FPS;
-const MAX_ENEMY_INTERVAL = 0.4 * FPS;
-
-export default function GameArcFire() {
-  // Frame setup
-  const [frameH, setFrameH] = useState(Math.min(W, H) - 80);
+export default function Game3() {
   const [frameW, setFrameW] = useState(Math.min(W, H) - 80);
-
-  const player = useRef({ x: frameW / 2, y: frameH / 2 });
-  const enemies = useRef([]);
-  const ticks = useRef(0);
-  const waveAngle = useRef(Math.random() * Math.PI * 2);
-  const nextWaveTick = useRef(0);
-  const nextEnemyTick = useRef(0);
+  const [frameH, setFrameH] = useState(Math.min(W, H) - 80);
   const [score, setScore] = useState(0);
   const [over, setOver] = useState(false);
   const [, forceRender] = useState(0);
 
-  // Aim + Arc visual
+  // Refs for game state
+  const ticks = useRef(0);
+  const enemies = useRef([]);
+  const waveAngle = useRef(Math.random() * Math.PI * 2);
+  const nextWaveTick = useRef(0);
+  const nextEnemyTick = useRef(0);
+  const spawning = useRef(false);
+  const enemiesSpawned = useRef(0);
+  const enemiesTarget = useRef(0);
+
+  // Player + aim state
   const aimAngle = useRef(0);
   const lockedAngle = useRef(null);
   const holding = useRef(false);
   const arcVisible = useRef(false);
   const currentLength = useRef(BASE_RADIUS);
 
-  // Wave control
-  const spawning = useRef(false);
-  const enemiesSpawned = useRef(0);
-  const enemiesTarget = useRef(0);
-
-  // Main game Loop
+  // Main Game Loop
   useEffect(() => {
-    let raf;
-
-    const loop = () => {
+    const timer = setInterval(() => {
       if (over) return;
       ticks.current++;
       const now = ticks.current;
@@ -74,13 +66,13 @@ export default function GameArcFire() {
       aimAngle.current += ROTATION_SPEED;
       if (aimAngle.current > Math.PI * 2) aimAngle.current -= Math.PI * 2;
 
-      // Handle holding + length
+      // Handle holding arc
       if (holding.current && lockedAngle.current !== null) {
         let diff = Math.abs(aimAngle.current - lockedAngle.current);
         if (diff > Math.PI) diff = 2 * Math.PI - diff;
 
         if (diff >= ARC_LIMIT) {
-          triggerAttack(); // auto-release
+          triggerAttack(); // auto release
         } else {
           const ratio = diff / ARC_LIMIT;
           currentLength.current =
@@ -88,10 +80,10 @@ export default function GameArcFire() {
         }
       }
 
-      // Wave spawning
+      // Start new wave
       if (!spawning.current && now >= nextWaveTick.current) startWave();
 
-      // Spawn enemies one by one
+      // Spawn enemies in wave
       if (
         spawning.current &&
         enemiesSpawned.current < enemiesTarget.current &&
@@ -111,12 +103,9 @@ export default function GameArcFire() {
       }
 
       // Move enemies
-      enemies.current.forEach((e) => {
-        e.x += e.vx;
-        e.y += e.vy;
-      });
+      moveEnemies();
 
-      // Collision check
+      // Collision detection
       const cx = frameW / 2;
       const cy = frameH / 2;
       const newEnemies = [];
@@ -132,45 +121,58 @@ export default function GameArcFire() {
       enemies.current = newEnemies;
 
       forceRender((t) => (t + 1) % 10000);
-      raf = requestAnimationFrame(loop);
-    };
+    }, FRAME_INTERVAL);
 
-    const startWave = () => {
-      waveAngle.current = Math.random() * Math.PI * 2;
-      enemiesSpawned.current = 0;
-      enemiesTarget.current = Math.floor(
-        randRange(MIN_ENEMIES, MAX_ENEMIES + 1)
-      );
-      spawning.current = true;
-      nextEnemyTick.current = ticks.current; // start immediately
-    };
-
-    const spawnEnemy = () => {
-      const cx = frameW / 2;
-      const cy = frameH / 2;
-      const baseA = waveAngle.current;
-      const a = baseA + (Math.random() - 0.5) * DIRECTION_SPAN;
-      const radius = frameW / 2 + 10;
-
-      const x = cx + radius * Math.cos(a);
-      const y = cy + radius * Math.sin(a);
-      const dx = cx - x;
-      const dy = cy - y;
-      const len = Math.sqrt(dx * dx + dy * dy);
-      enemies.current.push({
-        x,
-        y,
-        vx: (dx / len) * ENEMY_SPEED,
-        vy: (dy / len) * ENEMY_SPEED,
-      });
-    };
-
-    nextWaveTick.current = 0;
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
+    return () => clearInterval(timer);
   }, [frameW, frameH, over]);
 
-  // Input handlers
+  const startWave = () => {
+    waveAngle.current = Math.random() * Math.PI * 2;
+    enemiesSpawned.current = 0;
+    enemiesTarget.current = Math.floor(randRange(MIN_ENEMIES, MAX_ENEMIES + 1));
+    spawning.current = true;
+    nextEnemyTick.current = ticks.current; // start immediately
+  };
+
+  const spawnEnemy = () => {
+    const cx = frameW / 2;
+    const cy = frameH / 2;
+    const baseA = waveAngle.current;
+    const a = baseA + (Math.random() - 0.5) * DIRECTION_SPAN;
+    const radius = frameW / 2 + 10;
+
+    const x = cx + radius * Math.cos(a);
+    const y = cy + radius * Math.sin(a);
+    const dx = cx - x;
+    const dy = cy - y;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    enemies.current.push({
+      x,
+      y,
+      vx: (dx / len) * ENEMY_SPEED,
+      vy: (dy / len) * ENEMY_SPEED,
+    });
+  };
+
+  const moveEnemies = () => {
+    const cx = frameW / 2;
+    const cy = frameH / 2;
+    const maxDist = frameW / 2 + 40;
+    const newEnemies = [];
+
+    enemies.current.forEach((e) => {
+      e.x += e.vx;
+      e.y += e.vy;
+      const dx = e.x - cx;
+      const dy = e.y - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < maxDist) newEnemies.push(e);
+    });
+
+    enemies.current = newEnemies;
+  };
+
+  // INPUT HANDLING
   const onPressIn = () => {
     if (over) return;
     holding.current = true;
@@ -184,7 +186,6 @@ export default function GameArcFire() {
     triggerAttack();
   };
 
-  // Attack
   const triggerAttack = () => {
     if (!lockedAngle.current) return;
     const cx = frameW / 2;
@@ -214,9 +215,7 @@ export default function GameArcFire() {
 
     enemies.current = newEnemies;
 
-    // Combo scoring system
     if (kills > 0) {
-      // 1 + 2 + ... + n
       const comboScore = (kills * (kills + 1)) / 2;
       setScore((s) => s + comboScore);
     }
@@ -227,7 +226,6 @@ export default function GameArcFire() {
     currentLength.current = BASE_RADIUS;
   };
 
-  // Reset
   const reset = () => {
     enemies.current = [];
     ticks.current = 0;
@@ -241,9 +239,8 @@ export default function GameArcFire() {
     currentLength.current = BASE_RADIUS;
   };
 
-  const p = player.current;
-  const cx = p.x;
-  const cy = p.y;
+  const cx = frameW / 2;
+  const cy = frameH / 2;
   const radius = currentLength.current;
 
   return (
@@ -254,7 +251,6 @@ export default function GameArcFire() {
           const { width, height } = e.nativeEvent.layout;
           setFrameW(width);
           setFrameH(height);
-          player.current = { x: width / 2, y: height / 2 };
         }}
       >
         <Pressable onPressIn={onPressIn} onPressOut={onPressOut} style={{ flex: 1 }}>
@@ -262,7 +258,7 @@ export default function GameArcFire() {
           <View
             style={[
               styles.player,
-              { left: p.x - PLAYER_SIZE / 2, top: p.y - PLAYER_SIZE / 2 },
+              { left: cx - PLAYER_SIZE / 2, top: cy - PLAYER_SIZE / 2 },
             ]}
           />
 
@@ -279,7 +275,7 @@ export default function GameArcFire() {
             ]}
           />
 
-          {/* Locked mark */}
+          {/* Locked aim indicator */}
           {lockedAngle.current !== null && (
             <View
               style={[
@@ -288,21 +284,9 @@ export default function GameArcFire() {
                   left: cx,
                   top: cy,
                   width: radius,
-                  transform: [{ rotate: `${(lockedAngle.current * 180) / Math.PI}deg` }],
-                },
-              ]}
-            />
-          )}
-
-          {/* Arc ring visual */}
-          {arcVisible.current && lockedAngle.current !== null && (
-            <View
-              style={[
-                styles.arcCurve,
-                {
-                  left: cx - MAX_RADIUS,
-                  top: cy - MAX_RADIUS,
-                  transform: [{ rotate: `${(lockedAngle.current * 180) / Math.PI}deg` }],
+                  transform: [
+                    { rotate: `${(lockedAngle.current * 180) / Math.PI}deg` },
+                  ],
                 },
               ]}
             />
@@ -343,7 +327,7 @@ function randRange(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-// Styles
+// STYLES
 const styles = StyleSheet.create({
   frame: {
     margin: 12,
@@ -374,14 +358,6 @@ const styles = StyleSheet.create({
     height: 2,
     backgroundColor: "#00b4ff",
     transformOrigin: "left center",
-  },
-  arcCurve: {
-    position: "absolute",
-    width: MAX_RADIUS * 2,
-    height: MAX_RADIUS * 2,
-    borderWidth: 2,
-    borderColor: "rgba(0, 180, 255, 0.3)",
-    borderRadius: MAX_RADIUS,
   },
   enemy: {
     position: "absolute",
