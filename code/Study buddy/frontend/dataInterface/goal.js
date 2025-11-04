@@ -28,12 +28,8 @@ export async function getGoal(token) {
   return hoursToMs(5);
 }
 
-export async function goalCompleted(date, token) {
+export async function goalCompleted(date = Date.now(), token) {
   return getTimeLeftInGoal(date, token) <= 0;
-}
-
-export async function goalCompleted(token) {
-  return goalCompleted(Date.now(), token);
 }
 
 async function getTimeLeftInGoal(date, token) {

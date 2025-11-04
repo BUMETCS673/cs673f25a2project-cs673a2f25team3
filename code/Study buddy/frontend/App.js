@@ -9,7 +9,6 @@ import { AuthProvider, AuthContext } from "./AuthContext";
 import { useContext } from "react";
 
 import Home from "./screens/Home";
-import SelectStudyTime from "./screens/SelectStudyTime";
 import GameMenu from "./screens/GameMenu";
 import Statistics from "./screens/Statistics";
 import Settings from "./screens/Settings";
@@ -28,7 +27,6 @@ function AppNavigator() {
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="GameMenu" component={GameMenu} />
-      <Stack.Screen name="SelectStudyTime" component={SelectStudyTime} />
       <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="Statistics" component={Statistics} />
       <Stack.Screen name="Studying" component={Studying} />
