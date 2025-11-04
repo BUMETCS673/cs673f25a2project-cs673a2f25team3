@@ -33,6 +33,7 @@ export default [
       globals: {
         ...globals.es2021,
         ...globals.node,
+        ...globals.jest,
         __DEV__: true, // Expo global
       },
     },
