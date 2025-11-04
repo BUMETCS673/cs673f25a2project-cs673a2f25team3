@@ -60,7 +60,7 @@ export default function Home() {
       })
       .then(res => res.json())
       .then(data => {
-        setStatus(data.status);
+        setStatus(data.exp);
       })
       .catch(err => {
         console.error("Failed to fetch goal", err);

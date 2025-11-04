@@ -15,8 +15,9 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContext } from "../AuthContext";
 import { API_BASE_URL } from "@env";
-import { isSameWeek } from "../util/compareTimes";
 import { getTimeLeftInGoal } from "../dataInterface/timeLeft";
+import { increaseExp } from "../dataInterface/exp";
+import { changeStatus, getStatus } from "../dataInterface/status";
 
 const PRESET_MINUTES = [25, 45, 60];
 const TIMER_STORAGE_KEY = "@StudyTimer:state";
@@ -426,51 +427,14 @@ const footerMessage = isComplete
         throw new Error(data?.error || "Failed to record study session.");
       }
 
-      const expResponse = await fetch(`${API_BASE_URL}/buddy/exp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({exp: payload.duration}),
-      });
-
-      if (!expResponse.ok) {
-        const expData = await expResponse.json().catch(() => ({}));
-        throw new Error(expData?.error || "Failed to update exp.");
-      }
-
-      var buddyStats;
-      await fetch(`${API_BASE_URL}/buddy/me`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`, 
-          'Content-Type': 'application/json',
-        },
-      })
-      .then(res => res.json())
-      .then(data => {
-        buddyStats = data;
-      });
-
+      increaseExp(payload.duration, token);
       const goalNowFinished = await getTimeLeftInGoal(token) <= 0;
-      if (buddyStats.status < 4 && 
+      
+      if (await getStatus() < 4 && 
         !goalStartedFinished &&
         goalNowFinished
       ) {
-        const statusResponse = await fetch(`${API_BASE_URL}/buddy/status`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({status: 1}),
-        });
-
-        if (!statusResponse.ok) {
-          const statusData = await statusResponse.json().catch(() => ({}));
-          throw new Error(statusData?.error || "Failed to update status.");
-        }
+        changeStatus(1, token);
       }
       
       setStatus("complete");
