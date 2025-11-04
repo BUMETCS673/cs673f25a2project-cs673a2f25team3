@@ -1,7 +1,6 @@
 import { API_BASE_URL } from "@env";
-import React, { useState, useContext } from "react";
-import { AuthContext } from "../AuthContext";
 import { hoursToMs } from "../util/calculateMs";
+import { getTimeStudiedInWeek } from './timeStudied';
 
 /*
   50% AI
@@ -27,4 +26,16 @@ export async function getGoal(token) {
 
   if (goalMs !== null) return goalMs;
   return hoursToMs(5);
+}
+
+export async function goalCompleted(date, token) {
+  return getTimeLeftInGoal(date, token) <= 0;
+}
+
+export async function goalCompleted(token) {
+  return goalCompleted(Date.now(), token);
+}
+
+async function getTimeLeftInGoal(date, token) {
+	return Math.max(0, await getGoal(token) - await getTimeStudiedInWeek(date, token));
 }

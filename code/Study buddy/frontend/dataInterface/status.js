@@ -1,10 +1,14 @@
 import { API_BASE_URL } from "@env";
+import { isSameWeek } from "../util/compareTimes";
+import { goalCompleted } from "./goal";
+import { weeksToMs } from "../util/calculateMs";
 
 /*
   100% Manual
 */
 
 export async function changeStatus(status, token) {
+	updateStatus(token);
   const response = await fetch(`${API_BASE_URL}/buddy/status`, {
     method: "POST",
     headers: {
@@ -21,8 +25,9 @@ export async function changeStatus(status, token) {
 }
 
 export async function getStatus(token) {
+	updateStatus(token);
 	var status;
-	const response = await fetch(`${API_BASE_URL}/buddy/me`, {
+	await fetch(`${API_BASE_URL}/buddy/me`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${token}`, 
@@ -38,4 +43,38 @@ export async function getStatus(token) {
 	});
 
 	return status;
+}
+
+export async function updateStatus(token) {
+	var last_updated;
+	await fetch(`${API_BASE_URL}/buddy/me`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `Bearer ${token}`, 
+			'Content-Type': 'application/json',
+		},
+	})
+	.then(res => res.json())
+	.then(data => {
+		last_updated = data.last_updated;
+	})
+	.catch(err => {
+		console.error("Failed to fetch data", err);
+	});
+
+	if (!isSameWeek(last_updated, Date.now()) && !goalCompleted(Date.now() - weeksToMs(1))) {
+		const response = await fetch(`${API_BASE_URL}/buddy/status`, {
+			method: "POST",
+			headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify({status: -1}),
+		});
+
+		if (!response.ok) {
+			const data = await response.json().catch(() => ({}));
+			throw new Error(data?.error || "Failed to update status.");
+		}
+	}
 }

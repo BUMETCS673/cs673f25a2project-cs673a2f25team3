@@ -15,9 +15,9 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContext } from "../AuthContext";
 import { API_BASE_URL } from "@env";
-import { getTimeLeftInGoal } from "../dataInterface/timeLeft";
 import { increaseExp } from "../dataInterface/exp";
 import { changeStatus, getStatus } from "../dataInterface/status";
+import { goalCompleted } from "../dataInterface/goal";
 
 const PRESET_MINUTES = [25, 45, 60];
 const TIMER_STORAGE_KEY = "@StudyTimer:state";
@@ -412,7 +412,7 @@ const footerMessage = isComplete
     setIsSubmitting(true);
     setError("");
     try {
-      const goalStartedFinished = await getTimeLeftInGoal(token) <= 0;
+      const goalStartedFinished = await goalCompleted(token);
       const response = await fetch(`${API_BASE_URL}/study/me`, {
         method: "POST",
         headers: {
@@ -428,7 +428,7 @@ const footerMessage = isComplete
       }
 
       increaseExp(payload.duration, token);
-      const goalNowFinished = await getTimeLeftInGoal(token) <= 0;
+      const goalNowFinished = await goalCompleted(token);
       
       if (await getStatus() < 4 && 
         !goalStartedFinished &&
