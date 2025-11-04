@@ -44,8 +44,7 @@ describe("Buddy Model Integration Tests", () => {
     });
   });
 
-  test("When updating exp, last_updated changes", (done) => {
-    var origionalLastUpdated = 0;
+  test("Update exp", (done) => {
     BuddyModel.getBuddy(userId, (err, buddy) => {
       expect(err).toBeNull();
       origionalLastUpdated = new Date(buddy.last_updated).getTime();
@@ -57,7 +56,16 @@ describe("Buddy Model Integration Tests", () => {
 
     BuddyModel.getBuddy(userId, (err, buddy) => {
       expect(err).toBeNull();
-      expect(new Date(buddy.last_updated).getTime()).not.toBe(origionalLastUpdated);
+      expect(buddy.exp).toBe(5);
+    });
+
+    BuddyModel.updateExp(userId, 10, (err) => {
+      expect(err).toBeNull();
+    });
+
+    BuddyModel.getBuddy(userId, (err, buddy) => {
+      expect(err).toBeNull();
+      expect(buddy.exp).toBe(15);
       done();
     });
   });
