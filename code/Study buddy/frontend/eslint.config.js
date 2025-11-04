@@ -33,7 +33,6 @@ export default [
       globals: {
         ...globals.es2021,
         ...globals.node,
-        ...globals.jest,
         __DEV__: true, // Expo global
       },
     },
@@ -72,6 +71,7 @@ export default [
       parserOptions: { ecmaFeatures: { jsx: true } },
       globals: {
         ...globals.jest, // enables test, expect, describe, etc.
+        fetchMock: true
       },
     },
     rules: {
