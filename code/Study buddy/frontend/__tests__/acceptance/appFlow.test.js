@@ -122,7 +122,7 @@ describe('Acceptance Tests - App Flow', () => {
       await waitFor(() => expect(getByPlaceholderText('Enter your username')).toBeTruthy());
 
       // Mock network error
-      fetchMock.mockRejectOnce(new Error('Network error'));
+      fetchMock.mockRejectOnce(new Error('Something went wrong'));
 
       // Fill in login form
       fireEvent.changeText(getByPlaceholderText('Enter your username'), 'testuser');
@@ -174,7 +174,7 @@ describe('Acceptance Tests - App Flow', () => {
       return component;
     };
 
-    test('should navigate from Home to SelectStudyTime screen', async () => {
+    test('should navigate from Home to SelectStudyTime screen and back', async () => {
       const { getByText } = await setupLoggedInApp();
 
       // Navigate to SelectStudyTime
@@ -192,9 +192,19 @@ describe('Acceptance Tests - App Flow', () => {
       expect(getByText('30 Minutes')).toBeTruthy();
       expect(getByText('60 Minutes')).toBeTruthy();
       expect(getByText('Any Amount')).toBeTruthy();
+
+      // Navigate back to Home
+      await act(async () => {
+        fireEvent.press(getByText('Return Home'));
+      });
+
+      // Should be back on Home screen
+      await waitFor(() => {
+        expect(getByText('Home')).toBeTruthy();
+      });
     });
 
-    test('should navigate from Home to GameMenu screen', async () => {
+    test('should navigate from Home to GameMenu screen and back', async () => {
       const { getByText } = await setupLoggedInApp();
 
       // Navigate to GameMenu
@@ -206,9 +216,19 @@ describe('Acceptance Tests - App Flow', () => {
       await waitFor(() => {
         expect(getByText('Game Menu')).toBeTruthy();
       });
+
+      // Navigate back to Home
+      await act(async () => {
+        fireEvent.press(getByText('Return Home'));
+      });
+
+      // Should be back on Home screen
+      await waitFor(() => {
+        expect(getByText('Home')).toBeTruthy();
+      });
     });
 
-    test('should navigate from Home to Statistics screen', async () => {
+    test('should navigate from Home to Statistics screen and back', async () => {
       const { getByText } = await setupLoggedInApp();
 
       // Navigate to Statistics
@@ -220,9 +240,19 @@ describe('Acceptance Tests - App Flow', () => {
       await waitFor(() => {
         expect(getByText('Statistics')).toBeTruthy();
       });
+
+      // Navigate back to Home
+      await act(async () => {
+        fireEvent.press(getByText('Return Home'));
+      });
+
+      // Should be back on Home screen
+      await waitFor(() => {
+        expect(getByText('Home')).toBeTruthy();
+      });
     });
 
-    test('should navigate from Home to Settings screen', async () => {
+    test('should navigate from Home to Settings screen and back', async () => {
       const { getByText } = await setupLoggedInApp();
 
       // Navigate to Settings
@@ -237,21 +267,8 @@ describe('Acceptance Tests - App Flow', () => {
 
       // Verify settings content
       expect(getByText('Sound On')).toBeTruthy();
-    });
 
-    test('should return to Home from any screen using Return Home button', async () => {
-      const { getByText } = await setupLoggedInApp();
-
-      // Navigate to Settings
-      await act(async () => {
-        fireEvent.press(getByText('Settings'));
-      });
-
-      await waitFor(() => {
-        expect(getByText('Settings')).toBeTruthy();
-      });
-
-      // Return to Home
+      // Navigate back to Home
       await act(async () => {
         fireEvent.press(getByText('Return Home'));
       });
