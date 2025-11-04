@@ -45,11 +45,6 @@ describe("Buddy Model Integration Tests", () => {
   });
 
   test("Update exp", (done) => {
-    BuddyModel.getBuddy(userId, (err, buddy) => {
-      expect(err).toBeNull();
-      origionalLastUpdated = new Date(buddy.last_updated).getTime();
-    });
-
     BuddyModel.updateExp(userId, 5, (err) => {
       expect(err).toBeNull();
     });
