@@ -1,5 +1,6 @@
 /*
-  100% AI generated
+  98% AI generated
+  2% Manual
 */
 
 import React from 'react';
