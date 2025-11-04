@@ -25,6 +25,6 @@ export async function getStudySessions(token) {
     console.error("Failed to fetch goal", err);
   });
 
-  if (studySessions !== null) return studySessions;
+  if (Array.isArray(studySessions)) return studySessions;
   return [];
 }
