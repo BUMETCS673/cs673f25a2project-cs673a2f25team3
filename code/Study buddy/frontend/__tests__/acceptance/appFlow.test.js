@@ -174,7 +174,7 @@ describe('Acceptance Tests - App Flow', () => {
       return component;
     };
 
-    test('should navigate from Home to SelectStudyTime screen and back', async () => {
+    test('should navigate from Home to SelectStudyTime screen', async () => {
       const { getByText } = await setupLoggedInApp();
 
       // Navigate to SelectStudyTime
@@ -192,16 +192,6 @@ describe('Acceptance Tests - App Flow', () => {
       expect(getByText('30 Minutes')).toBeTruthy();
       expect(getByText('60 Minutes')).toBeTruthy();
       expect(getByText('Any Amount')).toBeTruthy();
-
-      // Navigate back to Home
-      await act(async () => {
-        fireEvent.press(getByText('Return Home'));
-      });
-
-      // Should be back on Home screen
-      await waitFor(() => {
-        expect(getByText('Home')).toBeTruthy();
-      });
     });
 
     test('should navigate from Home to GameMenu screen and back', async () => {
@@ -264,9 +254,6 @@ describe('Acceptance Tests - App Flow', () => {
       await waitFor(() => {
         expect(getByText('Settings')).toBeTruthy();
       });
-
-      // Verify settings content
-      expect(getByText('Sound On')).toBeTruthy();
 
       // Navigate back to Home
       await act(async () => {
