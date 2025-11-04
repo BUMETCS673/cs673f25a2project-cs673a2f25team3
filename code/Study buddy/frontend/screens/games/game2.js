@@ -22,8 +22,8 @@ const MAX_BAMBOOS = 5; // maximum number of bamboos at once
 
 export default function Game2() {
   // Game frame dimensions
-  const [frameH, setFrameH] = useState(H - 80);
-  const [frameW, setFrameW] = useState(W - 24);
+    const [frameH, setFrameH] = useState(Math.min(W, H) - 80);
+    const [frameW, setFrameW] = useState(Math.min(W, H) - 80);
   // Score and game over state
   const [score, setScore] = useState(0);
   const [over, setOver] = useState(false);
@@ -213,7 +213,6 @@ function randRange(min, max) {
 // Stylesheet
 const styles = StyleSheet.create({
   frame: {
-    flex: 1,
     margin: 12,
     borderWidth: 3,
     borderColor: "#e5e7eb",
@@ -221,7 +220,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     overflow: "hidden",
     alignSelf: "center",
-    width: "96%",
+    width: Math.min(W, H) - 80,
+    height: Math.min(W, H) - 80,
   },
   ground: {
     position: "absolute",

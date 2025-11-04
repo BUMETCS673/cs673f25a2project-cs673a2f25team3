@@ -30,8 +30,8 @@ const MAX_WIDTH_RATIO = 0.38;
 
 export default function Game1() {
   // Game frame dimensions
-  const [frameH, setFrameH] = useState(H - 80);
-  const [frameW, setFrameW] = useState(W - 24);
+  const [frameH, setFrameH] = useState(Math.min(W, H) - 80);
+  const [frameW, setFrameW] = useState(Math.min(W, H) - 80);
   // Ground Y position
   const groundY = Math.min(frameH * 0.8, 520);
   // Score and game over state
@@ -292,7 +292,6 @@ function randRange(min, max) {
 // Stylesheet
 const styles = StyleSheet.create({
   frame: {
-    flex: 1,
     margin: 12,
     borderWidth: 3,
     borderColor: "#e5e7eb",
@@ -300,8 +299,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     overflow: "hidden",
     alignSelf: "center",
-    width: "96%",
+    width: Math.min(W, H) - 80,
+    height: Math.min(W, H) - 80,
   },
+
   ground: {
     position: "absolute",
     height: 12,
@@ -368,3 +369,24 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
+
+// // Red of TDD
+// export function updateScore(currentScore, ticks) {
+//   // TODO: implement after test fails
+//   throw new Error("Not implemented");
+// }
+
+// // Green of TDD
+// export function updateScore(currentScore, ticks) {
+//   if (ticks % 60 === 0) {
+//     return currentScore + 1;
+//   }
+//   return currentScore;
+// }
+
+// // Refactor of TDD
+// export function updateScore(currentScore, ticks, rate = 60) {
+//   const shouldIncrease = ticks % rate === 0;
+//   return shouldIncrease ? currentScore + 1 : currentScore;
+// }
+

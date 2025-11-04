@@ -17,6 +17,7 @@ import Login from "./screens/Login";
 import Studying from "./screens/Studying";
 import Game1 from "./screens/games/game1";
 import Game2 from "./screens/games/game2";
+import Game3 from "./screens/games/game3";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,7 +27,8 @@ function AppNavigator() {
   if (loading) return null; // splash screen if needed
   // name is the routing name that needs to go in buttons to direct to the right page
   return (
-    <Stack.Navigator initialRouteName={user ? "Home" : "Login"}>
+    // <Stack.Navigator initialRouteName={user ? "Home" : "Login"}>
+    <Stack.Navigator initialRouteName={"GameMenu"}>
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="GameMenu" component={GameMenu} />
@@ -36,6 +38,7 @@ function AppNavigator() {
       <Stack.Screen name="Studying" component={Studying} />
       <Stack.Screen name="Game1" component={Game1} />
       <Stack.Screen name="Game2" component={Game2} />
+      <Stack.Screen name="Game3" component={Game3} />
     </Stack.Navigator>
   );
 }
