@@ -34,7 +34,6 @@ export async function getStatus(token) {
 			'Content-Type': 'application/json',
 		},
 	})
-	.then(res => res.json())
 	.then(data => {
 		status = data.status;
 	})
@@ -54,7 +53,6 @@ export async function updateStatus(token) {
 			'Content-Type': 'application/json',
 		},
 	})
-	.then(res => res.json())
 	.then(data => {
 		last_updated = data.last_updated;
 	})
@@ -62,7 +60,7 @@ export async function updateStatus(token) {
 		console.error("Failed to fetch data", err);
 	});
 
-	if (!isSameWeek(last_updated, Date.now()) && !goalCompleted(Date.now() - weeksToMs(1))) {
+	if (!isSameWeek(last_updated, Date.now()) && !goalCompleted(token, Date.now() - weeksToMs(1))) {
 		const response = await fetch(`${API_BASE_URL}/buddy/status`, {
 			method: "POST",
 			headers: {

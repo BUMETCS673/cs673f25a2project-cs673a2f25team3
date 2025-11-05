@@ -22,7 +22,6 @@ export function useBuddyValues() {
         "Content-Type": "application/json",
       },
     })
-      .then(res => res.json())
       .then(apiBuddy => {
         if (apiBuddy && typeof apiBuddy === "object") {
           setData(apiBuddy);

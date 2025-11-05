@@ -8,7 +8,7 @@ import { getTimeStudiedInWeek } from './timeStudied';
 */
 
 export async function getGoal(token) {
-  var goalMs = null;
+  var goalMs = 5*60;
   await fetch(`${API_BASE_URL}/settings/me`, {
     method: 'GET',
     headers: {
@@ -25,10 +25,10 @@ export async function getGoal(token) {
   });
 
   if (goalMs !== null) return goalMs;
-  return hoursToMs(5);
+  return 5*60;
 }
 
-export async function goalCompleted(date = Date.now(), token) {
+export async function goalCompleted(token, date = Date.now()) {
   return getTimeLeftInGoal(date, token) <= 0;
 }
 

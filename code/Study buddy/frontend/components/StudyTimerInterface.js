@@ -430,7 +430,7 @@ const footerMessage = isComplete
       increaseExp(payload.duration, token);
       const goalNowFinished = await goalCompleted(token);
       
-      if (await getStatus() < 4 && 
+      if (await getStatus(token) < 4 && 
         !goalStartedFinished &&
         goalNowFinished
       ) {
