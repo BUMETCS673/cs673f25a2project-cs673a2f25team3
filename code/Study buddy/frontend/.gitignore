@@ -23,3 +23,13 @@ node_modules/
 *.db
 coverage/
 
+
+# Ignore IDE, DB, temp, and build artifacts
+.idea/
+*.sqlite
+*.db
+*-H
+*-d
+Main.java
+package-lock.json
+
