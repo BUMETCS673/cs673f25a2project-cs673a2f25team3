@@ -2,6 +2,7 @@ import { View, Text } from 'react-native';
 import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
+import { HomeBuddy } from '../components/buddies/buddy';
 import { useContext } from 'react';
 import { AuthContext } from '../AuthContext'; 
 import { useNavigation } from '@react-navigation/native';
@@ -28,6 +29,7 @@ export default function Home() {
     <Background>
       <View style={styles.card}>
         <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
+        <HomeBuddy />
         <NavigationButton text="Start Studying!" link="SelectStudyTime" />
         <NavigationButton text="Game Menu" link="GameMenu" />
         <NavigationButton text="Statistics" link="Statistics" />
