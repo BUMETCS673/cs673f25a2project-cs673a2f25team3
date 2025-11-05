@@ -1,8 +1,16 @@
+// eslint-env jest
 // jest.setup.js
+
+// --- Polyfill for React Refresh used by Expo in tests ---
+/* istanbul ignore next */
+globalThis.$RefreshReg$ = () => {};
+globalThis.$RefreshSig$ = () => (type) => type;
+
 const { enableMocks } = require('jest-fetch-mock');
 enableMocks();
 fetchMock.doMock();
 
+// Provide a default API base for tests
 global.API_BASE_URL = 'http://localhost:8000';
 
 /******************
@@ -17,6 +25,7 @@ beforeEach(() => {
 
 // Quiet noisy warnings
 const origError = console.error;
+/* istanbul ignore next */
 console.error = (...args) => {
   const msg = args?.[0] || '';
   if (
