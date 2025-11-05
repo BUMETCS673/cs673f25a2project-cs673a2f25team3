@@ -14,3 +14,12 @@ yarn-error.log*
 .env.*
 # Expo
 .expo/
+
+# Ignore IDE and local files
+.idea/
+node_modules/
+.env
+*.sqlite
+*.db
+coverage/
+
