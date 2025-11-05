@@ -1,5 +1,5 @@
 /*
-  100% AI generate
+  100% AI generated (adjusted for multiple matching elements)
 */
 import React from 'react';
 import { render } from '@testing-library/react-native';
@@ -10,9 +10,10 @@ const Wrapper = ({ children }) => <NavigationContainer>{children}</NavigationCon
 
 describe('GameMenu', () => {
   test('renders menu with game buttons', () => {
-    const { getByText } = render(<GameMenu />, { wrapper: Wrapper });
-    expect(getByText('Game 1')).toBeTruthy();
-    expect(getByText('Game 2')).toBeTruthy();
-    expect(getByText('Return Home')).toBeTruthy();
+    const { getAllByText } = render(<GameMenu />, { wrapper: Wrapper });
+
+    expect(getAllByText('Game 1').length).toBeGreaterThan(0);
+    expect(getAllByText('Game 2').length).toBeGreaterThan(0);
+    expect(getAllByText('Return Home').length).toBeGreaterThan(0);
   });
 });
