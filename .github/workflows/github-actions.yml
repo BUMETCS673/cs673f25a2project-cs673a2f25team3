@@ -39,17 +39,12 @@ jobs:
       - name: Install dependencies
         run: |
           cd "code/Study buddy/frontend/"
-          npm install
-
-      - name: Install ESLint
-        run: |
-          cd "code/Study buddy/frontend/"
-          npm install eslint eslint-plugin-react eslint-plugin-react-hooks --save-dev
+          npm ci
 
       - name: Lint React code
         run: |
           cd "code/Study buddy/frontend/"
-          npx eslint . --fix || true
+          npm run lint
 
       - name: Run React Unit Tests
         run: |
@@ -72,19 +67,43 @@ jobs:
       - name: Install dependencies
         run: |
           cd "code/Study buddy/backend/"
-          npm install
-
-      - name: Install ESLint
-        run: |
-          cd "code/Study buddy/backend/"
-          npm install eslint eslint-plugin-react eslint-plugin-react-hooks --save-dev
+          npm ci
 
       - name: Lint Backend code
         run: |
           cd "code/Study buddy/backend/"
-          npx eslint . --fix || true
+          npm run lint
 
       - name: Run Backend Tests
         run: |
           cd "code/Study buddy/backend/"
           npm test
+
+  # Ensure Dockerfiles build successfully (no push)
+  tests-in-docker:
+    name: Run Tests in Docker Images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build backend image
+        run: |
+          docker build -t studybuddy-backend:ci -f "code/Study buddy/backend/Dockerfile" "code/Study buddy/backend"
+
+      - name: Build frontend image
+        run: |
+          docker build -t studybuddy-frontend:ci -f "code/Study buddy/frontend/Dockerfile" "code/Study buddy/frontend"
+
+      - name: Backend tests in Docker
+        run: |
+          docker run --rm -w /app studybuddy-backend:ci npm test
+
+      - name: Frontend tests in Docker
+        env:
+          CI: true
+        run: |
+          docker run --rm -w /app studybuddy-frontend:ci npm test
