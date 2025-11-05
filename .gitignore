@@ -1,6 +1,25 @@
+# Logs
 *.log
 npm-debug.log
 /logs/
+
+# IDE / Editors
 .vs/
+.idea/
+*.iml
+
+# Node
 node_modules
-.npm.idea/
+.npm/
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# Build / Dist
+dist/
+build/
+
+# OS
+.DS_Store
