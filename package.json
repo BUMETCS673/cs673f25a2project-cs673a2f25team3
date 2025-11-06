@@ -7,7 +7,7 @@
     "react-test-renderer": "^19.1.0"
   },
   "scripts": {
-    "install-all": "cd code/Study buddy/frontend && npm install && cd ../backend && npm install",
+    "install-all": "npm install && cd code/Study buddy/frontend && npm install && cd ../backend && npm install",
     "frontend": "cd code/Study buddy/frontend && npm start",
     "backend": "cd code/Study buddy/backend && npm start",
     "dev": "npm-run-all --parallel frontend backend"
