@@ -272,7 +272,7 @@ export default function Game3() {
             {showStartTip && (
               <View style={styles.startTipOverlay}>
                 <Text style={styles.startTipText}>Hold to Lock</Text>
-                <Text style={styles.startTipText}>Release to Attack</Text>
+                <Text style={styles.startTipText}>Release to Fire</Text>
                 <Text style={styles.startSubText}>(Tap anywhere to start)</Text>
               </View>
             )}
