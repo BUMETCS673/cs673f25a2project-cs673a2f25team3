@@ -27,8 +27,8 @@ function AppNavigator() {
   if (loading) return null; // splash screen if needed
   // name is the routing name that needs to go in buttons to direct to the right page
   return (
-    // <Stack.Navigator initialRouteName={user ? "Home" : "Login"}>
-    <Stack.Navigator initialRouteName={"GameMenu"}>
+    <Stack.Navigator initialRouteName={user ? "Home" : "Login"}>
+    {/* <Stack.Navigator initialRouteName={"GameMenu"}> */}
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="GameMenu" component={GameMenu} />
