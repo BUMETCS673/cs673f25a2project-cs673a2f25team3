@@ -14,27 +14,48 @@ import { Background } from "../../components/Background";
 // Get device dimensions
 const { width: W, height: H } = Dimensions.get("window");
 
+// Base unit for scaling
+const BASE_UNIT = Math.min(W, H);
+
 // Constants
-const PLAYER_SIZE = 16;
-const GROUND_Y = Math.min(H * 0.8, 520);
-const BAMBOO_WIDTH = 10;
+const PLAYER_SIZE = BASE_UNIT * 0.03;
+const BAMBOO_WIDTH = BASE_UNIT * 0.015;
 const MAX_BAMBOOS = 5; // maximum number of bamboos at once
+const PLAYER_SPEED = BASE_UNIT * 0.004;
+const BAMBOO_GROWTH_MIN = BASE_UNIT * 0.0003;
+const BAMBOO_GROWTH_MAX = BASE_UNIT * 0.0009;
+const BAMBOO_CUT_HEIGHT = BASE_UNIT * 0.23;
+const BAMBOO_SPAWN_DELAY_MIN = BASE_UNIT * 0.1;
+const BAMBOO_SPAWN_DELAY_MAX = BASE_UNIT * 0.2;
 
 export default function Game2() {
   // Game frame dimensions
-    const [frameH, setFrameH] = useState(Math.min(W, H) - 80);
-    const [frameW, setFrameW] = useState(Math.min(W, H) - 80);
+  const [frameH, setFrameH] = useState(Math.min(W, H) - 20);
+  const [frameW, setFrameW] = useState(Math.min(W, H) - 20);
+  // Ground Y position
+  const groundY = Math.min(frameH * 0.8, H * 0.7);
   // Score and game over state
   const [score, setScore] = useState(0);
   const [over, setOver] = useState(false);
+  const [showStartTip, setShowStartTip] = useState(true);
+  const [started, setStarted] = useState(false);
 
   // Runtime refs
-  const player = useRef({ x: frameW * 0.5, y: GROUND_Y - PLAYER_SIZE });  // player position
-  const vx = useRef(3); // horizontal velocity
+  const player = useRef({ x: frameW * 0.5, y: groundY - PLAYER_SIZE });  // player position
+  const vx = useRef(PLAYER_SPEED); // horizontal velocity
   const bamboos = useRef([]); // list of active bamboos
   const ticks = useRef(0);  // frame counter
   const nextBamboo = useRef(0); // timer until next bamboo spawn
 
+  // Handle window resize dynamically
+  useEffect(() => {
+    const handleResize = ({ window }) => {
+      setFrameW(Math.min(window.width, window.height) - 20);
+      setFrameH(Math.min(window.width, window.height) - 20);
+    };
+    const subscription = Dimensions.addEventListener("change", handleResize);
+    return () => subscription?.remove();
+  }, []);
   // Force screen update
   const [, forceRender] = useState(0);
 
@@ -42,13 +63,18 @@ export default function Game2() {
   useEffect(() => {
     let rafId;
     const loop = () => {
-      if (over) return; // stop if game over
-      ticks.current++;  // increment frame counter
+      if (over || !started) {
+        rafId = requestAnimationFrame(loop);
+        return;
+      }
+
+      ticks.current++;
 
       const p = player.current;
 
       // move player horizontally
       p.x += vx.current;
+
       // bounce back if reaching edges
       if (p.x <= 0 || p.x + PLAYER_SIZE >= frameW) {
         vx.current *= -1;
@@ -58,149 +84,164 @@ export default function Game2() {
       // spawn bamboos (only if count < MAX_BAMBOOS)
       nextBamboo.current--;
       if (nextBamboo.current <= 0 && bamboos.current.length < MAX_BAMBOOS) {
-        bamboos.current.push({
-          x: randRange(20, frameW - 20),  // random x position
-          height: 0,  // start height
-          speed: randRange(0.3, 0.85),  // growth speed
-          color: "yellow",  // start as yellow (young)
-        });
-        nextBamboo.current = randRange(80, 130);  // delay until next spawn
+        const newX = randRange(20, frameW - 20);
+
+        // prevent overlapping with nearby existing bamboos
+        const BAMBOO_SPAWN_MIN_DIST = BASE_UNIT * 0.12; // min distance between bamboos
+        const tooClose = bamboos.current.some(b => Math.abs(b.x - newX) < BAMBOO_SPAWN_MIN_DIST);
+
+        if (!tooClose) {
+          bamboos.current.push({
+            x: newX,
+            height: 0,
+            speed: randRange(BAMBOO_GROWTH_MIN, BAMBOO_GROWTH_MAX),
+            color: "yellow",
+          });
+        }
+
+        nextBamboo.current = randRange(BAMBOO_SPAWN_DELAY_MIN, BAMBOO_SPAWN_DELAY_MAX);
       }
+
 
       // Update existing bamboos
       const newB = [];
       for (const b of bamboos.current) {
-        b.height += b.speed;  // grow upward
+        b.height += b.speed;
 
-        // switch color from yellow → green(strong) when tall enough
-        if (b.height > 200 && b.color === "yellow") {
+        if (b.height > BASE_UNIT * 0.3 && b.color === "yellow") {
           b.color = "green";
         }
 
-        const bambooTop = GROUND_Y - b.height;
-        // collision detection
+        const bambooTop = groundY - b.height;
         const collide =
-          p.x + PLAYER_SIZE > b.x - BAMBOO_WIDTH / 2 &&
+          p.x > b.x - BAMBOO_WIDTH / 2 &&
           p.x < b.x + BAMBOO_WIDTH / 2 &&
           p.y + PLAYER_SIZE >= bambooTop &&
-          p.y <= GROUND_Y;
+          p.y <= groundY;
 
         if (collide) {
-          // reverse direction always
-          vx.current *= -1;
 
           if (b.color === "yellow") {
-            // yellow: destroyed instantly + score
             setScore(s => s + 5);
-            continue; // remove this bamboo
+            continue;
           } else {
-            // green: cut
-            let cut = 100;
+            vx.current *= -1;
+            let cut = BAMBOO_CUT_HEIGHT;
             b.height -= cut;
-            if (b.height <= 0) continue; // destroyed if fully cut
+            if (b.height <= 0) continue;
           }
         }
 
-        // if bamboo reaches top, game over
-        if (b.height > GROUND_Y - 30) {
+        if (b.height > groundY - BASE_UNIT * 0.05) {
           setOver(true);
           break;
         }
 
-        newB.push(b); // keep active
+        newB.push(b);
       }
 
-      // update current bamboo list
       bamboos.current = newB;
 
-      // trigger re-render
+      // if (ticks.current % 60 === 0) setScore(s => s + 1);
       forceRender(t => (t + 1) % 100000);
       rafId = requestAnimationFrame(loop);
     };
 
-    // start the loop
     rafId = requestAnimationFrame(loop);
-    // cleanup on unmount
     return () => cancelAnimationFrame(rafId);
-  }, [over, frameW, frameH]);
+  }, [over, frameW, frameH, started, groundY]);
 
-  // Controls: tap to turn
+  // Controls
   const onPress = () => {
     if (over) return;
-    vx.current *= -1; // Tap to turn manually
+    if (showStartTip) {
+      setShowStartTip(false);
+      setStarted(true);
+      return;
+    }
+    vx.current *= -1;
   };
 
   // Restart game after game over
   const reset = () => {
-    player.current = { x: frameW * 0.5, y: GROUND_Y - PLAYER_SIZE };
-    vx.current = 3;
+    player.current = { x: frameW * 0.5, y: groundY - PLAYER_SIZE };
+    vx.current = PLAYER_SPEED;
     bamboos.current = [];
     ticks.current = 0;
     nextBamboo.current = 0;
     setOver(false);
     setScore(0);
+    setShowStartTip(true);
+    setStarted(false);
   };
 
-  // Render the player position
+  // Render
   const p = player.current;
 
-  // Render the game
   return (
     <Background>
-      <View
-        style={styles.frame}
-        onLayout={(e) => {
-          const { width, height } = e.nativeEvent.layout;
-          setFrameH(height);
-          setFrameW(width);
-        }}
-      >
-        <Pressable onPress={onPress} style={{ flex: 1 }}>
-          {/* ground */}
-          <View style={[styles.ground, { top: GROUND_Y }]} />
+      <View style={styles.container}>
+        <View
+          style={[
+            styles.frame,
+            { width: frameW, height: frameH },
+          ]}
+        >
+          <Pressable onPress={onPress} style={{ flex: 1 }}>
+            {/* start tip overlay */}
+            {showStartTip && (
+              <View style={styles.startTipOverlay}>
+                <Text style={styles.startTipText}>Tap to Turn</Text>
+                <Text style={styles.startTipText}>Avoid Tall Bamboos</Text>
+                <Text style={styles.startSubText}>(Tap anywhere to start)</Text>
+              </View>
+            )}
 
-          {/* player */}
-          <View
-            style={[
-              styles.player,
-              {
-                left: p.x - PLAYER_SIZE / 2,
-                top: p.y,
-              },
-            ]}
-          />
+            {/* ground */}
+            <View style={[styles.ground, { top: groundY }]} />
 
-          {/* bamboos */}
-          {bamboos.current.map((b, i) => (
+            {/* player */}
             <View
-              key={i}
               style={[
-                styles.bamboo,
+                styles.player,
                 {
-                  left: b.x - BAMBOO_WIDTH / 2,
-                  top: GROUND_Y - b.height,
-                  height: b.height,
-                  backgroundColor: b.color === "yellow" ? "#facc15" : "#16a34a",
+                  left: p.x - PLAYER_SIZE / 2,
+                  top: p.y,
                 },
               ]}
             />
-          ))}
 
-          {/* HUD */}
-          <Text style={styles.hud}>Score: {score}</Text>
-          {!over && <Text style={styles.help}>Tap = Turn</Text>}
+            {/* bamboos */}
+            {bamboos.current.map((b, i) => (
+              <View
+                key={i}
+                style={[
+                  styles.bamboo,
+                  {
+                    left: b.x - BAMBOO_WIDTH / 2,
+                    top: groundY - b.height,
+                    height: b.height,
+                    backgroundColor: b.color === "yellow" ? "#facc15" : "#16a34a",
+                  },
+                ]}
+              />
+            ))}
 
-          {/* Game Over */}
-          {over && (
-            <View style={styles.overlay}>
-              <Text style={styles.overTitle}>Game Over</Text>
-              <Text style={styles.overScore}>Score {score}</Text>
-              <Pressable onPress={reset} style={styles.button}>
-                <Text style={styles.buttonText}>Restart</Text>
-              </Pressable>
-            </View>
-          )}
-        </Pressable>
+            {/* HUD */}
+            <Text style={styles.hud}>Score: {Math.floor(score)}</Text>
+
+            {/* overlay */}
+            {over && (
+              <View style={styles.overlay}>
+                <Text style={styles.overTitle}>Game Over</Text>
+                <Text style={styles.overScore}>Score {Math.floor(score)}</Text>
+                <Pressable onPress={reset} style={styles.button}>
+                  <Text style={styles.buttonText}>Restart</Text>
+                </Pressable>
+              </View>
+            )}
+          </Pressable>
+        </View>
       </View>
     </Background>
   );
@@ -212,6 +253,11 @@ function randRange(min, max) {
 
 // Stylesheet
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   frame: {
     margin: 12,
     borderWidth: 3,
@@ -220,13 +266,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     overflow: "hidden",
     alignSelf: "center",
-    width: Math.min(W, H) - 80,
-    height: Math.min(W, H) - 80,
+    maxWidth: "95%",
+    maxHeight: "95%",
+    aspectRatio: 1,
   },
   ground: {
     position: "absolute",
     width: "100%",
-    height: 10,
+    height: H * 0.015,
     backgroundColor: "#a855f7",
   },
   player: {
@@ -248,13 +295,8 @@ const styles = StyleSheet.create({
     color: "#111",
     fontWeight: "bold",
     fontSize: 16,
-  },
-  help: {
-    position: "absolute",
-    right: 12,
-    top: 10,
-    color: "#666",
-    fontSize: 14,
+    userSelect: "none",
+    pointerEvents: "none",
   },
   overlay: {
     position: "absolute",
@@ -266,6 +308,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "rgba(0,0,0,0.35)",
     gap: 8,
+  },
+  startTipOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.9)",
+    zIndex: 10,
+  },
+  startTipText: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#111",
+    marginBottom: 6,
+  },
+  startSubText: {
+    fontSize: 16,
+    color: "#555",
   },
   overTitle: {
     color: "#111",

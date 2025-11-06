@@ -1,7 +1,6 @@
 /*
   100% AI generate
 */
-
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
