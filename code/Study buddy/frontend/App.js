@@ -36,9 +36,27 @@ function AppNavigator() {
       <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="Statistics" component={Statistics} />
       <Stack.Screen name="Studying" component={Studying} />
-      <Stack.Screen name="Game1" component={Game1} />
-      <Stack.Screen name="Game2" component={Game2} />
-      <Stack.Screen name="Game3" component={Game3} />
+      <Stack.Screen name="Game1" component={Game1}
+        options={{
+          headerTitleStyle: {
+            userSelect: "none",
+            pointerEvents: "none",
+          },
+      }}/>
+      <Stack.Screen name="Game2" component={Game2}
+        options={{
+          headerTitleStyle: {
+            userSelect: "none",
+            pointerEvents: "none",
+          },
+      }}/>
+      <Stack.Screen name="Game3" component={Game3}
+        options={{
+          headerTitleStyle: {
+            userSelect: "none",
+            pointerEvents: "none",
+          },
+      }}/>
     </Stack.Navigator>
   );
 }

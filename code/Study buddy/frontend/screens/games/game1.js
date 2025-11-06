@@ -15,44 +15,61 @@ import { Background } from "../../components/Background";
 const { width: W, height: H } = Dimensions.get("window");
 
 // Constants
-const PLAYER_SIZE = 18;
-const GRAVITY = 0.5;
-const JUMP_SPEED = 7;
-const WORLD_SCROLL = 2;
+const BASE_UNIT = Math.min(W, H);
+const PLAYER_SIZE = BASE_UNIT * 0.035;
+const GRAVITY = BASE_UNIT * 0.0007;
+const JUMP_SPEED = BASE_UNIT * 0.011;
+const WORLD_SCROLL = BASE_UNIT * 0.003;
+const FONT_SCALE = BASE_UNIT * 0.01;
 
 // Gap between platforms
-const MIN_GAP = 50;
-const MAX_GAP = 120;
+const MIN_GAP = BASE_UNIT * 0.1;
+const MAX_GAP = BASE_UNIT * 0.15;
 
 // Platform width ratios
-const MIN_WIDTH_RATIO = 0.22;
+const MIN_WIDTH_RATIO = 0.2;
 const MAX_WIDTH_RATIO = 0.38;
 
 export default function Game1() {
   // Game frame dimensions
-  const [frameH, setFrameH] = useState(Math.min(W, H) - 80);
-  const [frameW, setFrameW] = useState(Math.min(W, H) - 80);
+  const [frameH, setFrameH] = useState(Math.min(W, H) - 20);
+  const [frameW, setFrameW] = useState(Math.min(W, H) - 20);
   // Ground Y position
-  const groundY = Math.min(frameH * 0.8, 520);
-  // Score and game over state
+  const groundY = Math.min(frameH * 0.8, H * 0.7);
+  // Score and game states
   const [score, setScore] = useState(0);
+  const [showStartTip, setShowStartTip] = useState(true);
+  const [started, setStarted] = useState(false);
   const [over, setOver] = useState(false);
 
   // Runtime refs
-  const player = useRef({ x: W * 0.25, y: groundY - PLAYER_SIZE }); // player start position
-  const velocity = useRef({ x: 0, y: 0 });  // player velocity
-  const isJumping = useRef(false);  // jumping state
-  const angle = useRef(0);  // chosing angle
-  const holding = useRef(false);  // player action state
-  const segments = useRef([]);  // list of platform segments
-  const ticks = useRef(0);  // frame counter
-  const lastAddX = useRef(0); // last platform end x position
+  const player = useRef({ x: W * 0.25, y: groundY - PLAYER_SIZE });
+  const velocity = useRef({ x: 0, y: 0 });
+  const isJumping = useRef(false);
+  const angle = useRef(0);
+  const holding = useRef(false);
+  const segments = useRef([]);
+  const ticks = useRef(0);
+  const lastAddX = useRef(0);
+
+  // Handle window resize dynamically
+  useEffect(() => {
+    const handleResize = ({ window }) => {
+      setFrameW(Math.min(window.width, window.height) - 20);
+      setFrameH(Math.min(window.width, window.height) - 20);
+    };
+    const subscription = Dimensions.addEventListener("change", handleResize);
+    return () => subscription?.remove();
+  }, []);
 
   // Initial platforms
   useEffect(() => {
-    const initial = []; // starting platform
-    let x = 0;
-    for (let i = 0; i < 3; i++) {
+    const initial = [];
+    const firstWidth = randRange(W * MIN_WIDTH_RATIO, W * MAX_WIDTH_RATIO);
+    initial.push({ x: 0, width: firstWidth });
+    let x = firstWidth + randRange(MIN_GAP, MAX_GAP);
+
+    for (let i = 1; i < 3; i++) {
       const width = randRange(W * MIN_WIDTH_RATIO, W * MAX_WIDTH_RATIO);
       const gap = randRange(MIN_GAP, MAX_GAP);
       initial.push({ x, width });
@@ -60,6 +77,11 @@ export default function Game1() {
     }
     segments.current = initial;
     lastAddX.current = x;
+
+    player.current = {
+      x: initial[0].x + initial[0].width - PLAYER_SIZE,
+      y: groundY - PLAYER_SIZE,
+    };
   }, []);
 
   // Force screen update
@@ -69,8 +91,12 @@ export default function Game1() {
   useEffect(() => {
     let rafId;
     const loop = () => {
-      ticks.current += 1; // increment frame count
-      if (over) return; // stop if game over
+      ticks.current += 1;
+
+      if (over || !started) { // pause loop until started
+        rafId = requestAnimationFrame(loop);
+        return;
+      }
 
       // adjust angle if holding (not jumping)
       if (!isJumping.current && holding.current) angle.current -= 0.05;
@@ -82,16 +108,16 @@ export default function Game1() {
       if (isJumping.current) {
         p.x += v.x;
         p.y += v.y;
-        v.y += GRAVITY; // apply gravity
+        v.y += GRAVITY;
 
         // landing check
         let onGround = false;
         for (const seg of segments.current) {
           if (
-            p.x + PLAYER_SIZE > seg.x &&  // within platform x range
-            p.x < seg.x + seg.width &&
-            p.y + PLAYER_SIZE >= groundY && // at or below ground level
-            p.y + PLAYER_SIZE <= groundY + 10
+            p.x + 0.7 * PLAYER_SIZE > seg.x &&
+            p.x + 0.3 * PLAYER_SIZE < seg.x + seg.width &&
+            p.y + PLAYER_SIZE >= groundY &&
+            p.y + PLAYER_SIZE <= groundY + PLAYER_SIZE * 0.6
           ) {
             onGround = true;
             break;
@@ -106,7 +132,6 @@ export default function Game1() {
           angle.current = 0;
         }
       } else {
-        // scroll frame if not jumping
         p.x -= WORLD_SCROLL;
       }
 
@@ -122,48 +147,46 @@ export default function Game1() {
       }
 
       // move and recycle ground
-      const segs = segments.current.map(s => ({ ...s, x: s.x - WORLD_SCROLL }));  // scroll left
-      const visible = segs.filter(s => s.x + s.width > -50);  // remove off-screen
+      const segs = segments.current.map(s => ({ ...s, x: s.x - WORLD_SCROLL }));
+      const visible = segs.filter(s => s.x + s.width > -50);
 
-      // find rightmost platform to add new ones
       const rightmost = visible[visible.length - 1];
       if (rightmost && rightmost.x + rightmost.width < frameW + 50) {
-        // random gap
-        const newGap = randRange(MIN_GAP, MAX_GAP) * (Math.random() < 0.5 ? 0.7 : 1.0 + Math.random() * 0.3);
-        // random width
+        const newGap =
+          randRange(MIN_GAP, MAX_GAP) *
+          (Math.random() < 0.5 ? 0.7 : 1.0 + Math.random() * 0.3);
         const newWidth = randRange(frameW * MIN_WIDTH_RATIO, frameW * MAX_WIDTH_RATIO);
-        // new platform position
         const newX = rightmost.x + rightmost.width + Math.min(newGap, MAX_GAP);
 
-        // ensure no overlap
         if (newX > rightmost.x + 20) {
           visible.push({ x: newX, width: newWidth });
           lastAddX.current = newX + newWidth;
         }
       }
 
-      // update playforms
       segments.current = visible;
 
-      // get score every ~1 second
       if (ticks.current % 60 === 0) setScore(s => s + 1);
 
-      // trigger re-render
       forceRender(t => (t + 1) % 100000);
-      // schedule next frame
       rafId = requestAnimationFrame(loop);
     };
 
-    // start loop
     rafId = requestAnimationFrame(loop);
-    // cleanup on unmount
     return () => cancelAnimationFrame(rafId);
-  }, [over, frameW, frameH, groundY]);
+  }, [over, frameW, frameH, groundY, started]);
 
   // Controls
   const onPressIn = () => {
-    if (over) return; // ignore if game over
-    if (!isJumping.current) holding.current = true; // start aiming
+    if (over) return;
+
+    if (showStartTip) {
+      setShowStartTip(false);
+      setStarted(true); // officially start game
+      return; // avoid aiming immediately
+    }
+
+    if (!isJumping.current) holding.current = true;
   };
 
   const onPressOut = () => {
@@ -171,7 +194,6 @@ export default function Game1() {
     if (!isJumping.current && holding.current) {
       holding.current = false;
       isJumping.current = true;
-      // calculate jump velocity based on angle
       const a = angle.current;
       velocity.current = {
         x: JUMP_SPEED * Math.cos(a),
@@ -182,20 +204,12 @@ export default function Game1() {
 
   // Restart game after game over
   const reset = () => {
-    // reset player position and state
-    player.current = { x: frameW * 0.25, y: groundY - PLAYER_SIZE };
-    velocity.current = { x: 0, y: 0 };
-    isJumping.current = false;
-    holding.current = false;
-    angle.current = 0;
-    ticks.current = 0;
-    setScore(0);
-    setOver(false);
-
-    // regenerate initial platforms
     const newSegs = [];
-    let x = 0;
-    for (let i = 0; i < 3; i++) {
+    const firstWidth = randRange(frameW * MIN_WIDTH_RATIO, frameW * MAX_WIDTH_RATIO);
+    newSegs.push({ x: 0, width: firstWidth });
+
+    let x = firstWidth + randRange(MIN_GAP, MAX_GAP);
+    for (let i = 1; i < 3; i++) {
       const width = randRange(frameW * MIN_WIDTH_RATIO, frameW * MAX_WIDTH_RATIO);
       const gap = randRange(MIN_GAP, MAX_GAP);
       newSegs.push({ x, width });
@@ -203,83 +217,104 @@ export default function Game1() {
     }
     segments.current = newSegs;
     lastAddX.current = x;
+
+    player.current = {
+      x: newSegs[0].x + newSegs[0].width - PLAYER_SIZE,
+      y: groundY - PLAYER_SIZE,
+    };
+    velocity.current = { x: 0, y: 0 };
+    isJumping.current = false;
+    holding.current = false;
+    angle.current = 0;
+    ticks.current = 0;
+    setScore(0);
+    setOver(false);
+    setStarted(true);
   };
 
   // aim line calculations
   const p = player.current;
-  const aimLen = 40;  // length of aim line
+  const aimLen = BASE_UNIT * 0.06;
   const aimX2 = p.x + aimLen * Math.cos(angle.current);
   const aimY2 = p.y + aimLen * Math.sin(angle.current);
 
   // Render the game
   return (
     <Background>
-      <View
-        style={styles.frame}
-        onLayout={(e) => {
-          const { width, height } = e.nativeEvent.layout;
-          setFrameH(height);
-          setFrameW(width);
-        }}
-      >
-        <Pressable onPressIn={onPressIn} onPressOut={onPressOut} style={{ flex: 1 }}>
-          {/* ground */}
-          {segments.current.map((seg, i) => (
-            <View
-              key={i}
-              style={[
-                styles.ground,
-                { left: seg.x, top: groundY, width: seg.width },
-              ]}
-            />
-          ))}
+      <View style={styles.container}>
+        <View
+          style={[
+            styles.frame,
+            { width: frameW, height: frameH },
+          ]}
+        >
+          <Pressable onPressIn={onPressIn} onPressOut={onPressOut} style={{ flex: 1 }}>
+            {/* start tip overlay */}
+            {showStartTip && (
+              <View style={styles.startTipOverlay}>
+                <Text style={styles.startTipText}>Hold to aim angle</Text>
+                <Text style={styles.startTipText}>Release to jump</Text>
+                <Text style={styles.startSubText}>(Tap anywhere to start)</Text>
+              </View>
+            )}
 
-          {/* player */}
-          <View
-            style={[
-              styles.player,
-              {
-                left: p.x - PLAYER_SIZE / 2,
-                top: p.y,
-                width: PLAYER_SIZE,
-                height: PLAYER_SIZE,
-              },
-            ]}
-          />
+            {/* ground */}
+            {segments.current.map((seg, i) => (
+              <View
+                key={i}
+                style={[
+                  styles.ground,
+                  { left: seg.x, top: groundY, width: seg.width },
+                ]}
+              />
+            ))}
 
-          {/* aim line */}
-          {!isJumping.current && holding.current && (
+            {/* player */}
             <View
               style={[
-                styles.aimLine,
+                styles.player,
                 {
-                  left: p.x,
-                  top: p.y + PLAYER_SIZE / 2,
-                  width: Math.max(
-                    1,
-                    Math.hypot(aimX2 - p.x, aimY2 - (p.y + PLAYER_SIZE / 2))
-                  ),
-                  transform: [{ rotate: `${(angle.current * 180) / Math.PI}deg` }],
+                  left: p.x - PLAYER_SIZE / 2,
+                  top: p.y,
+                  width: PLAYER_SIZE,
+                  height: PLAYER_SIZE,
                 },
               ]}
             />
-          )}
 
-          {/* HUD */}
-          <Text style={styles.hud}>Score: {Math.floor(score)}</Text>
-          {!over && <Text style={styles.help}>Hold = aim ↓, Release = jump</Text>}
+            {/* aim line */}
+            {!isJumping.current && holding.current && (
+              <View
+                style={[
+                  styles.aimLine,
+                  {
+                    left: p.x,
+                    top: p.y + PLAYER_SIZE / 2,
+                    width: Math.max(
+                      1,
+                      Math.hypot(aimX2 - p.x, aimY2 - (p.y + PLAYER_SIZE / 2))
+                    ),
+                    transform: [{ rotate: `${(angle.current * 180) / Math.PI}deg` }],
+                  },
+                ]}
+              />
+            )}
 
-          {/* overlay */}
-          {over && (
-            <View style={styles.overlay}>
-              <Text style={styles.overTitle}>Game Over</Text>
-              <Text style={styles.overScore}>Score {Math.floor(score)}</Text>
-              <Pressable onPress={reset} style={styles.button}>
-                <Text style={styles.buttonText}>Restart</Text>
-              </Pressable>
-            </View>
-          )}
-        </Pressable>
+            {/* HUD */}
+            <Text style={styles.hud}>Score: {Math.floor(score)}</Text>
+
+            {/* overlay */}
+            {over && (
+              <View style={styles.overlay}>
+                <Text style={styles.overTitle}>Game Over</Text>
+                <Text style={styles.overScore}>Score {Math.floor(score)}</Text>
+                <Pressable onPress={reset} style={styles.button}>
+                  <Text style={styles.buttonText}>Restart</Text>
+                </Pressable>
+              </View>
+            )}
+          </Pressable>
+        </View>
       </View>
     </Background>
   );
@@ -291,6 +326,11 @@ function randRange(min, max) {
 
 // Stylesheet
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   frame: {
     margin: 12,
     borderWidth: 3,
@@ -299,16 +339,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     overflow: "hidden",
     alignSelf: "center",
-    width: Math.min(W, H) - 80,
-    height: Math.min(W, H) - 80,
+    maxWidth: "95%",
+    maxHeight: "95%",
+    aspectRatio: 1,
   },
-
   ground: {
     position: "absolute",
-    height: 12,
+    height: H * 0.015,
     backgroundColor: "#3b82f6",
-    borderTopLeftRadius: 6,
-    borderTopRightRadius: 6,
+    borderTopLeftRadius: 3,
+    borderTopRightRadius: 3,
   },
   player: {
     position: "absolute",
@@ -329,6 +369,8 @@ const styles = StyleSheet.create({
     color: "#111",
     fontWeight: "bold",
     fontSize: 16,
+    userSelect: "none",
+    pointerEvents: "none",
   },
   help: {
     position: "absolute",
@@ -347,6 +389,27 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "rgba(0,0,0,0.35)",
     gap: 8,
+  },
+  startTipOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.9)",
+    zIndex: 10,
+  },
+  startTipText: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#111",
+    marginBottom: 6,
+  },
+  startSubText: {
+    fontSize: 16,
+    color: "#555",
   },
   overTitle: {
     color: "#111",
@@ -370,6 +433,7 @@ const styles = StyleSheet.create({
   },
 });
 
+
 // // Red of TDD
 // export function updateScore(currentScore, ticks) {
 //   // TODO: implement after test fails
@@ -389,4 +453,3 @@ const styles = StyleSheet.create({
 //   const shouldIncrease = ticks % rate === 0;
 //   return shouldIncrease ? currentScore + 1 : currentScore;
 // }
-
