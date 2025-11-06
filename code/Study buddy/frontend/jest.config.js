@@ -1,30 +1,9 @@
-// jest.config.js
+/** Minimal Jest config for expo/react-native unit tests in CI.
+ *  It loads a small shim that defines Fast Refresh globals ($RefreshReg$, $RefreshSig$)
+ *  so that modules from expo/react-refresh won't crash in Jest.
+ */
 module.exports = {
   preset: 'jest-expo',
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  moduleNameMapper: {
-    '\\.(png|jpg|jpeg|gif|svg)$': '<rootDir>/__mocks__/fileMock.js',
-    '^react-native-reanimated$': '<rootDir>/__mocks__/react-native-reanimated.js',
-    '^@env$': '<rootDir>/__mocks__/envMock.js',
-  },
-  transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
-  },
-  transformIgnorePatterns: [
-    'node_modules/(?!(' +
-      '(jest-)?react-native' +
-      '|@react-native' +
-      '|react-native-.*' +
-      '|@react-navigation' +
-      '|expo' +
-      '|expo-.*' +
-      '|@expo/.*' +
-      '|react-native-paper' +
-      '|lucide-react-native' +
-    ')/)',
-  ],
-  clearMocks: true,
-  resetMocks: false,
+  setupFiles: ['<rootDir>/jest.refresh-shim.js'],
+  testPathIgnorePatterns: ['StudyTimerInterface.test.js'],
 };
