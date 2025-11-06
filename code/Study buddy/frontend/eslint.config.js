@@ -1,81 +1,56 @@
-// 100% AI generated
-
-// eslint.config.js
+// eslint.config.js — Flat config compatible with ESLint 8/9
 import js from '@eslint/js';
-import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
-import reactNative from 'eslint-plugin-react-native';
-import globals from 'globals';
+import reactRefresh from 'eslint-plugin-react-refresh';
+import testingLibrary from 'eslint-plugin-testing-library';
 
+/** @type {import('eslint').Linter.FlatConfig[]} */
 export default [
-  // Base ESLint recommended rules
-  js.configs.recommended,
-
-  // App code (React Native / Expo)
   {
-    files: ['**/*.{js,jsx}'],
     ignores: [
       'node_modules/**',
-      'android/**',
-      'ios/**',
-      '.expo/**',
-      '.expo-shared/**',
-      'dist/**',
-      'build/**',
-      'web-build/**',
+      'coverage/**', // ignore generated reports
     ],
-    languageOptions: {
-      ecmaVersion: 2023,
-      sourceType: 'module',
-      parserOptions: {
-        ecmaFeatures: { jsx: true }, // enable JSX parsing
-      },
-      globals: {
-        ...globals.es2021,
-        ...globals.node,
-        ...globals.browser,
-        __DEV__: true, // Expo global
-      },
-    },
+  },
+  js.configs.recommended,
+  {
+    files: ['**/*.js', '**/*.jsx'],
     plugins: {
-      react,
       'react-hooks': reactHooks,
-      'react-native': reactNative,
-    },
-    settings: {
-      react: { version: 'detect' },
+      'react-refresh': reactRefresh,
+      'testing-library': testingLibrary,
     },
     rules: {
-      // React / JSX
-      'react/react-in-jsx-scope': 'off',
-      'react/jsx-uses-react': 'off',
-
-      // Hooks
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-
-      // General hygiene
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-      'no-console': 'off',
-
-      // React Native
-      'react-native/no-inline-styles': 'warn',
-      'react-native/split-platform-components': 'warn',
-      'react-native/no-raw-text': 'off',
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
   },
-
-  // Test files (Jest)
+  // Tests & setup overrides
   {
-    files: ['**/*.{test,spec}.{js,jsx}'],
+    files: [
+      '**/__tests__/**/*.js',
+      '**/__tests__/**/*.jsx',
+      'jest.setup.js',
+    ],
     languageOptions: {
-      parserOptions: { ecmaFeatures: { jsx: true } },
       globals: {
-        ...globals.jest, // enables test, expect, describe, etc.
+        // Jest globals
+        jest: 'readonly',
+        expect: 'readonly',
+        beforeAll: 'readonly',
+        beforeEach: 'readonly',
+        afterAll: 'readonly',
+        afterEach: 'readonly',
+        // Web-ish globals common in test envs
+        document: 'readonly',
+        window: 'readonly',
+        // fetch mocking
+        fetch: 'readonly',
+        fetchMock: 'readonly',
       },
     },
     rules: {
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-undef': 'off',
     },
   },
 ];
