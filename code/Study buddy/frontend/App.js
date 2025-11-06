@@ -26,17 +26,35 @@ function AppNavigator() {
   if (loading) return null; // splash screen if needed
   // name is the routing name that needs to go in buttons to direct to the right page
   return (
-    // <Stack.Navigator initialRouteName={user ? "Home" : "Login"}>
-    <Stack.Navigator initialRouteName={"GameMenu"}>
+    <Stack.Navigator initialRouteName={user ? "Home" : "Login"}>
+    {/* <Stack.Navigator initialRouteName={"GameMenu"}> */}
       <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="GameMenu" component={GameMenu} />
       <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="Statistics" component={Statistics} />
       <Stack.Screen name="Studying" component={Studying} />
-      <Stack.Screen name="Game1" component={Game1} />
-      <Stack.Screen name="Game2" component={Game2} />
-      <Stack.Screen name="Game3" component={Game3} />
+      <Stack.Screen name="Game1" component={Game1}
+        options={{
+          headerTitleStyle: {
+            userSelect: "none",
+            pointerEvents: "none",
+          },
+      }}/>
+      <Stack.Screen name="Game2" component={Game2}
+        options={{
+          headerTitleStyle: {
+            userSelect: "none",
+            pointerEvents: "none",
+          },
+      }}/>
+      <Stack.Screen name="Game3" component={Game3}
+        options={{
+          headerTitleStyle: {
+            userSelect: "none",
+            pointerEvents: "none",
+          },
+      }}/>
     </Stack.Navigator>
   );
 }
