@@ -12,35 +12,30 @@ import { Background } from "../../components/Background";
 
 const { width: W, height: H } = Dimensions.get("window");
 
-// BASE UNIT FOR SCALING
-const BASE_UNIT = Math.min(W, H);
-
-// CONSTANTS (scaled)
-const PLAYER_SIZE = BASE_UNIT * 0.03;
-const ENEMY_SIZE = BASE_UNIT * 0.018;
-const ENEMY_SPEED = BASE_UNIT * 0.0013;
+// CONSTANTS
+const PLAYER_SIZE = 25;
+const ENEMY_SIZE = 14;
+const ENEMY_SPEED = 1;
 const DIRECTION_SPAN = Math.PI / 12; // ±15°
 const FPS = 60;
-const MIN_DELAY = 2 * FPS;
-const MAX_DELAY = 4 * FPS;
+const MIN_DELAY = 2 * FPS; // 2s between waves
+const MAX_DELAY = 4 * FPS; // 4s between waves
 const MIN_ENEMIES = 1;
-const MAX_ENEMIES = 10;
-const MIN_ENEMY_INTERVAL = 0.1 * FPS;
-const MAX_ENEMY_INTERVAL = 0.4 * FPS;
+const MAX_ENEMIES = 12;
+const MIN_ENEMY_INTERVAL = 0.1 * FPS; // 0.1s between enemies
+const MAX_ENEMY_INTERVAL = 0.4 * FPS; // 0.4s between enemies
 const ROTATION_SPEED = 0.07;
-const BASE_RADIUS = BASE_UNIT * 0.08;
-const MAX_RADIUS = BASE_UNIT * 0.36;
-const MIN_RADIUS = BASE_UNIT * 0.15;
-const ARC_LIMIT = (150 * Math.PI) / 180;
+const BASE_RADIUS = 50;
+const MAX_RADIUS = 270;
+const MIN_RADIUS = 90;
+const ARC_LIMIT = (150 * Math.PI) / 180; // 150° attack limit
 const FRAME_INTERVAL = 1000 / FPS;
 
 export default function Game3() {
-  const [frameW, setFrameW] = useState(Math.min(W, H) - 20);
-  const [frameH, setFrameH] = useState(Math.min(W, H) - 20);
+  const [frameW, setFrameW] = useState(Math.min(W, H) - 80);
+  const [frameH, setFrameH] = useState(Math.min(W, H) - 80);
   const [score, setScore] = useState(0);
   const [over, setOver] = useState(false);
-  const [showStartTip, setShowStartTip] = useState(true);
-  const [started, setStarted] = useState(false);
   const [, forceRender] = useState(0);
 
   // Refs for game state
@@ -60,20 +55,10 @@ export default function Game3() {
   const arcVisible = useRef(false);
   const currentLength = useRef(BASE_RADIUS);
 
-  // Handle window resize dynamically
-  useEffect(() => {
-    const handleResize = ({ window }) => {
-      setFrameW(Math.min(window.width, window.height) - 20);
-      setFrameH(Math.min(window.width, window.height) - 20);
-    };
-    const subscription = Dimensions.addEventListener("change", handleResize);
-    return () => subscription?.remove();
-  }, []);
-
   // Main Game Loop
   useEffect(() => {
     const timer = setInterval(() => {
-      if (over || !started) return;
+      if (over) return;
       ticks.current++;
       const now = ticks.current;
 
@@ -87,7 +72,7 @@ export default function Game3() {
         if (diff > Math.PI) diff = 2 * Math.PI - diff;
 
         if (diff >= ARC_LIMIT) {
-          triggerAttack();
+          triggerAttack(); // auto release
         } else {
           const ratio = diff / ARC_LIMIT;
           currentLength.current =
@@ -117,6 +102,7 @@ export default function Game3() {
         }
       }
 
+      // Move enemies
       moveEnemies();
 
       // Collision detection
@@ -138,14 +124,14 @@ export default function Game3() {
     }, FRAME_INTERVAL);
 
     return () => clearInterval(timer);
-  }, [frameW, frameH, over, started]);
+  }, [frameW, frameH, over]);
 
   const startWave = () => {
     waveAngle.current = Math.random() * Math.PI * 2;
     enemiesSpawned.current = 0;
     enemiesTarget.current = Math.floor(randRange(MIN_ENEMIES, MAX_ENEMIES + 1));
     spawning.current = true;
-    nextEnemyTick.current = ticks.current;
+    nextEnemyTick.current = ticks.current; // start immediately
   };
 
   const spawnEnemy = () => {
@@ -186,13 +172,9 @@ export default function Game3() {
     enemies.current = newEnemies;
   };
 
+  // INPUT HANDLING
   const onPressIn = () => {
     if (over) return;
-    if (showStartTip) {
-      setShowStartTip(false);
-      setStarted(true);
-      return;
-    }
     holding.current = true;
     arcVisible.current = true;
     lockedAngle.current = aimAngle.current;
@@ -255,8 +237,6 @@ export default function Game3() {
     nextWaveTick.current = 0;
     waveAngle.current = Math.random() * Math.PI * 2;
     currentLength.current = BASE_RADIUS;
-    setShowStartTip(true);
-    setStarted(false);
   };
 
   const cx = frameW / 2;
@@ -265,82 +245,79 @@ export default function Game3() {
 
   return (
     <Background>
-      <View style={styles.container}>
-        <View style={[styles.frame, { width: frameW, height: frameH }]}>
-          <Pressable onPressIn={onPressIn} onPressOut={onPressOut} style={{ flex: 1 }}>
-            {/* start tip overlay */}
-            {showStartTip && (
-              <View style={styles.startTipOverlay}>
-                <Text style={styles.startTipText}>Hold to Lock</Text>
-                <Text style={styles.startTipText}>Release to Fire</Text>
-                <Text style={styles.startSubText}>(Tap anywhere to start)</Text>
-              </View>
-            )}
+      <View
+        style={styles.frame}
+        onLayout={(e) => {
+          const { width, height } = e.nativeEvent.layout;
+          setFrameW(width);
+          setFrameH(height);
+        }}
+      >
+        <Pressable onPressIn={onPressIn} onPressOut={onPressOut} style={{ flex: 1 }}>
+          {/* Player */}
+          <View
+            style={[
+              styles.player,
+              { left: cx - PLAYER_SIZE / 2, top: cy - PLAYER_SIZE / 2 },
+            ]}
+          />
 
-            {/* Player */}
+          {/* Rotating aim line */}
+          <View
+            style={[
+              styles.line,
+              {
+                left: cx,
+                top: cy,
+                width: radius,
+                transform: [{ rotate: `${(aimAngle.current * 180) / Math.PI}deg` }],
+              },
+            ]}
+          />
+
+          {/* Locked aim indicator */}
+          {lockedAngle.current !== null && (
             <View
               style={[
-                styles.player,
-                { left: cx - PLAYER_SIZE / 2, top: cy - PLAYER_SIZE / 2 },
-              ]}
-            />
-
-            {/* Rotating aim line */}
-            <View
-              style={[
-                styles.line,
+                styles.lockedLine,
                 {
                   left: cx,
                   top: cy,
                   width: radius,
-                  transform: [{ rotate: `${(aimAngle.current * 180) / Math.PI}deg` }],
+                  transform: [
+                    { rotate: `${(lockedAngle.current * 180) / Math.PI}deg` },
+                  ],
                 },
               ]}
             />
+          )}
 
-            {/* Locked aim indicator */}
-            {lockedAngle.current !== null && (
-              <View
-                style={[
-                  styles.lockedLine,
-                  {
-                    left: cx,
-                    top: cy,
-                    width: radius,
-                    transform: [
-                      { rotate: `${(lockedAngle.current * 180) / Math.PI}deg` },
-                    ],
-                  },
-                ]}
-              />
-            )}
+          {/* Enemies */}
+          {enemies.current.map((e, i) => (
+            <View
+              key={i}
+              style={[
+                styles.enemy,
+                { left: e.x - ENEMY_SIZE / 2, top: e.y - ENEMY_SIZE / 2 },
+              ]}
+            />
+          ))}
 
-            {/* Enemies */}
-            {enemies.current.map((e, i) => (
-              <View
-                key={i}
-                style={[
-                  styles.enemy,
-                  { left: e.x - ENEMY_SIZE / 2, top: e.y - ENEMY_SIZE / 2 },
-                ]}
-              />
-            ))}
+          {/* HUD */}
+          <Text style={styles.hud}>Score: {score}</Text>
+          {!over && (
+            <Text style={styles.help}>Combo: 1+2+3 per multi-kill attack</Text>
+          )}
 
-            {/* HUD */}
-            <Text style={styles.hud}>Score: {Math.floor(score)}</Text>
-
-            {/* overlay */}
-            {over && (
-              <View style={styles.overlay}>
-                <Text style={styles.overTitle}>Game Over</Text>
-                <Text style={styles.overScore}>Score {Math.floor(score)}</Text>
-                <Pressable onPress={reset} style={styles.button}>
-                  <Text style={styles.buttonText}>Restart</Text>
-                </Pressable>
-              </View>
-            )}
-          </Pressable>
-        </View>
+          {over && (
+            <View style={styles.overlay}>
+              <Text style={styles.overTitle}>Game Over</Text>
+              <Pressable onPress={reset} style={styles.button}>
+                <Text style={styles.buttonText}>Restart</Text>
+              </Pressable>
+            </View>
+          )}
+        </Pressable>
       </View>
     </Background>
   );
@@ -352,11 +329,6 @@ function randRange(min, max) {
 
 // STYLES
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   frame: {
     margin: 12,
     borderWidth: 3,
@@ -365,9 +337,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     overflow: "hidden",
     alignSelf: "center",
-    maxWidth: "95%",
-    maxHeight: "95%",
-    aspectRatio: 1,
+    width: Math.min(W, H) - 80,
+    height: Math.min(W, H) - 80,
   },
   player: {
     position: "absolute",
@@ -402,8 +373,13 @@ const styles = StyleSheet.create({
     color: "#111",
     fontWeight: "bold",
     fontSize: 16,
-    userSelect: "none",
-    pointerEvents: "none",
+  },
+  help: {
+    position: "absolute",
+    right: 12,
+    top: 10,
+    color: "#666",
+    fontSize: 14,
   },
   overlay: {
     position: "absolute",
@@ -414,38 +390,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(0,0,0,0.35)",
-    gap: 8,
-  },
-  startTipOverlay: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.9)",
-    zIndex: 10,
-  },
-  startTipText: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#111",
-    marginBottom: 6,
-  },
-  startSubText: {
-    fontSize: 16,
-    color: "#555",
   },
   overTitle: {
     color: "#111",
     fontSize: 28,
     fontWeight: "bold",
-  },
-  overScore: {
-    color: "#111",
-    fontSize: 18,
-    marginBottom: 8,
   },
   button: {
     paddingHorizontal: 18,
