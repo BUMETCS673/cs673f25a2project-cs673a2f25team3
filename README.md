@@ -9,6 +9,7 @@ Study Buddy is a mobile and web application for tracking study sessions, user pr
 - [Technologies](#technologies)
 - [Installation](#installation)
 - [Backend Setup](#backend-setup)
+- [Frontend Setup](#frontend-setup)
 - [Running the App](#running-the-app)
 - [API Endpoints](#api-endpoints)
 - [Testing](#testing)
@@ -62,6 +63,12 @@ The backend will run at `http://localhost:3000`. Swagger documentation is availa
 
 ---
 
+## Frontend Setup
+
+Make sure you have the `.env` file in frontend folder. Inside `.env` file, put in `API_BASE_URL=http://localhost:3000/api`, where localhost should be your IPv4 address. This supports you to run the code locally but not for docker.
+
+---
+
 ## Running the App
 
 1. Start the Expo project:
@@ -88,6 +95,9 @@ npx expo start
 * **Study**
    * `POST /api/study/me` - Add a study session
    * `GET /api/study/me` - Get all study sessions
+* **Stats**
+   * `GET /api/stats/me` - Get study statistics for logged in user
+
 All routes except registration and login require **Authorization** header with a Bearer token
 
 ---
