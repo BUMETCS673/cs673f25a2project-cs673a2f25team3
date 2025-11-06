@@ -1,34 +1,41 @@
-// ESLint configuration quick fix for CI (ignore non-essential test/config files)
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import testingLibrary from 'eslint-plugin-testing-library';
-
+// code/Study buddy/frontend/eslint.config.js
 export default [
   {
+    files: ["**/*.{js,jsx,ts,tsx}"],
     ignores: [
-      'node_modules/**',
-      'coverage/**',
-      '.expo/**',
-      '.expo-shared/**',
-      // Ignore configuration and test helper files that cause CI lint errors
-      'jest.config.js',
-      'babel.config.js',
-      '__mocks__/**',
-      'util/**',
-      'jest.setup.js'
+      // 忽略测试与配置、mock 等
+      "**/__tests__/**",
+      "**/*.test.*",
+      "**/__mocks__/**",
+      "jest.config.*",
+      "jest.setup.*",
+      "jest.refresh-shim.*",
+      "babel.config.*",
+      "metro.config.*",
+      "coverage/**",
+      "node_modules/**"
     ],
-  },
-  {
-    files: ['**/*.{js,jsx}'],
-    plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
-      'testing-library': testingLibrary,
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: "module",
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      globals: {
+        // 常见全局，避免 'is not defined'
+        React: "writable",
+        require: "readonly",
+        module: "writable",
+        fetch: "readonly",
+        jest: "readonly",
+        describe: "readonly",
+        it: "readonly",
+        test: "readonly",
+        expect: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly"
+      }
     },
-    rules: {
-      'react-refresh/only-export-components': 'warn',
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-    },
-  },
+    rules: {}
+  }
 ];

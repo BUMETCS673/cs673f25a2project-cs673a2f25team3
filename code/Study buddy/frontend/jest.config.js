@@ -4,6 +4,9 @@
  */
 module.exports = {
   preset: 'jest-expo',
-  setupFiles: ['<rootDir>/jest.refresh-shim.js'],
+ setupFilesAfterEnv: [
+   "<rootDir>/jest.setup.js",
+   "<rootDir>/jest.refresh-shim.js"
+ ],
   testPathIgnorePatterns: ['StudyTimerInterface.test.js'],
 };
