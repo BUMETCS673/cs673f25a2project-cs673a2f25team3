@@ -8,3 +8,4 @@ npm-debug.log
 android
 ios
 .env
+!package-lock.json
