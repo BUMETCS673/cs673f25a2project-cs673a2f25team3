@@ -10,6 +10,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll=false",
+    "test:ci": "jest --ci --runInBand",
     "lint": "eslint \"App.js\" \"AuthContext.js\" \"components/**/*.js\" \"screens/**/*.js\" \"dataInterface/**/*.js\""
   },
   "dependencies": {
@@ -58,5 +59,11 @@
   },
   "overrides": {
     "react-test-renderer": "19.1.0"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "testEnvironment": "node",
+    "setupFiles": ["<rootDir>/jest.refresh-shim.js"],
+    "testPathIgnorePatterns": ["StudyTimerInterface.test.js"]
   }
 }
