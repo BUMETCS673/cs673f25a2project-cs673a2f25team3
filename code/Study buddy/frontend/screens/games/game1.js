@@ -108,7 +108,7 @@ export default function Game1() {
       if (isJumping.current) {
         p.x += v.x;
         p.y += v.y;
-        v.y += GRAVITY;
+        v.y += GRAVITY; // apply gravity
 
         // landing check
         let onGround = false;
@@ -132,6 +132,7 @@ export default function Game1() {
           angle.current = 0;
         }
       } else {
+        // scroll frame if not jumping
         p.x -= WORLD_SCROLL;
       }
 
@@ -157,7 +158,6 @@ export default function Game1() {
           (Math.random() < 0.5 ? 0.7 : 1.0 + Math.random() * 0.3);
         const newWidth = randRange(frameW * MIN_WIDTH_RATIO, frameW * MAX_WIDTH_RATIO);
         const newX = rightmost.x + rightmost.width + Math.min(newGap, MAX_GAP);
-
         if (newX > rightmost.x + 20) {
           visible.push({ x: newX, width: newWidth });
           lastAddX.current = newX + newWidth;
@@ -194,6 +194,7 @@ export default function Game1() {
     if (!isJumping.current && holding.current) {
       holding.current = false;
       isJumping.current = true;
+      // calculate jump velocity based on angle
       const a = angle.current;
       velocity.current = {
         x: JUMP_SPEED * Math.cos(a),
@@ -432,7 +433,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
 });
-
 
 // // Red of TDD
 // export function updateScore(currentScore, ticks) {

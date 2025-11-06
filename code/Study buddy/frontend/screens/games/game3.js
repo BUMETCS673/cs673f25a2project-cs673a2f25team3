@@ -87,7 +87,7 @@ export default function Game3() {
         if (diff > Math.PI) diff = 2 * Math.PI - diff;
 
         if (diff >= ARC_LIMIT) {
-          triggerAttack();
+          triggerAttack(); // auto release
         } else {
           const ratio = diff / ARC_LIMIT;
           currentLength.current =
@@ -117,6 +117,7 @@ export default function Game3() {
         }
       }
 
+      // Move enemies
       moveEnemies();
 
       // Collision detection
@@ -137,7 +138,7 @@ export default function Game3() {
       forceRender((t) => (t + 1) % 10000);
     }, FRAME_INTERVAL);
 
-    return () => clearInterval(timer);
+    return () => clearInterval(timer)
   }, [frameW, frameH, over, started]);
 
   const startWave = () => {
@@ -145,7 +146,7 @@ export default function Game3() {
     enemiesSpawned.current = 0;
     enemiesTarget.current = Math.floor(randRange(MIN_ENEMIES, MAX_ENEMIES + 1));
     spawning.current = true;
-    nextEnemyTick.current = ticks.current;
+    nextEnemyTick.current = ticks.current; // start immediately
   };
 
   const spawnEnemy = () => {
@@ -186,6 +187,7 @@ export default function Game3() {
     enemies.current = newEnemies;
   };
 
+  // Input handlers
   const onPressIn = () => {
     if (over) return;
     if (showStartTip) {
