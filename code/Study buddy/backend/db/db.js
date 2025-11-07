@@ -45,10 +45,24 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS study_sessions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
-      duration INTEGER NOT NULL,
+      duration INTEGER NOT NULL, --in mins
       start_time TIMESTAMP NOT NULL,
       end_time TIMESTAMP NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `);
+
+  // Track in-progress study sessions so the timer can resume across devices
+  db.run(`
+    CREATE TABLE IF NOT EXISTS study_progress (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL UNIQUE,
+      target_minutes INTEGER NOT NULL,
+      elapsed_seconds INTEGER NOT NULL,
+      session_start TIMESTAMP NOT NULL,
+      status TEXT NOT NULL,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
@@ -78,9 +92,11 @@ db.serialize(() => {
 
 
 db.reset = function reset(cb) {
+  // Reset helper used by tests to guarantee a clean database
   db.exec(
     `
       DELETE FROM study_sessions;
+      DELETE FROM study_progress;
       DELETE FROM study_buddies;
       DELETE FROM settings;
       DELETE FROM profiles;
