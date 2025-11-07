@@ -1,0 +1,61 @@
+# 90% AI generated
+# 10% Bug fixing
+
+# compose.yaml
+
+networks:
+  studybuddy:
+    driver: bridge
+
+services:
+  js-backend:
+    build:
+      context: "./code/Study buddy/backend"
+      dockerfile: Dockerfile
+    container_name: js-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: "3000"
+      JWT_SECRET: "change-me"
+      JWT_EXPIRES_IN: "1h"
+    working_dir: /app
+    command: npm start
+    networks: [studybuddy]
+
+  js-frontend:
+    build:
+      context: "./code/Study buddy/frontend"
+      dockerfile: Dockerfile
+    container_name: js-frontend
+    restart: unless-stopped
+    init: true
+    stdin_open: true
+    tty: true
+    ports:
+      - "8081:8081"   # Metro
+      - "19000:19000" # Expo dev server
+      - "19001:19001" # Metro WS
+      - "19002:19002" # DevTools
+      - "19006:19006" # Web
+    environment:
+      HOME: "/app"
+      NPM_CONFIG_CACHE: "/app/.npm"
+      EXPO_DEVTOOLS_LISTEN_ADDRESS: "0.0.0.0"
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+      TERM: "xterm-256color"
+      FORCE_COLOR: "1"
+      CI: "false"
+    volumes:
+      - "./code/Study buddy/frontend/.env:/app/.env:ro"
+    working_dir: /app
+    command: >
+      bash -lc "
+        exec npx expo start --host tunnel
+      "
+    depends_on:
+      [js-backend]
+    networks: [studybuddy]

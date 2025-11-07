@@ -1,0 +1,5 @@
+# Ignore environment variables
+.env
+db/*.sqlite
+db/*.db
+db/*.db3
