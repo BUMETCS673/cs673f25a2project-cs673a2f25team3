@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ActivityIndicator, View } from "react-native";
 
 import { AuthProvider, AuthContext } from "./AuthContext";
-import MainTabs from "./components/MainTabs"; // <-- 引入 MainTabs
+import MainTabs from "./components/MainTabs";
 
 import Login from "./screens/Login";
 import Settings from "./screens/Settings";

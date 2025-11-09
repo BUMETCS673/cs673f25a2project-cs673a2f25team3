@@ -1,4 +1,3 @@
-// MainTabs.js
 import React from "react";
 import { Platform, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
