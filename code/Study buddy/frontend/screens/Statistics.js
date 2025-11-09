@@ -22,8 +22,30 @@ export default function Statistics() {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null); // format: "YYYY-MM-DD" from Calendar
   const [markedDates, setMarkedDates] = useState({});
+
+  // Accept either Date object or date string/ISO; always output local YYYY-MM-DD
+  const getLocalDateString = (dateInput) => {
+    const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+
+  // Safely format a "YYYY-MM-DD" (calendar) into a local display string
+  const formatSelectedDateForDisplay = (ymd) => {
+    if (!ymd) return "";
+    // ymd expected like "2025-11-09"
+    const parts = ymd.split("-");
+    if (parts.length !== 3) return ymd;
+    const year = parseInt(parts[0], 10);
+    const monthIndex = parseInt(parts[1], 10) - 1; // 0-based
+    const day = parseInt(parts[2], 10);
+    // new Date(year, monthIndex, day) constructs a LOCAL date at midnight — no UTC parsing quirks
+    return new Date(year, monthIndex, day).toLocaleDateString("en-US");
+  };
 
   useEffect(() => {
     const fetchSessions = async () => {
@@ -51,15 +73,18 @@ export default function Statistics() {
 
   const markCalendarDates = (sessionsData) => {
     const marked = {};
-    const todayStr = new Date().toISOString().split("T")[0];
+    const todayStr = getLocalDateString(new Date());
 
     sessionsData.forEach((s) => {
-      const dateStr = new Date(s.start_time).toISOString().split("T")[0];
-      marked[dateStr] = { marked: true, dotColor: "#fff" };
+      const dateStr = getLocalDateString(s.start_time);
+      // if multiple sessions same day, ensure we don't overwrite selected/customStyles
+      marked[dateStr] = { ...(marked[dateStr] || {}), marked: true, dotColor: "#fff" };
     });
 
     if (selectedDate && !marked[selectedDate]) {
       marked[selectedDate] = { selected: true, selectedColor: "#2196F3" };
+    } else if (selectedDate && marked[selectedDate]) {
+      marked[selectedDate] = { ...marked[selectedDate], selected: true, selectedColor: "#2196F3" };
     }
 
     // Bold today
@@ -73,6 +98,7 @@ export default function Statistics() {
   };
 
   const onDayPress = (day) => {
+    // day.dateString comes from Calendar as "YYYY-MM-DD"
     setSelectedDate(day.dateString);
     const updated = { ...markedDates };
     Object.keys(updated).forEach((key) => {
@@ -80,15 +106,19 @@ export default function Statistics() {
         updated[key] = { ...updated[key], selected: false, selectedColor: undefined };
       }
     });
-    updated[day.dateString] = { ...updated[day.dateString], selected: true, selectedColor: "#2196F3" };
+    updated[day.dateString] = {
+      ...(updated[day.dateString] || {}),
+      selected: true,
+      selectedColor: "#2196F3",
+    };
     setMarkedDates(updated);
   };
 
   const getSessionsForDate = (date) =>
-    sessions.filter((s) => new Date(s.start_time).toISOString().split("T")[0] === date);
+    sessions.filter((s) => getLocalDateString(s.start_time) === date);
 
   const formatDuration = (minutes) => {
-    if (!minutes) return "0m";
+    if (!minutes && minutes !== 0) return "0m";
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
     return h > 0 ? `${h}h ${m}m` : `${m}m`;
@@ -98,8 +128,8 @@ export default function Statistics() {
     new Date(ts).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
   const getStats = () => {
-    const uniqueDays = new Set(sessions.map((s) => new Date(s.start_time).toISOString().split("T")[0]));
-    const totalMinutes = sessions.reduce((acc, s) => acc + s.duration, 0);
+    const uniqueDays = new Set(sessions.map((s) => getLocalDateString(s.start_time)));
+    const totalMinutes = sessions.reduce((acc, s) => acc + (s.duration || 0), 0);
     return { totalSessions: sessions.length, totalDays: uniqueDays.size, totalMinutes };
   };
 
@@ -151,7 +181,7 @@ export default function Statistics() {
 
   const selectedDaySessions = selectedDate ? getSessionsForDate(selectedDate) : [];
   const stats = getStats();
-  const dayTotalMinutes = selectedDaySessions.reduce((sum, s) => sum + s.duration, 0);
+  const dayTotalMinutes = selectedDaySessions.reduce((sum, s) => sum + (s.duration || 0), 0);
 
   return (
     <ImageBackground
@@ -207,7 +237,7 @@ export default function Statistics() {
         {selectedDate && (
           <View style={styles.card}>
             <Text style={styles.statsCardTitle}>
-              {new Date(selectedDate).toLocaleDateString("en-US")}
+              {formatSelectedDateForDisplay(selectedDate)}
             </Text>
             {selectedDaySessions.length === 0 ? (
               <Text style={styles.noSessions}>No study sessions on this day</Text>
