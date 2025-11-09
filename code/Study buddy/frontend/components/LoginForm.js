@@ -20,6 +20,7 @@ console.log("[LoginForm] API_BASE_URL:", API_BASE_URL);
 import { AuthContext } from "../AuthContext";
 import { styles } from "../styles/style";
 import { useNavigation } from "@react-navigation/native";
+import { loginStyles } from "../styles/loginStyle";
 
 export default function LoginForm() {
   const navigation = useNavigation();
@@ -31,8 +32,32 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
+  // Util: Very basic client-side secure password regex validation
+  // 12+ chars, at least 1 number, 1 lowercase, 1 uppercase, 1 special char
+  const isPasswordSecure = (pw) =>
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{12,}$/.test(pw);
+
   const handleAuth = async () => {
-    if (!username || !password) return;
+    if (!username) {
+      setErrorMsg(
+        "Must contain username"
+      );
+      return;
+    };
+
+    if (!password) {
+      setErrorMsg(
+        "Must contain password"
+      );
+      return;
+    }
+
+    if (mode === "register" && !isPasswordSecure(password)) {
+      setErrorMsg(
+        "Password must be at least 12 characters: including a number, an uppercase, a lowercase, and a special character."
+      );
+      return;
+    }
 
     setLoading(true);
     setErrorMsg("");
@@ -70,6 +95,10 @@ export default function LoginForm() {
     }
   };
 
+  const switchMode = () => {
+    setMode(mode === "login" ? "register" : "login");
+    setErrorMsg("");
+  }
 
   if (user) {
     // if logged in
@@ -91,7 +120,7 @@ export default function LoginForm() {
             <Mail color="rgba(255,255,255,0.5)" size={20} style={styles.iconLeft} />
             <TextInput
               style={[styles.input, { paddingLeft: 36 }]}
-              placeholder="Enter your username"
+              placeholder="Username"
               placeholderTextColor="rgba(255,255,255,0.4)"
               value={username}
               onChangeText={setUsername}
@@ -107,7 +136,7 @@ export default function LoginForm() {
             <Lock color="rgba(255,255,255,0.5)" size={20} style={styles.iconLeft} />
             <TextInput
               style={[styles.input, { paddingLeft: 36, paddingRight: 36 }]}
-              placeholder="Enter your password"
+              placeholder={"Password"}
               placeholderTextColor="rgba(255,255,255,0.4)"
               secureTextEntry={!showPassword}
               value={password}
@@ -120,6 +149,12 @@ export default function LoginForm() {
               {showPassword ? <EyeOff color="rgba(255,255,255,0.6)" size={20} /> : <Eye color="rgba(255,255,255,0.6)" size={20} />}
             </TouchableOpacity>
           </View>
+          {/* Show password advice/info during register */}
+          {mode === "register" && (
+            <Text style={loginStyles.hint}>
+              Use at least 12 characters: including a number, an uppercase, a lowercase, and a special character.
+            </Text>
+          )}
         </View>
 
         {loading ? (
@@ -133,12 +168,12 @@ export default function LoginForm() {
         )}
 
         {errorMsg ? (
-          <Text style={{ color: "#ff6b6b", marginTop: 12, textAlign: "center" }}>
+          <Text style={loginStyles.error}>
             {errorMsg}
           </Text>
         ) : null}
 
-        <TouchableOpacity onPress={() => setMode(mode === "login" ? "register" : "login")} style={{ marginTop: 12 }}>
+        <TouchableOpacity onPress={switchMode} style={{ marginTop: 12 }}>
           <Text style={{ color: "#888", textAlign: "center" }}>
             {mode === "login" ? "Switch to Register" : "Switch to Login"}
           </Text>
