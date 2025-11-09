@@ -1,3 +1,8 @@
+/*
+  80% AI
+  20% Human
+*/
+
 import React from "react";
 import { Platform, View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -29,15 +34,15 @@ export default function MainTabs() {
           shadowOffset: { width: 0, height: 5 },
           shadowOpacity: 0.15,
           shadowRadius: 5,
-          backgroundColor: "transparent", // 保持透明
+          backgroundColor: "transparent", 
         },
         tabBarBackground: () => (
           <View
             style={{
               flex: 1,
               borderRadius: 20,
-              backgroundColor: "rgba(255,255,255,0.2)", // 半透明白色，可根据需要调整透明度
-              // backgroundColor: "rgba(0,0,0,0.0)", // 完全透明也可以
+              backgroundColor: "rgba(255,255,255,0.2)", 
+              // backgroundColor: "rgba(0,0,0,0.0)", // total transparent
             }}
           />
         ),
