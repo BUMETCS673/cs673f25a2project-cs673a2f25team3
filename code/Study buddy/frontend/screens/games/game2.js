@@ -56,7 +56,6 @@ export default function Game2() {
     const subscription = Dimensions.addEventListener("change", handleResize);
     return () => subscription?.remove();
   }, []);
-
   // Force screen update
   const [, forceRender] = useState(0);
 
@@ -75,6 +74,8 @@ export default function Game2() {
 
       // move player horizontally
       p.x += vx.current;
+
+      // bounce back if reaching edges
       if (p.x <= 0 || p.x + PLAYER_SIZE >= frameW) {
         vx.current *= -1;
         p.x = Math.max(0, Math.min(p.x, frameW - PLAYER_SIZE));
@@ -142,7 +143,6 @@ export default function Game2() {
       bamboos.current = newB;
 
       // if (ticks.current % 60 === 0) setScore(s => s + 1);
-
       forceRender(t => (t + 1) % 100000);
       rafId = requestAnimationFrame(loop);
     };
