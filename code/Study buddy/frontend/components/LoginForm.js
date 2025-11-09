@@ -88,6 +88,10 @@ export default function LoginForm() {
         });
       }
     } catch (err) {
+      if (err?.message == "SQLITE_CONSTRAINT: UNIQUE constraint failed: users.username") {
+        setErrorMsg("Username taken");
+        return;
+      }
       console.log(err);
       setErrorMsg(err?.message || "Something went wrong");
     } finally {
