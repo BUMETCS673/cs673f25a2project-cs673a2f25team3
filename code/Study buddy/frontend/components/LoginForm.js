@@ -1,6 +1,6 @@
 /*
-  50% AI
-  50% Human
+  40% AI
+  60% Human
 */
 
 import React, { useState, useContext } from "react";
@@ -22,6 +22,9 @@ import { styles } from "../styles/style";
 import { useNavigation } from "@react-navigation/native";
 import { loginStyles } from "../styles/loginStyle";
 
+const isPasswordSecure = (pw) =>
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{12,}$/.test(pw);
+
 export default function LoginForm() {
   const navigation = useNavigation();
   const { user, login, logout } = useContext(AuthContext);
@@ -34,8 +37,6 @@ export default function LoginForm() {
 
   // Util: Very basic client-side secure password regex validation
   // 12+ chars, at least 1 number, 1 lowercase, 1 uppercase, 1 special char
-  const isPasswordSecure = (pw) =>
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{12,}$/.test(pw);
 
   const handleAuth = async () => {
     if (!username) {
@@ -186,3 +187,7 @@ export default function LoginForm() {
     </KeyboardAvoidingView>
   );
 }
+
+export const exportForTest = {
+  isPasswordSecure
+};
