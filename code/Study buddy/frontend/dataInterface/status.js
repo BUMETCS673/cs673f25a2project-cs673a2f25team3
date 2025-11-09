@@ -2,6 +2,7 @@ import { API_BASE_URL } from "@env";
 import { isSameWeek } from "../util/compareTimes";
 import { goalCompleted } from "./goal";
 import { weeksToMs } from "../util/calculateMs";
+import { resetBuddy } from "./resetBuddy";
 
 /*
   100% Manual
@@ -40,6 +41,10 @@ export async function getStatus(token) {
 	.catch(err => {
 		console.error("Failed to fetch status", err);
 	});
+
+	if (status == 0) {
+		resetBuddy(token);
+	}
 
 	return status;
 }
