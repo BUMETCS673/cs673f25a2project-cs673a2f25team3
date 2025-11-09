@@ -33,7 +33,3 @@ jest.mock('expo-modules-core', () => {
 // Mock fetch globally
 import fetchMock from 'jest-fetch-mock';
 fetchMock.enableMocks();
-
-// Mock requestAnimationFrame to prevent act(...) warnings in animation loops
-global.requestAnimationFrame = (cb) => setTimeout(cb, 0);
-global.cancelAnimationFrame = (id) => clearTimeout(id);

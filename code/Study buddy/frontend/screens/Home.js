@@ -1,9 +1,13 @@
+/*
+  30% AI
+  70% Human
+*/
+
 import { View, Text } from 'react-native';
 import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
-import { getGoal } from '../dataInterface/goal';
-import { createClock } from '../util/formatString';
+import { HomeBuddy } from '../components/buddies/buddy';
 import { useContext } from 'react';
 import { AuthContext } from '../AuthContext'; 
 import { useNavigation } from '@react-navigation/native';
@@ -30,7 +34,9 @@ export default function Home() {
     <Background>
       <View style={styles.card}>
         <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
-        <NavigationButton text="Start Studying!" link="SelectStudyTime" />
+        {/* Jump straight to the timer so the refreshed StudyTimerInterface is shown immediately */}
+        <HomeBuddy />
+        <NavigationButton text="Start Studying!" link="Studying" />
         <NavigationButton text="Game Menu" link="GameMenu" />
         <NavigationButton text="Statistics" link="Statistics" />
         <NavigationButton text="Settings" link="Settings" />
