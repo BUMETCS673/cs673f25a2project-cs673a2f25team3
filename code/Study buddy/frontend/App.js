@@ -1,19 +1,13 @@
-/* 
-  50% AI
-  50% Human
-*/
-
+import React, { useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { AuthProvider, AuthContext } from "./AuthContext";
-import { useContext } from "react";
+import { ActivityIndicator, View } from "react-native";
 
-import Home from "./screens/Home";
-import SelectStudyTime from "./screens/SelectStudyTime";
-import GameMenu from "./screens/GameMenu";
-import Statistics from "./screens/Statistics";
-import Settings from "./screens/Settings";
+import { AuthProvider, AuthContext } from "./AuthContext";
+import MainTabs from "./components/MainTabs"; // <-- 引入 MainTabs
+
 import Login from "./screens/Login";
+import Settings from "./screens/Settings";
 import Studying from "./screens/Studying";
 import Game1 from "./screens/games/game1";
 import Game2 from "./screens/games/game2";
@@ -24,43 +18,31 @@ const Stack = createNativeStackNavigator();
 function AppNavigator() {
   const { user, loading } = useContext(AuthContext);
 
-  if (loading) return null; // splash screen if needed
-  // name is the routing name that needs to go in buttons to direct to the right page
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000" }}>
+        <ActivityIndicator size="large" color="#4CAF50" />
+      </View>
+    );
+  }
+
   return (
-    <Stack.Navigator initialRouteName={user ? "Home" : "Login"}>
-    {/* <Stack.Navigator initialRouteName={"GameMenu"}> */}
-      <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-      <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="GameMenu" component={GameMenu} />
-      <Stack.Screen name="SelectStudyTime" component={SelectStudyTime} />
-      <Stack.Screen name="Settings" component={Settings} />
-      <Stack.Screen name="Statistics" component={Statistics} />
-      <Stack.Screen name="Studying" component={Studying} />
-      <Stack.Screen name="Game1" component={Game1}
-        options={{
-          headerTitleStyle: {
-            userSelect: "none",
-            pointerEvents: "none",
-          },
-      }}/>
-      <Stack.Screen name="Game2" component={Game2}
-        options={{
-          headerTitleStyle: {
-            userSelect: "none",
-            pointerEvents: "none",
-          },
-      }}/>
-      <Stack.Screen name="Game3" component={Game3}
-        options={{
-          headerTitleStyle: {
-            userSelect: "none",
-            pointerEvents: "none",
-          },
-      }}/>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {!user ? (
+        <Stack.Screen name="Login" component={Login} />
+      ) : (
+        <>
+          <Stack.Screen name="MainTabs" component={MainTabs} />
+          <Stack.Screen name="Settings" component={Settings} />
+          <Stack.Screen name="Studying" component={Studying} />
+          <Stack.Screen name="Game1" component={Game1} options={{ headerShown: true, headerTitle: "Game 1" }} />
+          <Stack.Screen name="Game2" component={Game2} options={{ headerShown: true, headerTitle: "Game 2" }} />
+          <Stack.Screen name="Game3" component={Game3} options={{ headerShown: true, headerTitle: "Game 3" }} />
+        </>
+      )}
     </Stack.Navigator>
   );
 }
-
 
 export default function App() {
   return (

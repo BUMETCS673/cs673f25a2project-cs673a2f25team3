@@ -24,10 +24,6 @@ export default function Home() {
 
   const handleLogout = () => {
     logout(); // clear login state
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }], // back to login page and clear stack
-    });
   };
 
   return (

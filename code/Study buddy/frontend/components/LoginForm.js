@@ -57,10 +57,6 @@ export default function LoginForm() {
       } else {
         await login(data.user, data.token);
         // successfully login, direct to Home
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Home" }],
-        });
       }
     } catch (err) {
       console.log(err);
