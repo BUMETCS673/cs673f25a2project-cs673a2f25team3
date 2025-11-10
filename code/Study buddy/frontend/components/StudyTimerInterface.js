@@ -16,7 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContext } from "../AuthContext";
 import { API_BASE_URL } from "@env";
 
-const PRESET_MINUTES = [25, 45, 60];
+const PRESET_MINUTES = [25, 60];
 const TIMER_STORAGE_KEY = "@StudyTimer:state";
 const MAX_MINUTES = 180;
 
