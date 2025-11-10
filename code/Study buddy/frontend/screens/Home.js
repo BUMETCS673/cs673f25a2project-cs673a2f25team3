@@ -45,7 +45,7 @@ export default function HomeScreen() {
           <View style={styles.iconWrapper}>
             <Home color="#E67E22" size={46} strokeWidth={2.4} />
           </View>
-          <Text style={styles.headerTitle}>Welcome Home</Text>
+          <Text style={styles.headerTitle}>Home</Text>
           <Text style={styles.motto}>
             A balanced mind learns more efficiently
           </Text>
