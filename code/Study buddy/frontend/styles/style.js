@@ -8,7 +8,7 @@ import { borderRadius, fonts, padding } from "./base";
 
 /*
   100% unified styles for the app
-  - combines original style.js + LoginForm styles
+  - combines original style.js + LoginForm styles + Statistics page styles
 */
 
 export const styles = StyleSheet.create({
@@ -18,7 +18,6 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  // ====== Containers ======
   container: {
     flex: 1,
     width: "100%",
@@ -27,7 +26,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   card: {
-    width: "90%",
+    width: 300,
     maxWidth: 400,
     padding: padding.lg,
     borderRadius: borderRadius.md,
@@ -44,8 +43,6 @@ export const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.4)",
     paddingHorizontal: 20,
   },
-
-  // ====== Text ======
   cardH1: {
     fontSize: fonts.lg,
     fontWeight: "bold",
@@ -81,8 +78,6 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     textDecorationLine: "underline",
   },
-
-  // ====== Input Fields ======
   field: {
     marginBottom: 16,
     width: "100%",
@@ -190,8 +185,6 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
   },
-
-  // ====== Checkbox ======
   checkboxOutline: {
     flexDirection: "row",
     alignItems: "center",
@@ -204,5 +197,64 @@ export const styles = StyleSheet.create({
     margin: padding.sm,
     fontSize: fonts.md,
     color: "white",
-  }
+  },
+
+  // ====== Statistics Page Styles ======
+  statsContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    padding: 16,
+  },
+  statsCardTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 12,
+    textAlign: "center", // horizontally center
+    width: "100%",
+    flexWrap: "wrap",
+  },
+  statsRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+  },
+  statBox: {
+    alignItems: "center",
+  },
+  statNumber: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  statLabel: {
+    fontSize: 14,
+    color: "#ccc",
+    marginTop: 4,
+  },
+  sessionRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255,255,255,0.2)",
+    width: "100%",
+  },
+  sessionText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  noSessions: {
+    color: "#ccc",
+    fontSize: 16,
+    textAlign: "center",
+    paddingVertical: 10,
+  },
+  dayTotal: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+    marginTop: 8,
+    textAlign: "center",
+  },
 });
