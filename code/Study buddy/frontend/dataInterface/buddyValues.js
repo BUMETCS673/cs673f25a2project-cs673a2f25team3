@@ -7,6 +7,10 @@ import { AuthContext } from "../AuthContext";
 */
 
 const DEFAULT_BUDDY_DATA = {
+  buddyType: "deer",
+  outlineColor: "black",
+  insideColor: "#8B4513",
+  name: "Buddy",
   status: 4,
   exp: 0,
 };
@@ -50,9 +54,8 @@ export function useBuddyValues() {
   const size = Math.max(0, 100 + parsedExp / 2);
 
   return {
-    buddyType: "deer",
-    outlineColor: "black",
-    insideColor: "#8B4513",
+    ...DEFAULT_BUDDY_DATA,
+    exp: parsedExp,
     status,
     size,
   };

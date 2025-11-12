@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { borderRadius, fonts, padding } from "./base";
+import { borderRadius, fonts, padding, colors } from "./base";
 
 /*
   50% AI
@@ -113,7 +113,7 @@ export const styles = StyleSheet.create({
   },
   inputText: {
     fontSize: fonts.md,
-    color:'white'
+    color: colors.text
   },
   inputOutline: {
     flexDirection: 'row',

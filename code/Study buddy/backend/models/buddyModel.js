@@ -31,4 +31,11 @@ function getStatusByEnergy(energy) {
   return 0;
 }
 
-module.exports = { getBuddy, createBuddy, updateEnergy, getStatusByEnergy };
+function updateBuddy(userId, name, callback) {
+  const query = `UPDATE study_buddies SET name = ? WHERE user_id = ?`;
+  db.run(query, [name, userId], function(err) {
+    callback(err);
+  });
+}
+
+module.exports = { getBuddy, createBuddy, updateEnergy, getStatusByEnergy, updateBuddy };

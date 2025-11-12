@@ -11,11 +11,11 @@ import { TextInput } from 'react-native-paper';
 // parameters: 
 //    text: text next to the checkbox
 // example: <CustomCheckbox text="Sound On" />
-export const NumericalInput = ({text, value, setValue}) => {
+export const CustomInput = ({text, value, setValue, inputMode}) => {
   return(
     <View style={styles.inputOutline}>
       <Text style={styles.inputText}>{text}: </Text>
-      <TextInput style={styles.inputBox} value={value} inputMode='numeric' onChangeText={setValue}/>
+      <TextInput style={styles.inputBox} value={value} inputMode={inputMode} onChangeText={setValue}/>
     </View>
   );
 }
