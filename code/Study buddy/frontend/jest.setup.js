@@ -73,6 +73,25 @@ jest.mock('@expo/vector-icons', () => {
   };
 });
 
+// Mock react-native-calendars to prevent parsing and native module errors
+jest.mock('react-native-calendars', () => {
+  const React = require('react');
+  const { View, Text, TouchableOpacity } = require('react-native');
+  
+  // Create a mock Calendar component
+  const MockCalendar = ({ markedDates, onDayPress, style, theme, ...props }) => {
+    return React.createElement(
+      View,
+      { ...props, testID: 'mock-calendar', style },
+      React.createElement(Text, { testID: 'calendar-text' }, 'Calendar')
+    );
+  };
+  
+  return {
+    Calendar: MockCalendar,
+  };
+});
+
 // Mock fetch globally
 import fetchMock from 'jest-fetch-mock';
 fetchMock.enableMocks();
