@@ -86,7 +86,7 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS study_buddies (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL UNIQUE,
-      name TEXT NOT NULL,
+      name TEXT NOT NULL DEFAULT Buddy,
       energy INTEGER DEFAULT 100,
       exp INTEGER DEFAULT 0,
       status INTEGER DEFAULT 4,

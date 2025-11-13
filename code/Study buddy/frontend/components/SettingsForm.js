@@ -3,7 +3,7 @@ import { CustomInput } from './CustomInput';
 import { AuthContext } from "../AuthContext";
 import React, { useState, useContext } from "react";
 import { API_BASE_URL } from "@env";
-import { updateBuddy, getBuddyValues } from '../dataInterface/buddyValues';
+import { useBuddyValues } from '../dataInterface/buddyValues';
 export const exportForTesting = {
   isGoalValid
 }
@@ -34,9 +34,20 @@ export default function SettingsForm() {
     .catch(err => {
       console.error("Failed to fetch settings", err);
     });
-    
-    const buddyValues = async () => getBuddyValues();
-    setName(buddyValues.name);
+    fetch(`${API_BASE_URL}/buddy/me`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, 
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(res => res.json())
+    .then(data => {
+      setName(data.name);
+    })
+    .catch(err => {
+      console.error("Failed to fetch buddy", err);
+    });
   }, []);
   
   const submit = () => {
@@ -61,7 +72,19 @@ export default function SettingsForm() {
         console.error("Failed to change settings", err);
       });
 
-      async () => await updateBuddy(name, token);
+      fetch(`${API_BASE_URL}/buddy/update`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name
+        })
+      })
+      .catch(err => {
+        console.error("Failed to update buddy", err);
+      });
     }
   };
 
