@@ -24,11 +24,12 @@ export default function Home() {
 
   const handleLogout = () => {
     logout(); // clear login state
+    navigation.replace('Login')
   };
 
   return (
     <Background>
-      <View style={styles.card}>
+      <View style={styles.card} testID="home-screen">
         <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
         {/* Jump straight to the timer so the refreshed StudyTimerInterface is shown immediately */}
         <HomeBuddy />
