@@ -9,7 +9,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
 import Home from "../screens/Home";
-import SelectStudyTime from "../screens/SelectStudyTime";
+import SelectStudyTime from "../screens/Studying";
 import GameMenu from "../screens/GameMenu";
 import Statistics from "../screens/Statistics";
 
