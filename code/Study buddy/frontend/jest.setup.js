@@ -20,13 +20,56 @@ jest.mock('expo-linear-gradient', () => {
   };
 });
 
-// Mock expo-modules-core EventEmitter
+// Mock expo-modules-core EventEmitter and requireNativeModule
 jest.mock('expo-modules-core', () => {
   return {
     EventEmitter: class {
       addListener() {}
       removeAllListeners() {}
     },
+    requireNativeModule: jest.fn(() => ({
+      // Return a mock native module
+    })),
+  };
+});
+
+// Mock expo-font to prevent native module errors
+jest.mock('expo-font', () => {
+  return {
+    loadAsync: jest.fn(() => Promise.resolve()),
+    isLoaded: jest.fn(() => true),
+    loadFontsAsync: jest.fn(() => Promise.resolve()),
+  };
+});
+
+// Mock @expo/vector-icons to prevent native module errors
+jest.mock('@expo/vector-icons', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  
+  // Create a mock icon component
+  const MockIcon = ({ name, size, color, ...props }) => {
+    return React.createElement(View, {
+      ...props,
+      testID: `icon-${name}`,
+      style: { width: size, height: size, backgroundColor: color },
+    });
+  };
+  
+  return {
+    Ionicons: MockIcon,
+    MaterialIcons: MockIcon,
+    MaterialCommunityIcons: MockIcon,
+    FontAwesome: MockIcon,
+    FontAwesome5: MockIcon,
+    AntDesign: MockIcon,
+    Entypo: MockIcon,
+    Feather: MockIcon,
+    Fontisto: MockIcon,
+    Foundation: MockIcon,
+    Octicons: MockIcon,
+    SimpleLineIcons: MockIcon,
+    Zocial: MockIcon,
   };
 });
 
