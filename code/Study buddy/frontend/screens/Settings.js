@@ -2,24 +2,20 @@ import { View, Text } from 'react-native';
 import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
-import { CustomCheckbox } from '../components/Checkbox';
-import { useState } from 'react';
+import SettingsForm from '../components/SettingsForm';
 
 /*
   50% framework
   50% manual
 */
 
-// this page is not finished
-
 // Settings page - used to change font, style, and other important settings
-// Implimented settings: none
-export default function Settings({ navigation }) {
+export default function Settings() {
   return (
     <Background>
       <View style={styles.card}>
         <Text style={styles.cardH1} accessibilityRole='header'>Settings</Text>
-        <CustomCheckbox text="Sound On" />
+        <SettingsForm />
         <NavigationButton text="Return Home" link="Home" />
       </View>
     </Background>
