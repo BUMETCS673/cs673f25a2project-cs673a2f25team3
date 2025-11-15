@@ -45,7 +45,17 @@ export default function SettingsForm() {
       setName(data.name);
     })
     .catch(err => {
-      console.error("Failed to fetch buddy", err);
+      fetch(`${API_BASE_URL}/buddy/me`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: 'Buddy'
+        })
+      })
+      .catch(err => {});
     });
   }, []);
   
