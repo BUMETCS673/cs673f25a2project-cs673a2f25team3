@@ -12,6 +12,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../AuthContext'; 
 import { useNavigation } from '@react-navigation/native';
 
+
 /*
   40% framework
   60% manual

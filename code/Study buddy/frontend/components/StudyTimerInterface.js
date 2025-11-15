@@ -15,6 +15,9 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthContext } from "../AuthContext";
 import { API_BASE_URL } from "@env";
+import { increaseExp } from "../dataInterface/exp";
+import { changeStatus, getStatus } from "../dataInterface/status";
+import { goalCompleted } from "../dataInterface/goal";
 
 const PRESET_MINUTES = [25, 45, 60];
 const TIMER_STORAGE_KEY = "@StudyTimer:state";
@@ -409,6 +412,7 @@ const footerMessage = isComplete
     setIsSubmitting(true);
     setError("");
     try {
+      const goalStartedFinished = await goalCompleted(token);
       const response = await fetch(`${API_BASE_URL}/study/me`, {
         method: "POST",
         headers: {
@@ -423,6 +427,16 @@ const footerMessage = isComplete
         throw new Error(data?.error || "Failed to record study session.");
       }
 
+      increaseExp(payload.duration, token);
+      const goalNowFinished = await goalCompleted(token);
+      
+      if (await getStatus(token) < 4 && 
+        !goalStartedFinished &&
+        goalNowFinished
+      ) {
+        changeStatus(1, token);
+      }
+      
       setStatus("complete");
       await clearProgressRecord();
     } catch (err) {

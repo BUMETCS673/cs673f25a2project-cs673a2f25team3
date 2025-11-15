@@ -75,11 +75,11 @@ describe("API Integration Tests", () => {
     const res = await request(app)
       .post("/api/settings/me")
       .set("Authorization", `Bearer ${token}`)
-      .send({ theme: "dark", daily_goal: 50 });
+      .send({ theme: "dark", goal: 50 });
 
     expect(res.statusCode).toBe(200);
     expect(res.body.theme).toBe("dark");
-    expect(res.body.daily_goal).toBe(50);
+    expect(res.body.goal).toBe(50);
   });
 
   test("Add Study Session", async () => {
