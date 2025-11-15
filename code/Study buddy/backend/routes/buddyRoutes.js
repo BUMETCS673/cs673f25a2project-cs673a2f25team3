@@ -32,6 +32,22 @@ router.post("/update", (req, res) => {
     if (err) return res.status(500).json({ error: err.message });
     res.status(201).json(buddy);
   });
-})
+});
+
+router.post("/exp", (req, res) => {
+  const { exp } = req.body;
+  Buddy.updateExp(req.user.id, exp, (err, buddy) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(201).json(buddy);
+  });
+});
+
+router.post("/status", (req, res) => {
+  const { status } = req.body;
+  Buddy.updateStatus(req.user.id, status, (err, buddy) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(201).json(buddy);
+  });
+});
 
 module.exports = router;

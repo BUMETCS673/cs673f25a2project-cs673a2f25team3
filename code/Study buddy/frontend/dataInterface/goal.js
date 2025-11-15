@@ -1,32 +1,36 @@
 import { API_BASE_URL } from "@env";
-import React, { useState, useContext } from "react";
-import { AuthContext } from "../AuthContext";
+import { getTimeStudiedInWeek } from './timeStudied';
 
 /*
   50% AI
   50% Manual
 */
 
-export function useGoal() {
-  const [goalMin, setGoalMin] = useState(null);
-  const { token } = useContext(AuthContext);
-  React.useEffect(() => {
-    fetch(`${API_BASE_URL}/settings/me`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .then(data => {
-        setGoalMin(data.goal);
-      })
-      .catch(err => {
-        console.error("Failed to fetch goal", err);
-      });
-  }, []);
+export async function getGoal(token) {
+  var goalMs = 5*60;
+  await fetch(`${API_BASE_URL}/settings/me`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+  .then(res => res.json())
+  .then(data => {
+    goalMs = data.goal;
+  })
+  .catch(err => {
+    console.error("Failed to fetch goal", err);
+  });
 
-  if (goalMin !== null) return goalMin;
+  if (goalMs !== null) return goalMs;
   return 5*60;
+}
+
+export async function goalCompleted(token, date = Date.now()) {
+  return getTimeLeftInGoal(date, token) <= 0;
+}
+
+async function getTimeLeftInGoal(date, token) {
+	return Math.max(0, await getGoal(token) - await getTimeStudiedInWeek(date, token));
 }

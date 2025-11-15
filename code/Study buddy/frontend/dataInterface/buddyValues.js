@@ -25,8 +25,7 @@ export function useBuddyValues() {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    })
-      .then(res => res.json())
+    }).then(res => res.json())
       .then(apiBuddy => {
         if (apiBuddy && typeof apiBuddy === "object") {
           console.log(apiBuddy.name);

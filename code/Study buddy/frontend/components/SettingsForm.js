@@ -3,7 +3,6 @@ import { CustomInput } from './CustomInput';
 import { AuthContext } from "../AuthContext";
 import React, { useState, useContext } from "react";
 import { API_BASE_URL } from "@env";
-import { useBuddyValues } from '../dataInterface/buddyValues';
 export const exportForTesting = {
   isGoalValid
 }

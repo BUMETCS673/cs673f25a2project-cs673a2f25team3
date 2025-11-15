@@ -7,6 +7,11 @@ import { borderRadius, fonts, padding, colors } from "./base";
 */
 
 /*
+  50% AI
+  50% Manual
+*/
+
+/*
   100% unified styles for the app
   - combines original style.js + LoginForm styles + Statistics page styles
 */
