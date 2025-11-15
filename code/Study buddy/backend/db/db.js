@@ -92,7 +92,15 @@ db.serialize(() => {
       last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY(user_id) REFERENCES users(id)
     )
-  `)
+  `);
+
+  // Add last_updated column to study_buddies if it doesn't exist
+  // This handles cases where the table was created before this column was added
+  db.run(`
+    ALTER TABLE study_buddies ADD COLUMN last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `, (err) => {
+    // Ignore error if column already exists
+  });
 });
 
 
