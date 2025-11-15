@@ -1,0 +1,23 @@
+/*
+100% manual
+*/
+
+export function minutesToMs(minutes) {
+    return minutes * 60 * 1000;
+}
+
+export function hoursToMs(hours) {
+    return hours * 3600 * 1000;
+}
+
+export function weeksToMs(weeks) {
+    return weeks * 7 * 24 * 3600 * 1000;
+}
+
+export function daysToMs(days) {
+    return days * 24 * 3600 * 1000;
+}
+
+export function msToHours(ms) {
+    return ms / 1000 / 3600;
+}

@@ -48,20 +48,18 @@ describe("Study Buddy Acceptance Tests", () => {
 
     expect(res.statusCode).toBe(201);
     expect(res.body.name).toBe("BuddyOne");
-    expect(res.body.energy).toBe(100);
     expect(res.body.status).toBe(4); // energetic
   });
 
-  test("Update buddy energy and status", async () => {
+  test("Update buddy status", async () => {
     await new Promise((resolve) =>
-      Buddy.updateEnergy(userId, 60, resolve)
+      Buddy.updateStatus(userId, -1, resolve)
     );
 
     const buddy = await new Promise((resolve) =>
       Buddy.getBuddy(userId, (_, b) => resolve(b))
     );
-    expect(buddy.energy).toBe(60);
-    expect(buddy.status).toBe(3); // not happy
+    expect(buddy.status).toBe(3);
   });
 
   test("Add a study session with start/end time", async () => {

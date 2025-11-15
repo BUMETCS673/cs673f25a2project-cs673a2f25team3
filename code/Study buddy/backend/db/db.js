@@ -36,10 +36,15 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL UNIQUE,
       theme TEXT DEFAULT 'light',
-      daily_goal INTEGER DEFAULT 25,
+      goal INTEGER DEFAULT 18000000,
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
+
+  db.run(`
+    ALTER TABLE settings RENAME COLUMN daily_goal TO goal
+  `, (err) => {
+  });
 
   db.run(`
     CREATE TABLE IF NOT EXISTS study_sessions (
@@ -82,12 +87,20 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL UNIQUE,
       name TEXT NOT NULL,
-      energy INTEGER DEFAULT 100,
       exp INTEGER DEFAULT 0,
       status INTEGER DEFAULT 4,
+      last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY(user_id) REFERENCES users(id)
     )
-  `)
+  `);
+
+  // Add last_updated column to study_buddies if it doesn't exist
+  // This handles cases where the table was created before this column was added
+  db.run(`
+    ALTER TABLE study_buddies ADD COLUMN last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `, (err) => {
+    // Ignore error if column already exists
+  });
 });
 
 
