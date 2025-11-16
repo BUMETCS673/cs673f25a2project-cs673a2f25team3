@@ -1,7 +1,5 @@
-import { CustomCheckbox } from '../components/Checkbox';
 import { SubmitButton } from '../components/FormSubmitButton';
-import { NumericalInput } from './NumericalInput';
-import { hoursToMs, msToHours } from '../util/calculateMs';
+import { CustomInput } from './CustomInput';
 import { AuthContext } from "../AuthContext";
 import React, { useState, useContext } from "react";
 import { API_BASE_URL } from "@env";
@@ -15,10 +13,9 @@ export const exportForTesting = {
   70% manual
 */
 
-// Implimented settings: goal
 export default function SettingsForm() {
-  const [goalInHours, setGoalInHours] = useState(0);
-	const [isChecked, setChecked] = useState("true");
+  const [goalInMinutes, setGoalInMinutes] = useState(0);
+  const [name, setName] = useState("Buddy");
   const { token } = useContext(AuthContext);
 
   React.useEffect(() => {
@@ -31,22 +28,44 @@ export default function SettingsForm() {
     })
     .then(res => res.json())
     .then(data => {
-      setGoalInHours(msToHours(data.goal));
+      setGoalInMinutes(data.goal);
     })
     .catch(err => {
-      console.error("Failed to fetch goal", err);
+      console.error("Failed to fetch settings", err);
+    });
+    fetch(`${API_BASE_URL}/buddy/me`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, 
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(res => res.json())
+    .then(data => {
+      setName(data.name);
+    })
+    .catch(err => {
+      fetch(`${API_BASE_URL}/buddy/me`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: 'Buddy'
+        })
+      })
+      .catch(err => {});
     });
   }, []);
   
   const submit = () => {
-    // use this function to move useState variables into backend / local storage
     var allIsValid = true;
-    if (!isGoalValid(goalInHours)) {
+    if (!isGoalValid(goalInMinutes)) {
       console.log('Goal is not valid value');
       allIsValid = false;
     }
     if (allIsValid) {
-      // save values to database
       fetch(`${API_BASE_URL}/settings/me`, {
         method: 'POST',
         headers: {
@@ -55,19 +74,33 @@ export default function SettingsForm() {
         },
         body: JSON.stringify({
           theme: 'light',
-          goal: hoursToMs(goalInHours)
+          goal: goalInMinutes
         })
       })
       .catch(err => {
-        console.error("Failed to fetch goal", err);
+        console.error("Failed to change settings", err);
+      });
+
+      fetch(`${API_BASE_URL}/buddy/update`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name
+        })
+      })
+      .catch(err => {
+        console.error("Failed to update buddy", err);
       });
     }
   };
 
   return (
     <>
-			<CustomCheckbox text="Sound On" isChecked={isChecked} setChecked={setChecked} />
-			<NumericalInput text="Goal in hours per week" value={goalInHours} setValue={setGoalInHours} />
+			<CustomInput text="Goal in minutes per week" value={goalInMinutes} setValue={setGoalInMinutes} inputMode='numeric' />
+      <CustomInput text="Buddy name" value={name} setValue={setName} inputMode='text' />
 			<SubmitButton text="Save" submit={submit} />
     </>
   );

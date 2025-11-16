@@ -1,5 +1,4 @@
 import { API_BASE_URL } from "@env";
-import { hoursToMs } from "../util/calculateMs";
 import { getTimeStudiedInWeek } from './timeStudied';
 
 /*
