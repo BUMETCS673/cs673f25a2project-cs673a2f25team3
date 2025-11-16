@@ -36,15 +36,15 @@ describe('LoginForm', () => {
   test('renders login form correctly', async () => {
     const { getByPlaceholderText, getByTestId } = render(<AppWithNavigation />);
 
-    await waitFor(() => expect(getByPlaceholderText('Username')).toBeTruthy());
-    expect(getByPlaceholderText('Password')).toBeTruthy();
+    await waitFor(() => expect(getByPlaceholderText('Enter your username')).toBeTruthy());
+    expect(getByPlaceholderText('Enter your password')).toBeTruthy();
     expect(getByTestId('loginButton')).toBeTruthy();
   });
 
   test('login updates context and navigates', async () => {
     const { getByPlaceholderText, getByTestId, queryByPlaceholderText, findByTestId } = render(<AppWithNavigation />);
 
-    await waitFor(() => expect(getByPlaceholderText('Username')).toBeTruthy());
+    await waitFor(() => expect(getByPlaceholderText('Enter your username')).toBeTruthy());
 
     fetchMock.mockResponseOnce(
       JSON.stringify({
@@ -55,14 +55,14 @@ describe('LoginForm', () => {
     );
 
     // input user name and password
-    fireEvent.changeText(getByPlaceholderText('Username'), 'testuser');
-    fireEvent.changeText(getByPlaceholderText('Password'), '$Password123');
+    fireEvent.changeText(getByPlaceholderText('Enter your username'), 'testuser');
+    fireEvent.changeText(getByPlaceholderText('Enter your password'), 'password');
 
     await act(async () => {
       fireEvent.press(getByTestId('loginButton'));
     });
 
-    await waitFor(() => expect(queryByPlaceholderText('Username')).toBeNull());
+    await waitFor(() => expect(queryByPlaceholderText('Enter your username')).toBeNull());
     await findByTestId('home-screen');
   });
 
