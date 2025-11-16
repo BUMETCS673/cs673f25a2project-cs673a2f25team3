@@ -30,4 +30,11 @@ function updateStatus(userId, status, callback) {
   });
 }
 
-module.exports = { getBuddy, createBuddy, updateExp, updateStatus };
+function updateBuddy(userId, name, callback) {
+  const query = `UPDATE study_buddies SET name = ? WHERE user_id = ?`;
+  db.run(query, [name, userId], function(err) {
+    callback(err);
+  });
+}
+
+module.exports = { getBuddy, createBuddy, updateExp, updateStatus, updateBuddy };
