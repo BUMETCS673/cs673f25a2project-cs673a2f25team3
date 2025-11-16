@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "@env";
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthContext";
+import { updateStatus } from "./status";
 
 /*
   100% Manual
@@ -14,6 +15,13 @@ const DEFAULT_BUDDY_DATA = {
 export function useBuddyValues() {
   const [data, setData] = useState(DEFAULT_BUDDY_DATA);
   const { token } = useContext(AuthContext);
+  
+  React.useEffect(() => {
+    (async () => {
+      await updateStatus(token);
+    })();
+  }, []);
+
   React.useEffect(() => {
     fetch(`${API_BASE_URL}/buddy/me`, {
       method: "GET",

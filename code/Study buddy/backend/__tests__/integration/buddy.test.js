@@ -82,6 +82,18 @@ describe("Buddy Model Integration Tests", () => {
       done();
     });
   });
+
+  test("Delete Buddy", (done) => {
+    BuddyModel.deleteBuddy(userId, (err) => {
+      expect(err).toBeNull();
+    });
+    
+    BuddyModel.getBuddy(userId, (err, buddy) => {
+      expect(err).toBeNull();
+      expect(buddy).toBeUndefined();
+      done();
+    });
+  });
 });
 
 afterAll(() => db.close());
