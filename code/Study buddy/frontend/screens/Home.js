@@ -17,11 +17,8 @@ export default function Home() {
   const navigation = useNavigation();
 
   const handleLogout = () => {
-    logout();
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
+    logout(); // clear login state
+    navigation.replace('Login')
   };
 
   // -----------------------------------
@@ -43,9 +40,9 @@ export default function Home() {
 
   return (
     <Background>
-      <View style={styles.card}>
-        <Text style={styles.cardH1}>Home</Text>
-
+      <View style={styles.card} testID="home-screen">
+        <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
+        {/* Jump straight to the timer so the refreshed StudyTimerInterface is shown immediately */}
         <HomeBuddy />
 
         <NavigationButton text="Start Studying!" link="Studying" />

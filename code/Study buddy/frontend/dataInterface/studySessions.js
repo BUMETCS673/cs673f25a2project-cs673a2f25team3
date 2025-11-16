@@ -1,6 +1,4 @@
 import { API_BASE_URL } from "@env";
-import React, { useState, useContext } from 'react';
-import { AuthContext } from '../AuthContext';
 
 /*
   50% AI

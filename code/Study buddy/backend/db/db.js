@@ -36,7 +36,7 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL UNIQUE,
       theme TEXT DEFAULT 'light',
-      goal INTEGER DEFAULT 18000000,
+      goal INTEGER DEFAULT 300, --in mins
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
@@ -86,7 +86,8 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS study_buddies (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL UNIQUE,
-      name TEXT NOT NULL,
+      name TEXT NOT NULL DEFAULT Buddy,
+      energy INTEGER DEFAULT 100,
       exp INTEGER DEFAULT 0,
       status INTEGER DEFAULT 4,
       last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
