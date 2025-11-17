@@ -1,6 +1,6 @@
 /*
-  50% AI
-  50% Human
+  60% AI
+  40% Human
 */
 
 const request = require("supertest");
@@ -100,5 +100,51 @@ describe("API Integration Tests", () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.length).toBeGreaterThan(0);
     expect(res.body[0]).toHaveProperty("duration");
+  });
+
+  test("Update Buddy with valid type 'cat'", async () => {
+    const res = await request(app)
+      .post("/api/buddy/update")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ name: "Fluffy", type: "cat" });
+
+    expect(res.statusCode).toBe(201);
+    
+    // Verify the update by getting the buddy
+    const getRes = await request(app)
+      .get("/api/buddy/me")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(getRes.statusCode).toBe(200);
+    expect(getRes.body.name).toBe("Fluffy");
+    expect(getRes.body.type).toBe("cat");
+  });
+
+  test("Update Buddy with valid type 'deer'", async () => {
+    const res = await request(app)
+      .post("/api/buddy/update")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ name: "Bambi", type: "deer" });
+
+    expect(res.statusCode).toBe(201);
+    
+    // Verify the update by getting the buddy
+    const getRes = await request(app)
+      .get("/api/buddy/me")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(getRes.statusCode).toBe(200);
+    expect(getRes.body.name).toBe("Bambi");
+    expect(getRes.body.type).toBe("deer");
+  });
+
+  test("Update Buddy with invalid type returns error", async () => {
+    const res = await request(app)
+      .post("/api/buddy/update")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ name: "Invalid", type: "this is an invalid buddy type" });
+
+    expect(res.statusCode).toBe(500);
+    expect(res.body.error).toBe("Invalid buddy type selection");
   });
 });
