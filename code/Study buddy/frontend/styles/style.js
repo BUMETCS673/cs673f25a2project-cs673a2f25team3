@@ -1,5 +1,15 @@
 import { StyleSheet } from "react-native";
-import { borderRadius, fonts, padding } from "./base";
+import { borderRadius, fonts, padding, colors } from "./base";
+
+/*
+  50% AI
+  50% Manual
+*/
+
+/*
+  50% AI
+  50% Manual
+*/
 
 /*
   100% unified styles for the app
@@ -44,6 +54,13 @@ export const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     marginBottom: padding.md,
+  },
+  cardH2: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: fonts.md,
+    fontWeight: 'bold',
+    marginBottom: padding.md
   },
   paragraph: {
     fontSize: fonts.md,
@@ -97,6 +114,18 @@ export const styles = StyleSheet.create({
     right: 10,
     zIndex: 1,
   },
+  inputBox: {
+  },
+  inputText: {
+    fontSize: fonts.md,
+    color: colors.text
+  },
+  inputOutline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  // ====== Buttons ======
   button: {
     backgroundColor: "rgba(255,255,255,0.2)",
     paddingVertical: 12,
@@ -119,6 +148,23 @@ export const styles = StyleSheet.create({
     textAlignVertical: "center",
     margin: padding.xs,
   },
+  submitButton: {
+    backgroundColor: 'white', 
+    color: 'black',
+    fontWeight: 'bold', 
+    borderWidth: 2,
+    borderColor: 'transparent',
+    paddingVertical: padding.sm,
+    paddingHorizontal: padding.md,
+    borderRadius: borderRadius.sm,
+    cursor: 'pointer',
+    fontSize: fonts.lg,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    margin: padding.xs
+  },
+
+  // ====== Bottom Row ======
   bottomRow: {
     flexDirection: "row",
     justifyContent: "space-between",

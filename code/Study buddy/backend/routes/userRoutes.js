@@ -27,6 +27,7 @@ router.post("/register", (req, res) => {
     // Auto create default profile and settings
     db.run("INSERT INTO profiles (user_id) VALUES (?)", [user.id]);
     db.run("INSERT INTO settings (user_id) VALUES (?)", [user.id]);
+    db.run("INSERT INTO study_buddies (user_id) VALUES (?)", [user.id]);
 
     // Auto create default buddy in study_buddies
     db.run(
