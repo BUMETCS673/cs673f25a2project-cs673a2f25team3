@@ -2,8 +2,12 @@ import { SubmitButton } from '../components/FormSubmitButton';
 import { CustomInput } from './CustomInput';
 import { AuthContext } from "../AuthContext";
 import React, { useState, useContext } from "react";
+import { View, Text } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import { API_BASE_URL } from "@env";
 import { NavigationButton } from './NavigationButton';
+import { styles } from '../styles/style';
+
 export const exportForTesting = {
   isGoalValid
 }
@@ -119,7 +123,18 @@ export default function SettingsForm() {
     <>
 			<CustomInput text="Goal in minutes per week" value={goalInMinutes} setValue={setGoalInMinutes} inputMode='numeric' />
       <CustomInput text="Buddy name" value={name} setValue={setName} inputMode='text' />
-      <CustomInput text="Buddy type" value={buddyType} setValue={setBuddyType} inputMode='text' />
+      <View style={styles.inputOutline}>
+        <Picker
+          selectedValue={buddyType}
+          onValueChange={(itemValue, itemIndex) =>
+            setBuddyType(itemValue)
+          }
+          style={styles.inputPicker}
+          >
+          <Picker.Item label="Cat" value="cat" />
+          <Picker.Item label="Deer" value="deer" />
+        </Picker>
+      </View>
 			<SubmitButton text="Save" submit={submit} />
       <NavigationButton text="Get Buddy" onPress={buddy} />
     </>
