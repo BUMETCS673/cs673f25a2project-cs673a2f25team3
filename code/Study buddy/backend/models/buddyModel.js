@@ -31,6 +31,7 @@ function updateStatus(userId, status, callback) {
 }
 
 function updateBuddy(userId, name, type, callback) {
+  if (type != "cat" && type != "deer") return callback(new Error("Invalid buddy type selection"));
   const query = `UPDATE study_buddies SET name = ?, type = ? WHERE user_id = ?`;
   db.run(query, [name, type, userId], function(err) {
     callback(err);
