@@ -2,8 +2,9 @@ const db = require("../../db/db");
 const BuddyModel = require("../../models/buddyModel");
 
 /*
-  90% Human
+  40% Human
   10% framework
+  50% AI
 */
 
 let userId;

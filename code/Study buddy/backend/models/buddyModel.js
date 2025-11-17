@@ -1,5 +1,6 @@
 /*
-  100% human
+  90% human
+  10% AI
 */
 
 const db = require("../db/db");
