@@ -24,6 +24,11 @@ function updateExp(userId, exp, callback) {
 
 function updateStatus(userId, status, callback) {
   const last_updated = Date.now();
+
+  if (status == 0 || !Number.isInteger(status)) {
+    return callback("Invalid status update");
+  }
+
   db.get(`SELECT * FROM study_buddies WHERE user_id = ?`, [userId], function(err, buddy) {
     if (err) {
       callback(err);
@@ -31,27 +36,23 @@ function updateStatus(userId, status, callback) {
       callback(new Error("Buddy not found"));
     } else {
       const newStatus = buddy.status + status;
-      var finalStatus = -1;
+      var finalStatus = newStatus;
 
       if (newStatus >= 4) {
         finalStatus = 4;
       } else if (newStatus <= 0) {
         finalStatus = 0;
-      } else if (Number.isInteger(newStatus)) {
-        finalStatus = newStatus;
-      } else if (!Number.isNaN(newStatus)) {
-        finalStatus = Math.floor(newStatus);
       }
 
-      if (finalStatus != -1 && finalStatus != buddy.status) {
-        db.run(
-          `UPDATE study_buddies SET status = ?, last_updated = ? WHERE user_id = ?`,
-          [finalStatus, last_updated, userId],
-          function(err) {
-            callback(err);
-          }
-        );
-      }
+      if (buddy.status == finalStatus) return callback("Status capped");
+
+      db.run(
+        `UPDATE study_buddies SET status = ?, last_updated = ? WHERE user_id = ?`,
+        [finalStatus, last_updated, userId],
+        function(err) {
+          callback(err);
+        }
+      );
     }
   });
 }

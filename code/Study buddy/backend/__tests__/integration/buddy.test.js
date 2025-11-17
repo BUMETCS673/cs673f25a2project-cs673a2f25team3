@@ -65,23 +65,7 @@ describe("Buddy Model Integration Tests", () => {
     });
   });
 
-  test("When updating status, last_updated changes", (done) => {
-    var origionalLastUpdated = 0;
-    BuddyModel.getBuddy(userId, (err, buddy) => {
-      expect(err).toBeNull();
-      origionalLastUpdated = new Date(buddy.last_updated).getTime();
-    });
-
-    BuddyModel.updateStatus(userId, 1, (err) => {
-      expect(err).toBeNull();
-    });
-
-    BuddyModel.getBuddy(userId, (err, buddy) => {
-      expect(err).toBeNull();
-      expect(new Date(buddy.last_updated).getTime()).not.toBe(origionalLastUpdated);
-      done();
-    });
-  });
+  
 
   describe("updateStatus", () => {
     beforeEach((done) => {
@@ -89,27 +73,44 @@ describe("Buddy Model Integration Tests", () => {
       db.run("UPDATE study_buddies SET status = 2 WHERE user_id = ?", [userId], done);
     });
 
+    test("When updating status, last_updated changes", (done) => {
+      BuddyModel.getBuddy(userId, (err, buddy) => {
+        expect(err).toBeNull();
+        var origionalLastUpdated = new Date(buddy.last_updated).getTime();
+        
+        BuddyModel.updateStatus(userId, 1, (err) => {
+          expect(err).toBeNull();
+          
+          BuddyModel.getBuddy(userId, (err, buddy) => {
+            expect(err).toBeNull();
+            expect(new Date(buddy.last_updated).getTime()).not.toBe(origionalLastUpdated);
+            done();
+          });
+        });
+      });
+    });
+
     test("Increments status within bounds", (done) => {
       BuddyModel.updateStatus(userId, 1, (err) => {
         expect(err).toBeNull();
-      });
 
-      BuddyModel.getBuddy(userId, (err, buddy) => {
-        expect(err).toBeNull();
-        expect(buddy.status).toBe(3);
-        done();
+        BuddyModel.getBuddy(userId, (err, buddy) => {
+          expect(err).toBeNull();
+          expect(buddy.status).toBe(3);
+          done();
+        });
       });
     });
 
     test("Decrements status within bounds", (done) => {
       BuddyModel.updateStatus(userId, -1, (err) => {
         expect(err).toBeNull();
-      });
 
-      BuddyModel.getBuddy(userId, (err, buddy) => {
-        expect(err).toBeNull();
-        expect(buddy.status).toBe(1);
-        done();
+        BuddyModel.getBuddy(userId, (err, buddy) => {
+          expect(err).toBeNull();
+          expect(buddy.status).toBe(1);
+          done();
+        });
       });
     });
 
@@ -117,13 +118,13 @@ describe("Buddy Model Integration Tests", () => {
       // Set status to 4
       db.run("UPDATE study_buddies SET status = 4 WHERE user_id = ?", [userId], () => {
         BuddyModel.updateStatus(userId, 1, (err) => {
-          expect(err).toBeNull();
-        });
+          expect(err).toBe("Status capped");
 
-        BuddyModel.getBuddy(userId, (err, buddy) => {
-          expect(err).toBeNull();
-          expect(buddy.status).toBe(4);
-          done();
+          BuddyModel.getBuddy(userId, (err, buddy) => {
+            expect(err).toBeNull();
+            expect(buddy.status).toBe(4);
+            done();
+          });
         });
       });
     });
@@ -133,12 +134,12 @@ describe("Buddy Model Integration Tests", () => {
       db.run("UPDATE study_buddies SET status = 3 WHERE user_id = ?", [userId], () => {
         BuddyModel.updateStatus(userId, 2, (err) => {
           expect(err).toBeNull();
-        });
 
-        BuddyModel.getBuddy(userId, (err, buddy) => {
-          expect(err).toBeNull();
-          expect(buddy.status).toBe(4);
-          done();
+          BuddyModel.getBuddy(userId, (err, buddy) => {
+            expect(err).toBeNull();
+            expect(buddy.status).toBe(4);
+            done();
+          });
         });
       });
     });
@@ -147,13 +148,13 @@ describe("Buddy Model Integration Tests", () => {
       // Set status to 0
       db.run("UPDATE study_buddies SET status = 0 WHERE user_id = ?", [userId], () => {
         BuddyModel.updateStatus(userId, -1, (err) => {
-          expect(err).toBeNull();
-        });
+          expect(err).toBe("Status capped");
 
-        BuddyModel.getBuddy(userId, (err, buddy) => {
-          expect(err).toBeNull();
-          expect(buddy.status).toBe(0);
-          done();
+          BuddyModel.getBuddy(userId, (err, buddy) => {
+            expect(err).toBeNull();
+            expect(buddy.status).toBe(0);
+            done();
+          });
         });
       });
     });
@@ -163,84 +164,34 @@ describe("Buddy Model Integration Tests", () => {
       db.run("UPDATE study_buddies SET status = 1 WHERE user_id = ?", [userId], () => {
         BuddyModel.updateStatus(userId, -2, (err) => {
           expect(err).toBeNull();
-        });
 
-        BuddyModel.getBuddy(userId, (err, buddy) => {
-          expect(err).toBeNull();
-          expect(buddy.status).toBe(0);
-          done();
+          BuddyModel.getBuddy(userId, (err, buddy) => {
+            expect(err).toBeNull();
+            expect(buddy.status).toBe(0);
+            done();
+          });
         });
       });
     });
 
-    test("Handles non-integer status delta by flooring", (done) => {
+    test("Returns error for non-integer status delta", (done) => {
       BuddyModel.updateStatus(userId, 1.7, (err) => {
-        expect(err).toBeNull();
-      });
-
-      BuddyModel.getBuddy(userId, (err, buddy) => {
-        expect(err).toBeNull();
-        // 2 + 1.7 = 3.7, floored to 3
-        expect(buddy.status).toBe(3);
+        expect(err).toBe("Invalid status update");
         done();
       });
     });
 
-    test("Handles negative non-integer status delta", (done) => {
-      // Set status to 3
-      db.run("UPDATE study_buddies SET status = 3 WHERE user_id = ?", [userId], () => {
-        BuddyModel.updateStatus(userId, -1.3, (err) => {
-          expect(err).toBeNull();
-        });
-
-        BuddyModel.getBuddy(userId, (err, buddy) => {
-          expect(err).toBeNull();
-          // 3 + (-1.3) = 1.7, floored to 1
-          expect(buddy.status).toBe(1);
-          done();
-        });
+    test("Returns error for negative non-integer status delta", (done) => {
+      BuddyModel.updateStatus(userId, -1.3, (err) => {
+        expect(err).toBe("Invalid status update");
+        done();
       });
     });
 
-    test("Does not update when status would not change", (done) => {
-      // Set status to 4
-      db.run("UPDATE study_buddies SET status = 4 WHERE user_id = ?", [userId], () => {
-        BuddyModel.getBuddy(userId, (err, buddy) => {
-          expect(err).toBeNull();
-          const originalLastUpdated = buddy.last_updated;
-
-          // Try to increment beyond max (should not update)
-          BuddyModel.updateStatus(userId, 1, (err) => {
-            expect(err).toBeNull();
-
-            BuddyModel.getBuddy(userId, (err, buddy) => {
-              expect(err).toBeNull();
-              expect(buddy.status).toBe(4);
-              // last_updated should not change when status doesn't change
-              expect(buddy.last_updated).toBe(originalLastUpdated);
-              done();
-            });
-          });
-        });
-      });
-    });
-
-    test("Does not update when status delta is 0", (done) => {
-      BuddyModel.getBuddy(userId, (err, buddy) => {
-        expect(err).toBeNull();
-        const originalLastUpdated = buddy.last_updated;
-
-        BuddyModel.updateStatus(userId, 0, (err) => {
-          expect(err).toBeNull();
-
-          BuddyModel.getBuddy(userId, (err, buddy) => {
-            expect(err).toBeNull();
-            expect(buddy.status).toBe(2);
-            // last_updated should not change when status doesn't change
-            expect(buddy.last_updated).toBe(originalLastUpdated);
-            done();
-          });
-        });
+    test("Returns error when status delta is 0", (done) => {
+      BuddyModel.updateStatus(userId, 0, (err) => {
+        expect(err).toBe("Invalid status update");
+        done();
       });
     });
 
@@ -255,51 +206,49 @@ describe("Buddy Model Integration Tests", () => {
 
     test("Handles multiple status updates correctly", (done) => {
       // Set status to 1
-      db.run("UPDATE study_buddies SET status = 1 WHERE user_id = ?", [userId], () => {
-        BuddyModel.updateStatus(userId, 1, (err) => {
+      BuddyModel.updateStatus(userId, 1, (err) => {
           expect(err).toBeNull();
-        });
-
-        BuddyModel.getBuddy(userId, (err, buddy) => {
-          expect(err).toBeNull();
-          expect(buddy.status).toBe(2);
-
-          BuddyModel.updateStatus(userId, 1, (err) => {
-            expect(err).toBeNull();
-          });
 
           BuddyModel.getBuddy(userId, (err, buddy) => {
             expect(err).toBeNull();
             expect(buddy.status).toBe(3);
-            done();
+  
+            BuddyModel.updateStatus(userId, 1, (err) => {
+              expect(err).toBeNull();
+
+              BuddyModel.getBuddy(userId, (err, buddy) => {
+                expect(err).toBeNull();
+                expect(buddy.status).toBe(4);
+                done();
+              });
+            });
           });
         });
-      });
     });
 
     test("Handles large positive delta correctly", (done) => {
       BuddyModel.updateStatus(userId, 10, (err) => {
         expect(err).toBeNull();
-      });
 
-      BuddyModel.getBuddy(userId, (err, buddy) => {
-        expect(err).toBeNull();
-        // 2 + 10 = 12, capped at 4
-        expect(buddy.status).toBe(4);
-        done();
+        BuddyModel.getBuddy(userId, (err, buddy) => {
+          expect(err).toBeNull();
+          // 2 + 10 = 12, capped at 4
+          expect(buddy.status).toBe(4);
+          done();
+        });
       });
     });
 
     test("Handles large negative delta correctly", (done) => {
       BuddyModel.updateStatus(userId, -10, (err) => {
         expect(err).toBeNull();
-      });
 
-      BuddyModel.getBuddy(userId, (err, buddy) => {
-        expect(err).toBeNull();
-        // 2 + (-10) = -8, capped at 0
-        expect(buddy.status).toBe(0);
-        done();
+        BuddyModel.getBuddy(userId, (err, buddy) => {
+          expect(err).toBeNull();
+          // 2 + (-10) = -8, capped at 0
+          expect(buddy.status).toBe(0);
+          done();
+        });
       });
     });
   });
