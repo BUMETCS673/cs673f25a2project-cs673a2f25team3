@@ -87,6 +87,7 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL UNIQUE,
       name TEXT NOT NULL DEFAULT Buddy,
+      type TEXT NOT NULL DEFAULT 'cat',
       energy INTEGER DEFAULT 100,
       exp INTEGER DEFAULT 0,
       status INTEGER DEFAULT 4,
@@ -99,6 +100,11 @@ db.serialize(() => {
   // This handles cases where the table was created before this column was added
   db.run(`
     ALTER TABLE study_buddies ADD COLUMN last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  `, (err) => {
+    // Ignore error if column already exists
+  });
+  db.run(`
+    ALTER TABLE study_buddies ADD COLUMN type TEXT NOT NULL DEFAULT 'cat'
   `, (err) => {
     // Ignore error if column already exists
   });

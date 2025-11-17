@@ -30,9 +30,9 @@ function updateStatus(userId, status, callback) {
   });
 }
 
-function updateBuddy(userId, name, callback) {
-  const query = `UPDATE study_buddies SET name = ? WHERE user_id = ?`;
-  db.run(query, [name, userId], function(err) {
+function updateBuddy(userId, name, type, callback) {
+  const query = `UPDATE study_buddies SET name = ?, type = ? WHERE user_id = ?`;
+  db.run(query, [name, type, userId], function(err) {
     callback(err);
   });
 }
