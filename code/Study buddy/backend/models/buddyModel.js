@@ -37,4 +37,11 @@ function deleteBuddy(userId, callback) {
   });
 }
 
-module.exports = { getBuddy, createBuddy, updateExp, updateStatus, deleteBuddy };
+function updateBuddy(userId, name, callback) {
+  const query = `UPDATE study_buddies SET name = ? WHERE user_id = ?`;
+  db.run(query, [name, userId], function(err) {
+    callback(err);
+  });
+}
+
+module.exports = { getBuddy, createBuddy, updateExp, updateStatus, deleteBuddy, updateBuddy };

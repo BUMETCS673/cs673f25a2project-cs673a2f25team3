@@ -26,6 +26,14 @@ router.post("/me", (req, res) => {
   });
 });
 
+router.post("/update", (req, res) => {
+  const { name } = req.body;
+  Buddy.updateBuddy(req.user.id, name, (err, buddy) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(201).json(buddy);
+  });
+});
+
 router.post("/exp", (req, res) => {
   const { exp } = req.body;
   Buddy.updateExp(req.user.id, exp, (err, buddy) => {
