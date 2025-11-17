@@ -1,7 +1,6 @@
 /*
-  20% AI
-  70% Human
-  10% Framework
+  Study Buddy - user routes
+  Fixed register: init default buddy in study_buddies with conservative insert
 */
 
 require('dotenv').config();
@@ -29,9 +28,9 @@ router.post("/register", (req, res) => {
     db.run("INSERT INTO profiles (user_id) VALUES (?)", [user.id]);
     db.run("INSERT INTO settings (user_id) VALUES (?)", [user.id]);
 
-    // Auto create default buddy in buddies table
+    // Auto create default buddy in study_buddies
     db.run(
-      "INSERT INTO buddies (user_id, name) VALUES (?, ?)",
+      "INSERT INTO study_buddies (user_id, name) VALUES (?, ?)",
       [user.id, "Buddy"],
       (err) => {
         if (err) {
@@ -46,8 +45,5 @@ router.post("/register", (req, res) => {
     });
   });
 });
-
-// keep your other routes below if you want (login, me, etc.)
-// For now, only register is included.
 
 module.exports = router;
