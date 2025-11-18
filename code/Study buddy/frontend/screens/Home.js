@@ -11,6 +11,9 @@ import { HomeBuddy } from '../components/buddies/buddy';
 import { useContext, useCallback } from 'react';
 import { AuthContext } from '../AuthContext'; 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { DecrementStatusButton } from '../components/testButtons/DecrementStatusButton';
+import { IncrementStatusButton } from '../components/testButtons/IncrementStatusButton';
+import { PrintBuddyStatusButton } from '../components/testButtons/PrintBuddyStatusButton';
 
 export default function Home() {
   const { logout, studyData, fetchStudyBuddyData } = useContext(AuthContext);
@@ -27,6 +30,7 @@ export default function Home() {
   useFocusEffect(
     useCallback(() => {
       const run = async () => {
+        // this changes the study data, which runs the callback again, causing a loop
         await fetchStudyBuddyData();
 
         if (studyData && studyData.status === 0) {
@@ -45,10 +49,13 @@ export default function Home() {
         {/* Jump straight to the timer so the refreshed StudyTimerInterface is shown immediately */}
         <HomeBuddy />
 
-        <NavigationButton text="Start Studying!" link="Studying" />
+        {/* <NavigationButton text="Start Studying!" link="Studying" />
         <NavigationButton text="Game Menu" link="GameMenu" />
         <NavigationButton text="Statistics" link="Statistics" />
-        <NavigationButton text="Settings" link="Settings" />
+        <NavigationButton text="Settings" link="Settings" /> */}
+        <IncrementStatusButton />
+        <DecrementStatusButton />
+        <PrintBuddyStatusButton />
         <NavigationButton text="Logout" onPress={handleLogout} />
       </View>
     </Background>

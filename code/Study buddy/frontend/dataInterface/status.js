@@ -34,6 +34,7 @@ export async function getStatus(token) {
 			'Content-Type': 'application/json',
 		},
 	})
+	.then(res => res.json())
 	.then(data => {
 		status = data.status;
 	})
