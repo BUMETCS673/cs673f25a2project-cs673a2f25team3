@@ -3,12 +3,12 @@
   70% Human
 */
 
-import { View, Text, Alert } from 'react-native';
+import { View, Text, Alert, Platform } from 'react-native';
 import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
 import { HomeBuddy } from '../components/buddies/buddy';
-import { useContext, useCallback } from 'react';
+import { useContext, useRef, useEffect, useCallback } from 'react';
 import { AuthContext } from '../AuthContext'; 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { DecrementStatusButton } from '../components/testButtons/DecrementStatusButton';
@@ -18,41 +18,50 @@ import { PrintBuddyStatusButton } from '../components/testButtons/PrintBuddyStat
 export default function Home() {
   const { logout, studyData, fetchStudyBuddyData } = useContext(AuthContext);
   const navigation = useNavigation();
+  const prevStatusRef = useRef();
 
   const handleLogout = () => {
-    logout(); // clear login state
-    navigation.replace('Login')
+    logout();
+    navigation.replace('Login');
   };
 
   // -----------------------------------
-  // Auto refresh + death detection
+  // Refresh data once when the screen is focused
   // -----------------------------------
   useFocusEffect(
     useCallback(() => {
-      const run = async () => {
-        // this changes the study data, which runs the callback again, causing a loop
-        await fetchStudyBuddyData();
-
-        if (studyData && studyData.status === 0) {
-          Alert.alert("Your buddy died", "Try studying more to revive it! 😢");
-        }
-      };
-
-      run();
-    }, [studyData])
+      fetchStudyBuddyData();
+    }, [])
   );
+
+  // -----------------------------------
+  // Show alert when Buddy status reaches 0 (triggered only on non-zero -> 0)
+  // -----------------------------------
+  useEffect(() => {
+    if (!studyData) return;
+
+    const prevStatus = prevStatusRef.current;
+    const currentStatus = studyData.status;
+
+    if (currentStatus === 0 && prevStatus !== 0) {
+      const message = "Your buddy died. Try studying more to revive it! 😢";
+
+      if (Platform.OS === 'web') {
+        window.alert(message);
+      } else {
+        Alert.alert("Your buddy died", message);
+      }
+    }
+
+    prevStatusRef.current = currentStatus;
+  }, [studyData]);
 
   return (
     <Background>
       <View style={styles.card} testID="home-screen">
         <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
-        {/* Jump straight to the timer so the refreshed StudyTimerInterface is shown immediately */}
         <HomeBuddy />
 
-        {/* <NavigationButton text="Start Studying!" link="Studying" />
-        <NavigationButton text="Game Menu" link="GameMenu" />
-        <NavigationButton text="Statistics" link="Statistics" />
-        <NavigationButton text="Settings" link="Settings" /> */}
         <IncrementStatusButton />
         <DecrementStatusButton />
         <PrintBuddyStatusButton />

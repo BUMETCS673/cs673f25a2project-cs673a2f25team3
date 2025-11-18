@@ -9,9 +9,15 @@ import { changeStatus } from '../../dataInterface/status';
 */
 
 export const DecrementStatusButton = () => {
-  const { token } = useContext(AuthContext);
+  const { token, fetchStudyBuddyData } = useContext(AuthContext);
+
   const handlePress = async () => {
-    await changeStatus(-1, token);
+    try {
+      await changeStatus(-1, token);       
+      await fetchStudyBuddyData();        
+    } catch (err) {
+      console.error("Failed to increment status:", err);
+    }
   };
 
   return (
