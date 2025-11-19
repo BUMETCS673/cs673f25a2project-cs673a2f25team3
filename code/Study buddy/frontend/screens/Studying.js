@@ -8,6 +8,9 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Clock, Play } from "lucide-react-native";
 import StudyTimerInterface from "../components/StudyTimerInterface";
 import { Background } from "../components/Background";
+import AppIcon from '../components/icons/AppIcon';
+import { iconWrapper } from '../styles/iconStyles';
+import { styles } from "../styles/style";
 
 export default function Studying() {
   return (
@@ -15,9 +18,11 @@ export default function Studying() {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <View style={styles.iconWrapper}>
-            <Clock color="#E67E22" size={44} strokeWidth={2.4} />
+
+          <View style={iconWrapper}>
+            <AppIcon name="clock" size={44} />
           </View>
+
           <Text style={styles.headerTitle}>Focus Mode</Text>
           <Text style={styles.motto}>
             Consistency turns effort into progress
@@ -55,14 +60,6 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     marginBottom: 20,
-  },
-  iconWrapper: {
-    backgroundColor: "#FFF5E6",
-    borderRadius: 16,
-    padding: 12,
-    borderWidth: 2,
-    borderColor: "#F5C16C",
-    marginBottom: 5,
   },
   headerTitle: {
     fontSize: 24,

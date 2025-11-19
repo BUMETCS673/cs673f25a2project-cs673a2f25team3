@@ -11,6 +11,8 @@ import { HomeBuddy } from '../components/buddies/buddy';
 import { AuthContext } from '../AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import { Home } from 'lucide-react-native';
+import AppIcon from '../components/icons/AppIcon';
+import { iconWrapper } from '../styles/iconStyles';
 
 /*
   40% framework
@@ -42,9 +44,11 @@ export default function HomeScreen() {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <View style={styles.iconWrapper}>
-            <Home color="#E67E22" size={46} strokeWidth={2.4} />
+
+          <View style={iconWrapper}>
+            <AppIcon />
           </View>
+
           <Text style={styles.headerTitle}>Home</Text>
           <Text style={styles.motto}>
             A balanced mind learns more efficiently
