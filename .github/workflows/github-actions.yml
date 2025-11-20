@@ -1,0 +1,109 @@
+# 50% reference
+# 40% AI
+# 10% manual
+
+# reference: https://github.com/BUMETCS673/seprojects-cs673olf24team1/blob/ea3a0785bd0eaaa063c90f6f7ff99dbeabb6ba34/.github/workflows/github-actions.yml
+
+
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - '**' 
+    paths:
+      - "code/Study buddy/frontend/**"
+      - "code/Study buddy/backend/**"
+      - "tests/**"
+
+  pull_request:
+    branches:
+      - '**'   # Run on PRs from any branch
+
+
+jobs:
+  # Frontend checks
+  frontend:
+    name: React Frontend Linting and Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: |
+          cd "code/Study buddy/frontend/"
+          npm ci
+
+      - name: Lint React code
+        run: |
+          cd "code/Study buddy/frontend/"
+          npm run lint
+
+      - name: Run React Unit Tests
+        run: |
+          cd "code/Study buddy/frontend/"
+          npm test
+
+  ## Backend checks
+  backend:
+    name: Backend Linting and Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: |
+          cd "code/Study buddy/backend/"
+          npm ci
+
+      - name: Lint Backend code
+        run: |
+          cd "code/Study buddy/backend/"
+          npm run lint
+
+      - name: Run Backend Tests
+        run: |
+          cd "code/Study buddy/backend/"
+          npm test
+
+  # Ensure Dockerfiles build successfully (no push)
+  tests-in-docker:
+    name: Run Tests in Docker Images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build backend image
+        run: |
+          docker build -t studybuddy-backend:ci -f "code/Study buddy/backend/Dockerfile" "code/Study buddy/backend"
+
+      - name: Build frontend image
+        run: |
+          docker build -t studybuddy-frontend:ci -f "code/Study buddy/frontend/Dockerfile" "code/Study buddy/frontend"
+
+      - name: Backend tests in Docker
+        run: |
+          docker run --rm -w /app studybuddy-backend:ci npm test
+
+      - name: Frontend tests in Docker
+        env:
+          CI: true
+        run: |
+          docker run --rm -w /app studybuddy-frontend:ci npm test -- --testPathIgnorePatterns="StudyTimerInterface.test.js"
