@@ -48,8 +48,11 @@ export default function Home() {
 
       if (Platform.OS === 'web') {
         window.alert(message);
+        resetBuddy(token);
       } else {
-        Alert.alert("Your buddy died", message);
+        Alert.alert("Your buddy died", message, [
+          {text: 'Ok', onPress: async () => {await resetBuddy(token)}},
+        ]);
       }
     }
 
