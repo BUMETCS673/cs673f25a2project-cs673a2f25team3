@@ -1,6 +1,6 @@
 /*
   Study Buddy - user routes
-  Fixed register: init default buddy in study_buddies with conservative insert
+  Fixed register: safe default buddy insert
 */
 
 require('dotenv').config();
@@ -24,14 +24,13 @@ router.post("/register", (req, res) => {
   User.createUser(username, password, (err, user) => {
     if (err) return res.status(400).json({ error: err.message });
 
-    // Auto create default profile and settings
-    db.run("INSERT INTO profiles (user_id) VALUES (?)", [user.id]);
-    db.run("INSERT INTO settings (user_id) VALUES (?)", [user.id]);
-    db.run("INSERT INTO study_buddies (user_id) VALUES (?)", [user.id]);
+    // create profile + settings (safe)
+    db.run("INSERT OR IGNORE INTO profiles (user_id) VALUES (?)", [user.id]);
+    db.run("INSERT OR IGNORE INTO settings (user_id) VALUES (?)", [user.id]);
 
-    // Auto create default buddy in study_buddies
+    // create default buddy (only once)
     db.run(
-      "INSERT INTO study_buddies (user_id, name) VALUES (?, ?)",
+      "INSERT OR IGNORE INTO study_buddies (user_id, name) VALUES (?, ?)",
       [user.id, "Buddy"],
       (err) => {
         if (err) {
