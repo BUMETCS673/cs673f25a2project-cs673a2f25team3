@@ -58,6 +58,13 @@ function updateStatus(userId, status, callback) {
   });
 }
 
+function deleteBuddy(userId, callback) {
+  const query = `DELETE FROM study_buddies WHERE user_id = ?`;
+  db.run(query, [userId], function(err) {
+    callback(err);
+  });
+}
+
 function updateBuddy(userId, name, callback) {
   const query = `UPDATE study_buddies SET name = ? WHERE user_id = ?`;
   db.run(query, [name, userId], function(err) {
@@ -65,4 +72,4 @@ function updateBuddy(userId, name, callback) {
   });
 }
 
-module.exports = { getBuddy, createBuddy, updateExp, updateStatus, updateBuddy };
+module.exports = { getBuddy, createBuddy, updateExp, updateStatus, deleteBuddy, updateBuddy };

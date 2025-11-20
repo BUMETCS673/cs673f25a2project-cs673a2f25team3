@@ -11,12 +11,10 @@ import { HomeBuddy } from '../components/buddies/buddy';
 import { useContext, useRef, useEffect, useCallback } from 'react';
 import { AuthContext } from '../AuthContext'; 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { DecrementStatusButton } from '../components/testButtons/DecrementStatusButton';
-import { IncrementStatusButton } from '../components/testButtons/IncrementStatusButton';
-import { PrintBuddyStatusButton } from '../components/testButtons/PrintBuddyStatusButton';
+import { resetBuddy } from '../dataInterface/resetBuddy';
 
 export default function Home() {
-  const { logout, studyData, fetchStudyBuddyData } = useContext(AuthContext);
+  const { logout, studyData, fetchStudyBuddyData, token } = useContext(AuthContext);
   const navigation = useNavigation();
   const prevStatusRef = useRef();
 
@@ -48,8 +46,11 @@ export default function Home() {
 
       if (Platform.OS === 'web') {
         window.alert(message);
+        resetBuddy(token);
       } else {
-        Alert.alert("Your buddy died", message);
+        Alert.alert("Your buddy died", message, [
+          {text: 'Ok', onPress: async () => {await resetBuddy(token)}},
+        ]);
       }
     }
 
