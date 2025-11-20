@@ -66,7 +66,39 @@ describe("Buddy Model Integration Tests", () => {
     });
   });
 
-  
+  test("Update buddy with valid type 'cat'", (done) => {
+    BuddyModel.updateBuddy(userId, "Fluffy", "cat", (err) => {
+      expect(err).toBeNull();
+    });
+
+    BuddyModel.getBuddy(userId, (err, buddy) => {
+      expect(err).toBeNull();
+      expect(buddy.name).toBe("Fluffy");
+      expect(buddy.type).toBe("cat");
+      done();
+    });
+  });
+
+  test("Update buddy with valid type 'deer'", (done) => {
+    BuddyModel.updateBuddy(userId, "Bambi", "deer", (err) => {
+      expect(err).toBeNull();
+    });
+
+    BuddyModel.getBuddy(userId, (err, buddy) => {
+      expect(err).toBeNull();
+      expect(buddy.name).toBe("Bambi");
+      expect(buddy.type).toBe("deer");
+      done();
+    });
+  });
+
+  test("Update buddy with invalid type returns error", (done) => {
+    BuddyModel.updateBuddy(userId, "Invalid", "this is an invalid buddy type", (err) => {
+      expect(err).not.toBeNull();
+      expect(err.message).toBe("Invalid buddy type selection");
+      done();
+    });
+  });
 
   describe("updateStatus", () => {
     beforeEach((done) => {

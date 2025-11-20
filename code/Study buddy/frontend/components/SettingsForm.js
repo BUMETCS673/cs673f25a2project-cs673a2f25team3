@@ -2,7 +2,12 @@ import { SubmitButton } from '../components/FormSubmitButton';
 import { CustomInput } from './CustomInput';
 import { AuthContext } from "../AuthContext";
 import React, { useState, useContext } from "react";
+import { View, Text } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import { API_BASE_URL } from "@env";
+import { NavigationButton } from './NavigationButton';
+import { styles } from '../styles/style';
+
 export const exportForTesting = {
   isGoalValid
 }
@@ -16,6 +21,7 @@ export const exportForTesting = {
 export default function SettingsForm() {
   const [goalInMinutes, setGoalInMinutes] = useState(0);
   const [name, setName] = useState("Buddy");
+  const [buddyType, setBuddyType] = useState("cat");
   const { token } = useContext(AuthContext);
 
   React.useEffect(() => {
@@ -43,6 +49,7 @@ export default function SettingsForm() {
     .then(res => res.json())
     .then(data => {
       setName(data.name);
+      setBuddyType(data.type);
     })
     .catch(err => {
       fetch(`${API_BASE_URL}/buddy/me`, {
@@ -88,7 +95,8 @@ export default function SettingsForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: name
+          name: name,
+          type: buddyType
         })
       })
       .catch(err => {
@@ -97,11 +105,38 @@ export default function SettingsForm() {
     }
   };
 
+  const buddy = async () => {
+    await fetch(`${API_BASE_URL}/buddy/me`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, 
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
+    })
+  }
+
   return (
     <>
 			<CustomInput text="Goal in minutes per week" value={goalInMinutes} setValue={setGoalInMinutes} inputMode='numeric' />
       <CustomInput text="Buddy name" value={name} setValue={setName} inputMode='text' />
+      <View style={styles.inputOutline}>
+        <Picker
+          selectedValue={buddyType}
+          onValueChange={(itemValue, itemIndex) =>
+            setBuddyType(itemValue)
+          }
+          style={styles.inputPicker}
+          >
+          <Picker.Item label="Cat" value="cat" />
+          <Picker.Item label="Deer" value="deer" />
+        </Picker>
+      </View>
 			<SubmitButton text="Save" submit={submit} />
+      <NavigationButton text="Get Buddy" onPress={buddy} />
     </>
   );
 }
