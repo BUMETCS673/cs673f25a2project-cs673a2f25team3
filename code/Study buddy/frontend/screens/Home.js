@@ -61,10 +61,10 @@ export default function Home() {
       <View style={styles.card} testID="home-screen">
         <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
         <HomeBuddy />
-
-        <IncrementStatusButton />
-        <DecrementStatusButton />
-        <PrintBuddyStatusButton />
+        <NavigationButton text="Start Studying!" link="Studying" />
+        <NavigationButton text="Game Menu" link="GameMenu" />
+        <NavigationButton text="Statistics" link="Statistics" />
+        <NavigationButton text="Settings" link="Settings" />
         <NavigationButton text="Logout" onPress={handleLogout} />
       </View>
     </Background>
