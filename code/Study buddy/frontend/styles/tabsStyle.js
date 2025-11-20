@@ -50,6 +50,9 @@ export const tabScreenOptions = ({ route }) => ({
       case "Calendar":
         iconName = focused ? "calendar" : "calendar-outline";
         break;
+      case "Settings":
+        iconName = focused ? "settings" : "settings-outline";
+        break;
       default:
         iconName = "ellipse-outline";
     }
