@@ -2,6 +2,7 @@ import { API_BASE_URL } from "@env";
 import { isSameWeek } from "../util/compareTimes";
 import { goalCompleted } from "./goal";
 import { weeksToMs } from "../util/calculateMs";
+import { resetBuddy } from "./resetBuddy";
 
 /*
   100% human, front-end safe version

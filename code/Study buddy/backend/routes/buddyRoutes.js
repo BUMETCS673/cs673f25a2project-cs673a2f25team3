@@ -50,4 +50,15 @@ router.post("/status", (req, res) => {
   });
 });
 
+router.post("/reset", (req, res) => {
+  Buddy.deleteBuddy(req.user.id, (err, buddy) => {
+    if (err) return res.status(500).json({ error: err.message });
+    
+    Buddy.createBuddy(req.user.id, "Buddy", (err, buddy) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.status(201).json(buddy);
+    });
+  });
+});
+
 module.exports = router;
