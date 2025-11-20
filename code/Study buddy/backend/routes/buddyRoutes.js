@@ -27,8 +27,8 @@ router.post("/me", (req, res) => {
 });
 
 router.post("/update", (req, res) => {
-  const { name } = req.body;
-  Buddy.updateBuddy(req.user.id, name, (err, buddy) => {
+  const { name, type } = req.body;
+  Buddy.updateBuddy(req.user.id, name, type, (err, buddy) => {
     if (err) return res.status(500).json({ error: err.message });
     res.status(201).json(buddy);
   });
@@ -47,6 +47,17 @@ router.post("/status", (req, res) => {
   Buddy.updateStatus(req.user.id, status, (err, buddy) => {
     if (err) return res.status(500).json({ error: err.message });
     res.status(201).json(buddy);
+  });
+});
+
+router.post("/reset", (req, res) => {
+  Buddy.deleteBuddy(req.user.id, (err, buddy) => {
+    if (err) return res.status(500).json({ error: err.message });
+    
+    Buddy.createBuddy(req.user.id, "Buddy", (err, buddy) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.status(201).json(buddy);
+    });
   });
 });
 

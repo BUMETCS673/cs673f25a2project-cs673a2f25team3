@@ -124,6 +124,11 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  inputPicker: {
+    width: '100%',
+    backgroundColor: '#fff',
+    color: '#000'
+  },
 
   // ====== Buttons ======
   button: {

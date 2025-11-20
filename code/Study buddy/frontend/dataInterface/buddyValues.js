@@ -1,6 +1,7 @@
 import { API_BASE_URL } from "@env";
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthContext";
+import { updateStatus } from "./status";
 
 /*
   100% Manual
@@ -18,6 +19,13 @@ const DEFAULT_BUDDY_DATA = {
 export function useBuddyValues() {
   const [data, setData] = useState(DEFAULT_BUDDY_DATA);
   const { token } = useContext(AuthContext);
+  
+  React.useEffect(() => {
+    (async () => {
+      await updateStatus(token);
+    })();
+  }, []);
+
   React.useEffect(() => {
     fetch(`${API_BASE_URL}/buddy/me`, {
       method: "GET",
@@ -28,7 +36,6 @@ export function useBuddyValues() {
     }).then(res => res.json())
       .then(apiBuddy => {
         if (apiBuddy && typeof apiBuddy === "object") {
-          console.log(apiBuddy.name);
           setData(apiBuddy);
         } else {
           setData(DEFAULT_BUDDY_DATA);
@@ -53,7 +60,6 @@ export function useBuddyValues() {
   })();
   const size = Math.max(0, 100 + parsedExp / 2);
 
-  console.log(data.name);
   return {
     ...DEFAULT_BUDDY_DATA,
     name: data.name,
