@@ -60,6 +60,7 @@ router.post("/register", (req, res) => {
     // Automatically create default profile & settings data
     db.run("INSERT INTO profiles (user_id) VALUES (?)", [user.id]);
     db.run("INSERT INTO settings (user_id) VALUES (?)", [user.id]);
+    db.run("INSERT INTO study_buddies (user_id) VALUES (?)", [user.id]);
 
     res.status(201).json({
       message: "User registered successfully",

@@ -93,8 +93,8 @@ router.get("/me", (req, res) => {
  *         description: Internal server error
  */
 router.post("/me", (req, res) => {
-  const { theme, daily_goal } = req.body;
-  Settings.updateSettings(req.user.id, theme, daily_goal, (err, updated) => {
+  const { theme, goal } = req.body;
+  Settings.updateSettings(req.user.id, theme, goal, (err, updated) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(updated);
   });

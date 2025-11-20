@@ -15,20 +15,26 @@ function createBuddy(userId, name, callback) {
   });
 }
 
-function updateEnergy(userId, energy, callback) {
-  const status = getStatusByEnergy(energy);
-  const query = `UPDATE study_buddies SET energy = ?, status = ? WHERE user_id = ?`;
-  db.run(query, [energy, status, userId], function(err) {
+function updateExp(userId, exp, callback) {
+  const query = `UPDATE study_buddies SET exp = exp + ? WHERE user_id = ?`;
+  db.run(query, [exp, userId], function(err) {
     callback(err);
   });
 }
 
-function getStatusByEnergy(energy) {
-  if (energy >= 75) return 4;
-  if (energy >= 50) return 3;
-  if (energy >= 25) return 2;
-  if (energy >= 1) return 1;
-  return 0;
+function updateStatus(userId, status, callback) {
+  const last_updated = Date.now();
+  const query = `UPDATE study_buddies SET status = status + ?, last_updated = ? WHERE user_id = ?`;
+  db.run(query, [status, last_updated, userId], function(err) {
+    callback(err);
+  });
 }
 
-module.exports = { getBuddy, createBuddy, updateEnergy, getStatusByEnergy };
+function updateBuddy(userId, name, callback) {
+  const query = `UPDATE study_buddies SET name = ? WHERE user_id = ?`;
+  db.run(query, [name, userId], function(err) {
+    callback(err);
+  });
+}
+
+module.exports = { getBuddy, createBuddy, updateExp, updateStatus, updateBuddy };
