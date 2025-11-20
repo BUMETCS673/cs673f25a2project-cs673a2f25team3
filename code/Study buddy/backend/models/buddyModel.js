@@ -12,7 +12,7 @@ function getBuddy(userId, callback) {
 function createBuddy(userId, name, callback) {
   const query = `INSERT INTO study_buddies (user_id, name) VALUES (?, ?)`;
   db.run(query, [userId, name], function(err) {
-    callback(err, { id: this.lastID, user_id: userId, name, energy: 100, exp: 0, status: 4 });
+    callback(err, { id: this.lastID, user_id: userId, name });
   });
 }
 
