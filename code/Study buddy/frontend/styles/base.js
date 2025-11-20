@@ -11,7 +11,7 @@ export const dimensions = {
 }
   
 export const colors  = {
-  primary: '#E67E22',
+  primary: '#c36411ff',
   secondary: '#FFEDD5E6',
   tertiary: '#F5C16C',
   pale: '#FFF8EE',

@@ -115,6 +115,11 @@ export const styles = StyleSheet.create({
     zIndex: 1,
   },
   inputBox: {
+    backgroundColor: colors.pale,
+    borderColor: colors.primary,
+    borderWidth: 1,
+    borderRadius: 8,
+    width: 100
   },
   inputText: {
     fontSize: fonts.md,
@@ -123,6 +128,7 @@ export const styles = StyleSheet.create({
   inputOutline: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: padding.lg
   },
 
   // ====== Buttons ======
@@ -149,8 +155,8 @@ export const styles = StyleSheet.create({
     margin: padding.xs,
   },
   submitButton: {
-    backgroundColor: 'white', 
-    color: 'black',
+    backgroundColor: colors.primary, 
+    color: colors.pale,
     fontWeight: 'bold', 
     borderWidth: 2,
     borderColor: 'transparent',
