@@ -11,10 +11,11 @@ export const dimensions = {
 }
   
 export const colors  = {
-  primary: '#d041a0',
-  secondary: '#d3b3d1',
-  tertiary: '#cf70c8ff',
-  text: 'black'
+  primary: '#E67E22',
+  secondary: '#FFEDD5E6',
+  tertiary: '#F5C16C',
+  pale: '#FFF8EE',
+  text: 'black',
 }
 
 export const padding = {

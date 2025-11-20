@@ -21,6 +21,7 @@ import { AuthContext } from "../AuthContext";
 import { styles } from "../styles/style";
 import { useNavigation } from "@react-navigation/native";
 import { loginStyles } from "../styles/loginStyle";
+import { colors } from "../styles/base";
 
 const isPasswordSecure = (pw) =>
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{12,}$/.test(pw);
@@ -119,11 +120,11 @@ export default function LoginForm() {
         <View style={styles.field}>
           <Text style={styles.paragraph}>Username</Text>
           <View style={styles.inputWrapper}>
-            <Mail color="rgba(255,255,255,0.5)" size={20} style={styles.iconLeft} />
+            <Mail color={colors.text} size={20} style={styles.iconLeft} />
             <TextInput
               style={[styles.input, { paddingLeft: 36 }]}
               placeholder="Username"
-              placeholderTextColor="rgba(255,255,255,0.4)"
+              placeholderTextColor={colors.text}
               value={username}
               onChangeText={setUsername}
               autoCapitalize="none"
@@ -135,11 +136,11 @@ export default function LoginForm() {
         <View style={styles.field}>
           <Text style={styles.paragraph}>Password</Text>
           <View style={styles.inputWrapper}>
-            <Lock color="rgba(255,255,255,0.5)" size={20} style={styles.iconLeft} />
+            <Lock color={colors.text} size={20} style={styles.iconLeft} />
             <TextInput
               style={[styles.input, { paddingLeft: 36, paddingRight: 36 }]}
               placeholder={"Password"}
-              placeholderTextColor="rgba(255,255,255,0.4)"
+              placeholderTextColor={colors.text}
               secureTextEntry={!showPassword}
               value={password}
               onChangeText={setPassword}
@@ -148,7 +149,7 @@ export default function LoginForm() {
               onPress={() => setShowPassword(!showPassword)}
               style={styles.iconRight}
             >
-              {showPassword ? <EyeOff color="rgba(255,255,255,0.6)" size={20} /> : <Eye color="rgba(255,255,255,0.6)" size={20} />}
+              {showPassword ? <EyeOff color={colors.text} size={20} /> : <Eye color={colors.text} size={20} />}
             </TouchableOpacity>
           </View>
           {/* Show password advice/info during register */}
@@ -160,7 +161,7 @@ export default function LoginForm() {
         </View>
 
         {loading ? (
-          <ActivityIndicator size="large" color="#fff" style={{ marginTop: 16 }} />
+          <ActivityIndicator size="large" color={colors.text} style={{ marginTop: 16 }} />
         ) : (
           <TouchableOpacity testID="loginButton" style={styles.loginFormButton} onPress={handleAuth}>
             <Text style={styles.loginFormButtonText}>
@@ -176,7 +177,7 @@ export default function LoginForm() {
         ) : null}
 
         <TouchableOpacity onPress={switchMode} style={{ marginTop: 12 }}>
-          <Text style={{ color: "#888", textAlign: "center" }}>
+          <Text style={{ color: colors.text, textAlign: "center" }}>
             {mode === "login" ? "Switch to Register" : "Switch to Login"}
           </Text>
         </TouchableOpacity>

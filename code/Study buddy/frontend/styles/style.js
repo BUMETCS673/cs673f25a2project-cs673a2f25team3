@@ -35,9 +35,9 @@ export const styles = StyleSheet.create({
     maxWidth: 400,
     padding: padding.lg,
     borderRadius: borderRadius.md,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 2,
+    borderColor: colors.tertiary,
+    backgroundColor: colors.pale,
     alignItems: "center",
   },
   overlay: {
@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
   cardH1: {
     fontSize: fonts.lg,
     fontWeight: "bold",
-    color: "white",
+    color: colors.primary,
     textAlign: "center",
     marginBottom: padding.md,
   },
@@ -64,7 +64,7 @@ export const styles = StyleSheet.create({
   },
   paragraph: {
     fontSize: fonts.md,
-    color: "white",
+    color: colors.text,
   },
   timer: {
     fontSize: fonts.huge,
@@ -98,10 +98,10 @@ export const styles = StyleSheet.create({
   input: {
     height: 44,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-    color: "#fff",
-    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 2,
+    borderColor: colors.primary,
+    color: colors.text,
+    backgroundColor: colors.pale,
     paddingHorizontal: 12,
   },
   iconLeft: {
@@ -176,16 +176,16 @@ export const styles = StyleSheet.create({
   loginFormButton: {
     width: "100%",
     maxWidth: "400%",
-    backgroundColor: "rgba(255,255,255,0.2)",
-    borderColor: "rgba(255,255,255,0.3)",
-    borderWidth: 1,
+    backgroundColor: colors.primary,
+    borderColor: colors.text,
+    borderWidth: 0,
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: "center",
     marginTop: 16,
   },
   loginFormButtonText: {
-    color: "#fff",
+    color: colors.pale,
     fontSize: 16,
     fontWeight: "600",
     textAlign: "center",
