@@ -12,12 +12,6 @@ import { useContext } from 'react';
 import { AuthContext } from '../AuthContext'; 
 import { useNavigation } from '@react-navigation/native';
 
-
-/*
-  40% framework
-  60% manual
-*/
-
 // Home page - this is the general page for navigation and the first page the user sees (after logging in)
 export default function Home() {
   const { logout } = useContext(AuthContext);
@@ -32,7 +26,6 @@ export default function Home() {
     <Background>
       <View style={styles.card} testID="home-screen">
         <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
-        {/* Jump straight to the timer so the refreshed StudyTimerInterface is shown immediately */}
         <HomeBuddy />
         <NavigationButton text="Start Studying!" link="Studying" />
         <NavigationButton text="Game Menu" link="GameMenu" />

@@ -28,7 +28,6 @@ export function useBuddyValues() {
     }).then(res => res.json())
       .then(apiBuddy => {
         if (apiBuddy && typeof apiBuddy === "object") {
-          console.log(apiBuddy.name);
           setData(apiBuddy);
         } else {
           setData(DEFAULT_BUDDY_DATA);
@@ -53,7 +52,6 @@ export function useBuddyValues() {
   })();
   const size = Math.max(0, 100 + parsedExp / 2);
 
-  console.log(data.name);
   return {
     ...DEFAULT_BUDDY_DATA,
     name: data.name,
