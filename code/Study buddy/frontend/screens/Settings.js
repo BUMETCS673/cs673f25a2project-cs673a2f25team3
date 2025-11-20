@@ -16,7 +16,6 @@ export default function Settings() {
       <View style={styles.card}>
         <Text style={styles.cardH1} accessibilityRole='header'>Settings</Text>
         <SettingsForm />
-        <NavigationButton text="Return Home" link="Home" />
       </View>
     </Background>
   );
