@@ -5,20 +5,21 @@
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 
-// added in for testing
+// Determine if running under test mode
 const isTest = process.env.NODE_ENV === "test";
 
-// For tests: default to in-memory. You can override with SQLITE_DB=<path>.
+// Use in-memory DB for tests; persistent file DB otherwise
 const resolvedDbPath = isTest
   ? (process.env.SQLITE_DB || ":memory:")
   : path.resolve(__dirname, "./database.sqlite");
 
-const db = new sqlite3.Database(dbPath, (err) => {
+// Main database connection
+const db = new sqlite3.Database(resolvedDbPath, (err) => {
   if (err) console.error("❌ DB Connection Error:", err.message);
   else console.log("✅ Connected to SQLite database");
 });
 
-// initializing tables (make sure userId is unique)
+// Initialize tables
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
@@ -34,21 +35,21 @@ db.serialize(() => {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL UNIQUE,
       theme TEXT DEFAULT 'light',
-      goal INTEGER DEFAULT 300, --in mins
+      goal INTEGER DEFAULT 300,
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
 
+  // Handle legacy column rename (ignore if not exists)
   db.run(`
     ALTER TABLE settings RENAME COLUMN daily_goal TO goal
-  `, (err) => {
-  });
+  `, () => {});
 
   db.run(`
     CREATE TABLE IF NOT EXISTS study_sessions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
-      duration INTEGER NOT NULL, --in mins
+      duration INTEGER NOT NULL,
       start_time TIMESTAMP NOT NULL,
       end_time TIMESTAMP NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -56,7 +57,6 @@ db.serialize(() => {
     )
   `);
 
-  // Track in-progress study sessions so the timer can resume across devices
   db.run(`
     CREATE TABLE IF NOT EXISTS study_progress (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -84,7 +84,7 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS study_buddies (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL UNIQUE,
-      name TEXT NOT NULL DEFAULT Buddy,
+      name TEXT NOT NULL DEFAULT 'Buddy',
       energy INTEGER DEFAULT 100,
       exp INTEGER DEFAULT 0,
       status INTEGER DEFAULT 4,
@@ -93,18 +93,14 @@ db.serialize(() => {
     )
   `);
 
-  // Add last_updated column to study_buddies if it doesn't exist
-  // This handles cases where the table was created before this column was added
+  // Add last_updated column if missing
   db.run(`
     ALTER TABLE study_buddies ADD COLUMN last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  `, (err) => {
-    // Ignore error if column already exists
-  });
+  `, () => {});
 });
 
-
+// Helper to reset all tables (used in tests)
 db.reset = function reset(cb) {
-  // Reset helper used by tests to guarantee a clean database
   db.exec(
     `
       DELETE FROM study_sessions;
@@ -118,6 +114,7 @@ db.reset = function reset(cb) {
   );
 };
 
+// Async wrapper to close DB
 db.closeAsync = function closeAsync() {
   return new Promise((resolve, reject) => {
     db.close((err) => (err ? reject(err) : resolve()));
