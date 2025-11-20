@@ -3,18 +3,17 @@
   20% Human
 */
 
-import React, { createContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const AuthContext = createContext();
-import { API_BASE_URL } from "@env";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [studyData, setStudyData] = useState(null); 
   const [loading, setLoading] = useState(true);
 
+  // JWT payload
   const parseJwt = (jwt) => {
     try {
       const base64Payload = jwt.split('.')[1];
@@ -25,27 +24,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // -------------------------
-  // get Study Buddy data
-  // -------------------------
-  const fetchStudyBuddyData = useCallback(async () => {
-    if (!token) return;
-
-    try {
-      const res = await fetch(`${API_BASE_URL}/buddy/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      const json = await res.json();
-      setStudyData(json);
-    } catch (err) {
-      console.log("Failed to fetch study buddy data:", err);
-    }
-  }, [token]);
-
-  // -------------------------
-  // after APP start load session
-  // -------------------------
   useEffect(() => {
     const loadAuth = async () => {
       try {
@@ -56,17 +34,15 @@ export const AuthProvider = ({ children }) => {
           const payload = parseJwt(storedToken);
           const now = Math.floor(Date.now() / 1000);
 
-          if (payload && payload.exp > now) {
+          if (payload && payload.exp && payload.exp > now) {
             setUser(JSON.parse(storedUser));
             setToken(storedToken);
 
-            // refresh study buddy data
-            await fetchStudyBuddyData();
-
+            // set timeout timer
             const timeout = (payload.exp - now) * 1000;
             setTimeout(() => logout(), timeout);
           } else {
-            await logout();
+            await logout(); // token expired
           }
         }
       } catch (err) {
@@ -75,26 +51,18 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
       }
     };
-
     loadAuth();
   }, []);
 
-  // -------------------------
-  // Login
-  // -------------------------
   const login = async (userData, tokenData) => {
     setUser(userData);
     setToken(tokenData);
     await AsyncStorage.setItem("user", JSON.stringify(userData));
     await AsyncStorage.setItem("token", tokenData);
 
-    // After login refresh study buddy data
-    await fetchStudyBuddyData();
-
     const payload = parseJwt(tokenData);
     const now = Math.floor(Date.now() / 1000);
-
-    if (payload?.exp > now) {
+    if (payload && payload.exp && payload.exp > now) {
       const timeout = (payload.exp - now) * 1000;
       setTimeout(() => logout(), timeout);
     }
@@ -103,23 +71,12 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     setUser(null);
     setToken(null);
-    setStudyData(null); 
     await AsyncStorage.removeItem("user");
     await AsyncStorage.removeItem("token");
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        studyData,
-        fetchStudyBuddyData,
-        login,
-        logout,
-        loading
-      }}
-    >
+    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
