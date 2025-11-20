@@ -11,9 +11,7 @@ import { HomeBuddy } from '../components/buddies/buddy';
 import { useContext, useRef, useEffect, useCallback } from 'react';
 import { AuthContext } from '../AuthContext'; 
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { DecrementStatusButton } from '../components/testButtons/DecrementStatusButton';
-import { IncrementStatusButton } from '../components/testButtons/IncrementStatusButton';
-import { PrintBuddyStatusButton } from '../components/testButtons/PrintBuddyStatusButton';
+import { resetBuddy } from '../dataInterface/resetBuddy';
 
 export default function Home() {
   const { logout, studyData, fetchStudyBuddyData } = useContext(AuthContext);
