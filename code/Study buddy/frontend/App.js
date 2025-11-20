@@ -38,7 +38,6 @@ function AppNavigator() {
       ) : (
         <>
           <Stack.Screen name="MainTabs" component={MainTabs} />
-          <Stack.Screen name="Settings" component={Settings} />
           <Stack.Screen name="Studying" component={Studying} />
           <Stack.Screen name="Game1" component={Game1} options={{ headerShown: true, headerTitle: "Game 1" }} />
           <Stack.Screen name="Game2" component={Game2} options={{ headerShown: true, headerTitle: "Game 2" }} />
