@@ -10,6 +10,7 @@ import Home from "../screens/Home";
 import Studying from "../screens/Studying";
 import GameMenu from "../screens/GameMenu";
 import Statistics from "../screens/Statistics";
+import Settings from "../screens/Settings";
 
 import { tabScreenOptions } from "../styles/tabsStyle"; 
 
@@ -22,6 +23,7 @@ export default function MainTabs() {
       <Tab.Screen name="Study" component={Studying} />
       <Tab.Screen name="Game" component={GameMenu} />
       <Tab.Screen name="Calendar" component={Statistics} />
+      <Tab.Screen name="Settings" component={Settings} />
     </Tab.Navigator>
   );
 }
