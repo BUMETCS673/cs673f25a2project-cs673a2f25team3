@@ -2,7 +2,8 @@
   Study Buddy - user routes
   Fixed register: safe default buddy insert
 */
-
+console.log("USING THIS USER ROUTES FILE >>>>>>>>>");
+console.log(require("fs").readFileSync(__filename, "utf8"));
 require('dotenv').config();
 const express = require("express");
 const bcrypt = require("bcrypt");
