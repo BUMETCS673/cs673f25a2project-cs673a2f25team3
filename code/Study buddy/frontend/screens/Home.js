@@ -14,7 +14,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { resetBuddy } from '../dataInterface/resetBuddy';
 
 export default function Home() {
-  const { logout, studyData, fetchStudyBuddyData } = useContext(AuthContext);
+  const { logout, studyData, fetchStudyBuddyData, token } = useContext(AuthContext);
   const navigation = useNavigation();
   const prevStatusRef = useRef();
 
