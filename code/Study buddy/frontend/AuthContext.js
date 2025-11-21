@@ -44,13 +44,16 @@ export const AuthProvider = ({ children }) => {
   // Helper function to set auto-logout timeout based on token expiration
   const setupTokenExpirationTimeout = useCallback((tokenString) => {
     const payload = parseJwt(tokenString);
-    if (!payload || !payload.exp) return;
-
-    const now = Math.floor(Date.now() / 1000);
-    if (payload.exp > now) {
-      const timeout = (payload.exp - now) * 1000;
-      setTimeout(() => logout(), timeout);
+    if (payload && payload.exp){
+      const now = Math.floor(Date.now() / 1000);
+      if (payload.exp > now) {
+        const timeout = (payload.exp - now) * 1000;
+        setTimeout(() => logout(), timeout);
+        return;
+      }
     }
+
+    logout();
   }, []);
 
   // -------------------------
