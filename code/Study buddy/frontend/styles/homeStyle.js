@@ -5,6 +5,6 @@ export const homesStyles = StyleSheet.create({
     buddyContainer: {
         display: "flex",
         alignItems: "center",
-        paddingBottom: padding.md
+        rowGap: padding.sm
     }
 });

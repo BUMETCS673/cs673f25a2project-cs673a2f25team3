@@ -1,8 +1,9 @@
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { homesStyles } from "../../styles/homeStyle";
 import { useBuddyValues } from "../../dataInterface/buddyValues";
 import { Cat } from "./cat";
 import { Deer } from "./deer";
+import { styles } from "../../styles/style";
 
 /*
     10% framework
@@ -21,6 +22,7 @@ export function HomeBuddy() {
     return (
         <View style={homesStyles.buddyContainer}>
             {buddy}
+            <Text style={styles.cardH1}>Buddy Name</Text>
         </View>
     )
 }
