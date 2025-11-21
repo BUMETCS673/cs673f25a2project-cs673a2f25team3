@@ -24,6 +24,12 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.secondary
   },
+  background2: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+    backgroundColor: colors.secondary
+  },
   container: {
     flex: 1,
     width: "100%",
@@ -158,7 +164,8 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   navigationButton: {
-    backgroundColor: '#E67E22',
+    backgroundColor: colors.primary,
+    color: colors.pale,
     borderRadius: 10,
     paddingVertical: 12,
     justifyContent: 'center',

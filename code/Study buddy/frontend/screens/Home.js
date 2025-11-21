@@ -66,7 +66,7 @@ export default function Home() {
   ];
 
   return (
-    <Background>
+    <Background align={false}>
       <View style={homeStyles.container}>
         
         {/* Header */}
@@ -84,13 +84,7 @@ export default function Home() {
         {/* Buddy */}
         <HomeBuddy />
 
-        {/* Navigation Buttons */}
-        <View style={homeStyles.buttonGroup}>
-          {navItems.map((item) => (
-            <NavigationButton text={item.text} link={item.link} />
-          ))}
-          <NavigationButton text="Logout" onPress={handleLogout} accent={true} />
-        </View>
+        <NavigationButton text="Logout" onPress={handleLogout} accent={true} />
 
       </View>
     </Background>

@@ -12,7 +12,7 @@ import {studyingStyles} from "../styles/studyingStyles";
 
 export default function Studying() {
   return (
-    <Background>
+    <Background align={false}>
       <View style={studyingStyles.container}>
         <View style={studyingStyles.header}>
           <View style={iconWrapper}>
