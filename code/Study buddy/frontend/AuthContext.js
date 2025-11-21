@@ -25,12 +25,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Helper function to check if token is valid and not expired
-  const isTokenValid = (tokenString) => {
+  // Helper function to get token expiration info
+  const getTokenExpiration = (tokenString) => {
     const payload = parseJwt(tokenString);
-    if (!payload || !payload.exp) return false;
+    if (!payload || !payload.exp) return null;
     const now = Math.floor(Date.now() / 1000);
-    return payload.exp > now;
+    return {
+      exp: payload.exp,
+      isValid: payload.exp > now,
+      secondsUntilExpiry: payload.exp - now
+    };
   };
 
   const logout = async () => {
@@ -43,17 +47,13 @@ export const AuthProvider = ({ children }) => {
 
   // Helper function to set auto-logout timeout based on token expiration
   const setupTokenExpirationTimeout = useCallback((tokenString) => {
-    const payload = parseJwt(tokenString);
-    if (payload && payload.exp){
-      const now = Math.floor(Date.now() / 1000);
-      if (payload.exp > now) {
-        const timeout = (payload.exp - now) * 1000;
-        setTimeout(() => logout(), timeout);
-        return;
-      }
+    const expiration = getTokenExpiration(tokenString);
+    if (expiration?.isValid) {
+      const timeout = expiration.secondsUntilExpiry * 1000;
+      setTimeout(() => logout(), timeout);
+    } else {
+      logout();
     }
-
-    logout();
   }, []);
 
   // -------------------------
@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }) => {
         const storedToken = await AsyncStorage.getItem("token");
 
         if (storedUser && storedToken) {
-          if (isTokenValid(storedToken)) {
+          if (getTokenExpiration(storedToken)?.isValid) {
             setUser(JSON.parse(storedUser));
             setToken(storedToken);
 
