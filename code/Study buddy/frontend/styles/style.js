@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   card: {
-    width: 300,
+    width: "90%",
     maxWidth: 400,
     padding: padding.lg,
     borderRadius: borderRadius.md,
@@ -249,13 +249,11 @@ export const styles = StyleSheet.create({
     padding: 16,
   },
   statsCardTitle: {
-    fontSize: 20,
+    fontSize: fonts.lg,
     fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 12,
-    textAlign: "center", // horizontally center
-    width: "100%",
-    flexWrap: "wrap",
+    color: colors.primary,
+    marginBottom: padding.sm,
+    textAlign: "center",
   },
   statsRow: {
     flexDirection: "row",
@@ -266,14 +264,14 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   statNumber: {
-    fontSize: 22,
+    fontSize: fonts.mdlg,
     fontWeight: "bold",
-    color: "#fff",
+    color: colors.primary,
   },
+
   statLabel: {
-    fontSize: 14,
-    color: "#ccc",
-    marginTop: 4,
+    fontSize: fonts.md,
+    color: colors.text,
   },
   sessionRow: {
     flexDirection: "row",
@@ -284,17 +282,17 @@ export const styles = StyleSheet.create({
     width: "100%",
   },
   sessionText: {
-    color: "#fff",
+    color: colors.text,
     fontSize: 16,
   },
   noSessions: {
-    color: "#ccc",
+    color: colors.text,
     fontSize: 16,
     textAlign: "center",
     paddingVertical: 10,
   },
   dayTotal: {
-    color: "#fff",
+    color: colors.text,
     fontWeight: "bold",
     fontSize: 16,
     marginTop: 8,

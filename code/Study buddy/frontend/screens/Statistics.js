@@ -10,22 +10,22 @@ import {
   View,
   ActivityIndicator,
   TouchableOpacity,
-  ImageBackground,
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { AuthContext } from "../AuthContext";
 import { API_BASE_URL } from "@env";
 import { styles } from "../styles/style";
+import { Background } from "../components/Background";
+import { colors, fonts } from "../styles/base";
 
 export default function Statistics() {
   const { token } = useContext(AuthContext);
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(null); // format: "YYYY-MM-DD" from Calendar
+  const [selectedDate, setSelectedDate] = useState(null);
   const [markedDates, setMarkedDates] = useState({});
 
-  // Accept either Date object or date string/ISO; always output local YYYY-MM-DD
   const getLocalDateString = (dateInput) => {
     const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
     const y = d.getFullYear();
@@ -34,17 +34,10 @@ export default function Statistics() {
     return `${y}-${m}-${day}`;
   };
 
-  // Safely format a "YYYY-MM-DD" (calendar) into a local display string
   const formatSelectedDateForDisplay = (ymd) => {
     if (!ymd) return "";
-    // ymd expected like "2025-11-09"
-    const parts = ymd.split("-");
-    if (parts.length !== 3) return ymd;
-    const year = parseInt(parts[0], 10);
-    const monthIndex = parseInt(parts[1], 10) - 1; // 0-based
-    const day = parseInt(parts[2], 10);
-    // new Date(year, monthIndex, day) constructs a LOCAL date at midnight — no UTC parsing quirks
-    return new Date(year, monthIndex, day).toLocaleDateString("en-US");
+    const [year, month, day] = ymd.split("-").map(Number);
+    return new Date(year, month - 1, day).toLocaleDateString("en-US");
   };
 
   useEffect(() => {
@@ -52,14 +45,14 @@ export default function Statistics() {
       if (!token) return;
       try {
         setLoading(true);
-        setError(null);
         const res = await fetch(`${API_BASE_URL}/study/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch study sessions");
+
         const data = await res.json();
         setSessions(data);
-        markCalendarDates(data);
+        markCalendarDates(data, selectedDate);
       } catch (err) {
         console.error(err);
         setError(err.message);
@@ -71,47 +64,48 @@ export default function Statistics() {
     fetchSessions();
   }, [token]);
 
-  const markCalendarDates = (sessionsData) => {
+  const markCalendarDates = (sessionsData, selected = selectedDate) => {
     const marked = {};
     const todayStr = getLocalDateString(new Date());
 
     sessionsData.forEach((s) => {
       const dateStr = getLocalDateString(s.start_time);
-      // if multiple sessions same day, ensure we don't overwrite selected/customStyles
-      marked[dateStr] = { ...(marked[dateStr] || {}), marked: true, dotColor: "#fff" };
+      marked[dateStr] = {
+        ...(marked[dateStr] || {}),
+        marked: true,
+        dotColor: colors.primary,
+      };
     });
 
-    if (selectedDate && !marked[selectedDate]) {
-      marked[selectedDate] = { selected: true, selectedColor: "#2196F3" };
-    } else if (selectedDate && marked[selectedDate]) {
-      marked[selectedDate] = { ...marked[selectedDate], selected: true, selectedColor: "#2196F3" };
+    // selected date
+    if (selected) {
+      marked[selected] = {
+        ...(marked[selected] || {}),
+        selected: true,
+        selectedColor: colors.primary,
+        selectedTextColor: colors.pale,
+      };
     }
 
-    // Bold today
-    if (marked[todayStr]) {
-      marked[todayStr].customStyles = { text: { fontWeight: "bold" } };
+    // handle today
+    const todayMarked = { ...(marked[todayStr] || {}) };
+    if (selected === todayStr) {
+      todayMarked.customStyles = {
+        text: { fontWeight: "bold", color: colors.pale },
+      };
     } else {
-      marked[todayStr] = { customStyles: { text: { fontWeight: "bold" } } };
+      todayMarked.customStyles = {
+        text: { fontWeight: "bold", color: colors.primary },
+      };
     }
+    marked[todayStr] = todayMarked;
 
     setMarkedDates(marked);
   };
 
   const onDayPress = (day) => {
-    // day.dateString comes from Calendar as "YYYY-MM-DD"
     setSelectedDate(day.dateString);
-    const updated = { ...markedDates };
-    Object.keys(updated).forEach((key) => {
-      if (updated[key].selected && key !== day.dateString) {
-        updated[key] = { ...updated[key], selected: false, selectedColor: undefined };
-      }
-    });
-    updated[day.dateString] = {
-      ...(updated[day.dateString] || {}),
-      selected: true,
-      selectedColor: "#2196F3",
-    };
-    setMarkedDates(updated);
+    markCalendarDates(sessions, day.dateString); 
   };
 
   const getSessionsForDate = (date) =>
@@ -125,83 +119,81 @@ export default function Statistics() {
   };
 
   const formatTime = (ts) =>
-    new Date(ts).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+    new Date(ts).toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
   const getStats = () => {
-    const uniqueDays = new Set(sessions.map((s) => getLocalDateString(s.start_time)));
+    const uniqueDays = new Set(
+      sessions.map((s) => getLocalDateString(s.start_time))
+    );
     const totalMinutes = sessions.reduce((acc, s) => acc + (s.duration || 0), 0);
     return { totalSessions: sessions.length, totalDays: uniqueDays.size, totalMinutes };
   };
 
   if (!token) {
     return (
-      <ImageBackground
-        source={{ uri: "https://images.unsplash.com/photo-1673526759317-be71a1243e3d" }}
-        style={styles.background}
-        blurRadius={4}
-      >
+      <Background>
         <View style={styles.centered}>
           <Text style={styles.noSessions}>Please login to view your study history</Text>
         </View>
-      </ImageBackground>
+      </Background>
     );
   }
 
   if (loading) {
     return (
-      <ImageBackground
-        source={{ uri: "https://images.unsplash.com/photo-1673526759317-be71a1243e3d" }}
-        style={styles.background}
-        blurRadius={4}
-      >
+      <Background>
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#4CAF50" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.noSessions}>Loading your study history...</Text>
         </View>
-      </ImageBackground>
+      </Background>
     );
   }
 
   if (error) {
     return (
-      <ImageBackground
-        source={{ uri: "https://images.unsplash.com/photo-1673526759317-be71a1243e3d" }}
-        style={styles.background}
-        blurRadius={4}
-      >
+      <Background>
         <View style={styles.centered}>
           <Text style={styles.noSessions}>Error: {error}</Text>
-          <TouchableOpacity style={styles.button} onPress={() => setLoading(true)}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setLoading(true)}
+          >
             <Text style={styles.noSessions}>Retry</Text>
           </TouchableOpacity>
         </View>
-      </ImageBackground>
+      </Background>
     );
   }
 
   const selectedDaySessions = selectedDate ? getSessionsForDate(selectedDate) : [];
   const stats = getStats();
-  const dayTotalMinutes = selectedDaySessions.reduce((sum, s) => sum + (s.duration || 0), 0);
+  const dayTotalMinutes = selectedDaySessions.reduce(
+    (sum, s) => sum + (s.duration || 0),
+    0
+  );
 
   return (
-    <ImageBackground
-      source={{ uri: "https://images.unsplash.com/photo-1673526759317-be71a1243e3d" }}
-      style={styles.background}
-      blurRadius={4}
-    >
+    <Background>
       <ScrollView contentContainerStyle={styles.statsContainer}>
-        {/* Overall Statistics Card */}
+        {/* Overall Statistics */}
         <View style={styles.card}>
           <Text style={styles.statsCardTitle}>Statistics</Text>
+
           <View style={styles.statsRow}>
             <View style={styles.statBox}>
               <Text style={styles.statNumber}>{stats.totalSessions}</Text>
               <Text style={styles.statLabel}>Sessions</Text>
             </View>
+
             <View style={styles.statBox}>
               <Text style={styles.statNumber}>{stats.totalDays}</Text>
               <Text style={styles.statLabel}>Days</Text>
             </View>
+
             <View style={styles.statBox}>
               <Text style={styles.statNumber}>{formatDuration(stats.totalMinutes)}</Text>
               <Text style={styles.statLabel}>Total Time</Text>
@@ -209,36 +201,42 @@ export default function Statistics() {
           </View>
         </View>
 
-        {/* Calendar Card */}
+        {/* Calendar */}
         <View style={styles.card}>
           <Calendar
             markedDates={markedDates}
             onDayPress={onDayPress}
             style={{ backgroundColor: "transparent" }}
+            markingType="custom"
             theme={{
               calendarBackground: "transparent",
-              todayTextColor: "#fff",
-              arrowColor: "#fff",
-              monthTextColor: "#fff",
+              monthTextColor: colors.primary,
+              textMonthFontSize: fonts.lg,
               textMonthFontWeight: "bold",
-              textDayFontSize: 16,
-              textMonthFontSize: 18,
-              dayTextColor: "#fff",
-              textDisabledColor: "rgba(255,255,255,0.3)",
-              selectedDayBackgroundColor: "#555",
-              selectedDayTextColor: "#fff",
-              dotColor: "#fff",
+              textMonthAlignment: "center",
+              textSectionTitleColor: colors.text,
+              textSectionTitleDisabledColor: "rgba(0,0,0,0.2)",
+              dayTextColor: colors.text,
+              textDayFontSize: fonts.md,
+              textDayFontWeight: "500",
+              textDisabledColor: "rgba(0,0,0,0.2)",
+              todayTextColor: colors.primary,
+              selectedDayBackgroundColor: colors.primary,
+              selectedDayTextColor: colors.pale,
+              dotColor: colors.primary,
+              selectedDotColor: colors.pale,
+              arrowColor: colors.primary,
             }}
-            markingType="custom"
           />
         </View>
 
-        {/* Daily Detail Card */}
+        {/* Daily Sessions */}
         {selectedDate && (
           <View style={styles.card}>
             <Text style={styles.statsCardTitle}>
               {formatSelectedDateForDisplay(selectedDate)}
             </Text>
+
             {selectedDaySessions.length === 0 ? (
               <Text style={styles.noSessions}>No study sessions on this day</Text>
             ) : (
@@ -247,16 +245,21 @@ export default function Statistics() {
                   <Text style={styles.sessionText}>
                     {formatTime(s.start_time)} - {formatTime(s.end_time)}
                   </Text>
-                  <Text style={styles.sessionText}>{formatDuration(s.duration)}</Text>
+                  <Text style={styles.sessionText}>
+                    {formatDuration(s.duration)}
+                  </Text>
                 </View>
               ))
             )}
+
             {selectedDaySessions.length > 0 && (
-              <Text style={styles.dayTotal}>Total: {formatDuration(dayTotalMinutes)}</Text>
+              <Text style={styles.dayTotal}>
+                Total: {formatDuration(dayTotalMinutes)}
+              </Text>
             )}
           </View>
         )}
       </ScrollView>
-    </ImageBackground>
+    </Background>
   );
 }
