@@ -47,9 +47,9 @@ export const AuthProvider = ({ children }) => {
 
   // Helper function to set auto-logout timeout based on token expiration
   const setupTokenExpirationTimeout = useCallback((tokenString) => {
-    const expiration = getTokenExpiration(tokenString);
-    if (expiration?.isValid) {
-      const timeout = expiration.secondsUntilExpiry * 1000;
+    const tokenValues = getTokenExpiration(tokenString);
+    if (tokenValues?.isValid) {
+      const timeout = tokenValues.secondsUntilExpiry * 1000;
       setTimeout(() => logout(), timeout);
     } else {
       logout();
