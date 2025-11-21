@@ -26,35 +26,7 @@ export default StyleSheet.create({
     marginTop: 4,
   },
 
-  buddyWrapper: {
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-
   buttonGroup: {
     marginTop: 10,
-  },
-
-  mainButton: {
-    backgroundColor: '#E67E22',
-    borderRadius: 10,
-    paddingVertical: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 6,
-    shadowColor: '#E67E22',
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-
-  logoutButton: {
-    backgroundColor: '#C0392B',
-  },
+  }
 });

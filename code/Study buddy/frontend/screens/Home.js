@@ -2,17 +2,16 @@
   30% AI
   70% Human
 */
-import { useContext, useRef } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
 import { HomeBuddy } from '../components/buddies/buddy';
 import { AuthContext } from '../AuthContext';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import AppIcon from '../components/icons/AppIcon';
 import { iconWrapper } from '../styles/iconStyles';
 import homeStyles from '../styles/homeStyles';
-import { styles } from '../styles/style';
 import { resetBuddy } from '../dataInterface/resetBuddy';
 
 export default function Home() {
@@ -83,30 +82,14 @@ export default function Home() {
         </View>
 
         {/* Buddy */}
-        <View style={homeStyles.buddyWrapper}>
-          <HomeBuddy />
-        </View>
+        <HomeBuddy />
 
         {/* Navigation Buttons */}
         <View style={homeStyles.buttonGroup}>
           {navItems.map((item) => (
-            <TouchableOpacity
-              key={item.text}
-              style={homeStyles.mainButton}
-              activeOpacity={0.85}
-              onPress={() => navigation.navigate(item.link)}
-            >
-              <Text style={homeStyles.buttonText}>{item.text}</Text>
-            </TouchableOpacity>
+            <NavigationButton text={item.text} link={item.link} />
           ))}
-
-          <TouchableOpacity
-            style={[homeStyles.mainButton, homeStyles.logoutButton]}
-            activeOpacity={0.85}
-            onPress={handleLogout}
-          >
-            <Text style={homeStyles.buttonText}>Logout</Text>
-          </TouchableOpacity>
+          <NavigationButton text="Logout" onPress={handleLogout} accent={true} />
         </View>
 
       </View>
