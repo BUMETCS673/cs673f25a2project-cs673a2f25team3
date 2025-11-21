@@ -34,7 +34,7 @@ function AppNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {!user ? (
-        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Login" component={MainTabs} />
       ) : (
         <>
           <Stack.Screen name="MainTabs" component={MainTabs} />
