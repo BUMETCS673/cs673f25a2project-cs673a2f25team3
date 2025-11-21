@@ -131,6 +131,11 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     gap: padding.lg
   },
+  inputPicker: {
+    width: '100%',
+    backgroundColor: '#fff',
+    color: '#000'
+  },
 
   // ====== Buttons ======
   button: {

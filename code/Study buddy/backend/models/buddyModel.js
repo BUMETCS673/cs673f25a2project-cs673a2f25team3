@@ -58,16 +58,17 @@ function updateStatus(userId, status, callback) {
   });
 }
 
-function deleteBuddy(userId, callback) {
-  const query = `DELETE FROM study_buddies WHERE user_id = ?`;
-  db.run(query, [userId], function(err) {
+function updateBuddy(userId, name, type, callback) {
+  if (type != "cat" && type != "deer") return callback(new Error("Invalid buddy type selection"));
+  const query = `UPDATE study_buddies SET name = ?, type = ? WHERE user_id = ?`;
+  db.run(query, [name, type, userId], function(err) {
     callback(err);
   });
 }
 
-function updateBuddy(userId, name, callback) {
-  const query = `UPDATE study_buddies SET name = ? WHERE user_id = ?`;
-  db.run(query, [name, userId], function(err) {
+function deleteBuddy(userId, callback) {
+  const query = `DELETE FROM study_buddies WHERE user_id = ?`;
+  db.run(query, [userId], function(err) {
     callback(err);
   });
 }
