@@ -132,9 +132,15 @@ export const styles = StyleSheet.create({
     gap: padding.lg
   },
   inputPicker: {
-    width: '100%',
-    backgroundColor: '#fff',
-    color: '#000'
+    width: "100%",
+    borderColor: colors.primary,
+    borderWidth: 2,
+    borderRadius: 8,
+    padding: padding.sm,
+    margin: padding.sm,
+    fontSize: fonts.md,
+    backgroundColor: colors.pale,
+    color: colors.text
   },
 
   // ====== Buttons ======
