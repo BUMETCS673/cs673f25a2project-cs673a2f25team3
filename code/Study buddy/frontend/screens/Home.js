@@ -84,7 +84,7 @@ export default function Home() {
         {/* Buddy */}
         <HomeBuddy />
 
-        <NavigationButton text="Logout" onPress={handleLogout} accent={true} />
+        <NavigationButton text="Logout" onPress={handleLogout} />
 
       </View>
     </Background>
