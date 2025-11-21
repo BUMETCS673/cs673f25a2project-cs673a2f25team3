@@ -1,12 +1,17 @@
 import { API_BASE_URL } from "@env";
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../AuthContext";
+import { updateStatus } from "./status";
 
 /*
   100% Manual
 */
 
 const DEFAULT_BUDDY_DATA = {
+  buddyType: "deer",
+  outlineColor: "black",
+  insideColor: "#8B4513",
+  name: "Buddy",
   status: 4,
   exp: 0,
 };
@@ -14,6 +19,13 @@ const DEFAULT_BUDDY_DATA = {
 export function useBuddyValues() {
   const [data, setData] = useState(DEFAULT_BUDDY_DATA);
   const { token } = useContext(AuthContext);
+  
+  React.useEffect(() => {
+    (async () => {
+      await updateStatus(token);
+    })();
+  }, []);
+
   React.useEffect(() => {
     fetch(`${API_BASE_URL}/buddy/me`, {
       method: "GET",
@@ -21,8 +33,7 @@ export function useBuddyValues() {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    })
-      .then(res => res.json())
+    }).then(res => res.json())
       .then(apiBuddy => {
         if (apiBuddy && typeof apiBuddy === "object") {
           setData(apiBuddy);
@@ -50,9 +61,9 @@ export function useBuddyValues() {
   const size = Math.max(0, 100 + parsedExp / 2);
 
   return {
-    buddyType: "deer",
-    outlineColor: "black",
-    insideColor: "#8B4513",
+    ...DEFAULT_BUDDY_DATA,
+    name: data.name,
+    exp: parsedExp,
     status,
     size,
   };
