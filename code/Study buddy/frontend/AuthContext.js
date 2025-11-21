@@ -9,6 +9,7 @@ import { decode as atob } from "base-64";
 
 export const AuthContext = createContext();
 import { API_BASE_URL } from "@env";
+import { updateStatus } from "./dataInterface/status";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -64,6 +65,7 @@ export const AuthProvider = ({ children }) => {
     if (!token) return;
 
     try {
+      await updateStatus(token);
       const res = await fetch(`${API_BASE_URL}/buddy/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
