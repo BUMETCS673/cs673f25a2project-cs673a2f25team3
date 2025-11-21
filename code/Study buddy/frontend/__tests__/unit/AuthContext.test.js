@@ -6,6 +6,7 @@ import React from "react";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { AuthProvider, AuthContext } from "../../AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { encode as btoa } from "base-64";
 
 /*
   100% AI generate

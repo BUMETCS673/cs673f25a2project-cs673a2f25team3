@@ -5,6 +5,7 @@
 
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { decode as atob } from "base-64";
 
 export const AuthContext = createContext();
 import { API_BASE_URL } from "@env";
