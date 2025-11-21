@@ -26,6 +26,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   // -------------------------
+  // Logout
+  // -------------------------
+  const logout = useCallback(async () => {
+    setUser(null);
+    setToken(null);
+    setStudyData(null); 
+    await AsyncStorage.removeItem("user");
+    await AsyncStorage.removeItem("token");
+  }, []);
+
+  // -------------------------
   // get Study Buddy data
   // -------------------------
   const fetchStudyBuddyData = useCallback(async () => {
@@ -36,12 +47,18 @@ export const AuthProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
+      // If token is invalid, logout user
+      if (res.status === 401) {
+        await logout();
+        return;
+      }
+
       const json = await res.json();
       setStudyData(json);
     } catch (err) {
       console.log("Failed to fetch study buddy data:", err);
     }
-  }, [token]);
+  }, [token, logout]);
 
   // -------------------------
   // after APP start load session
@@ -98,14 +115,6 @@ export const AuthProvider = ({ children }) => {
       const timeout = (payload.exp - now) * 1000;
       setTimeout(() => logout(), timeout);
     }
-  };
-
-  const logout = async () => {
-    setUser(null);
-    setToken(null);
-    setStudyData(null); 
-    await AsyncStorage.removeItem("user");
-    await AsyncStorage.removeItem("token");
   };
 
   return (
