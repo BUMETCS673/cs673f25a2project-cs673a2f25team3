@@ -22,7 +22,7 @@ export function HomeBuddy() {
     return (
         <View style={homesStyles.buddyContainer}>
             {buddy}
-            <Text style={styles.cardH1}>Buddy Name</Text>
+            <Text style={styles.cardH1}>{buddyDetails.name}</Text>
         </View>
     )
 }
