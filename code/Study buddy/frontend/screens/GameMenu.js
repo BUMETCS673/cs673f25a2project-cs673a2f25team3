@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Gamepad2, Play } from 'lucide-react-native';
 import { Background } from '../components/Background';
+import { colors } from '../styles/base';
 
 /*
   50% framework
@@ -43,7 +44,7 @@ export default function GameMenu({ navigation }) {
   const selected = games.find((g) => g.id === selectedGame);
 
   return (
-    <Background>
+    <View style={styles.background}>
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
@@ -98,20 +99,25 @@ export default function GameMenu({ navigation }) {
           </View>
         )}
       </View>
-    </Background>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   motto: {
-  fontSize: 13,
-  color: '#A0601A',
-  fontStyle: 'italic',
-  textAlign: 'center',
-  marginTop: 4,
-  marginBottom: 4,
-},
-
+    fontSize: 13,
+    color: '#A0601A',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginTop: 4,
+    marginBottom: 4,
+  },
+  background: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+    backgroundColor: colors.secondary
+  },
   container: {
     flex: 1,
     padding: 20,

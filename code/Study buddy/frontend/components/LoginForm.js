@@ -163,8 +163,8 @@ export default function LoginForm() {
         {loading ? (
           <ActivityIndicator size="large" color={colors.text} style={{ marginTop: 16 }} />
         ) : (
-          <TouchableOpacity testID="loginButton" style={styles.loginFormButton} onPress={handleAuth}>
-            <Text style={styles.loginFormButtonText}>
+          <TouchableOpacity testID="loginButton" onPress={handleAuth}>
+            <Text style={styles.submitButton}>
               {mode === "login" ? "Login" : "Register"}
             </Text>
           </TouchableOpacity>

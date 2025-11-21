@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
     resizeMode: "cover",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: colors.secondary
   },
   container: {
     flex: 1,
@@ -35,7 +36,7 @@ export const styles = StyleSheet.create({
     maxWidth: 400,
     padding: padding.lg,
     borderRadius: borderRadius.md,
-    borderWidth: 2,
+    borderWidth: 0,
     borderColor: colors.tertiary,
     backgroundColor: colors.pale,
     alignItems: "center",
@@ -164,7 +165,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: padding.md,
     borderRadius: borderRadius.sm,
     cursor: 'pointer',
-    fontSize: fonts.lg,
+    fontSize: fonts.mdlg,
     textAlign: 'center',
     textAlignVertical: 'center',
     margin: padding.xs
@@ -192,7 +193,7 @@ export const styles = StyleSheet.create({
   },
   loginFormButtonText: {
     color: colors.pale,
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "600",
     textAlign: "center",
   },
