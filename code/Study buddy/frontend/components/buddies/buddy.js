@@ -1,6 +1,5 @@
 import { View, Text } from "react-native";
 import { homesStyles } from "../../styles/homeStyle";
-import { useBuddyValues } from "../../dataInterface/buddyValues";
 import { Cat } from "./cat";
 import { Deer } from "./deer";
 import { styles } from "../../styles/style";
