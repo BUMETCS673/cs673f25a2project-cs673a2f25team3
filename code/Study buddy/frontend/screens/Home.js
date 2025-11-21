@@ -3,7 +3,7 @@
   70% Human
 */
 import { useCallback, useContext, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, Alert, Platform } from 'react-native';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
 import { HomeBuddy } from '../components/buddies/buddy';
