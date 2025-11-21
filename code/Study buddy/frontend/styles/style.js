@@ -118,7 +118,7 @@ export const styles = StyleSheet.create({
   inputBox: {
     backgroundColor: colors.pale,
     borderColor: colors.primary,
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 8,
     width: 100
   },
