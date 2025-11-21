@@ -176,23 +176,6 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  navigationAccentButton: {
-    backgroundColor: '#C0392B',
-    borderRadius: 10,
-    paddingVertical: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 6,
-    shadowColor: '#E67E22',
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  navigationButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
   submitButton: {
     backgroundColor: colors.primary, 
     color: colors.pale,
