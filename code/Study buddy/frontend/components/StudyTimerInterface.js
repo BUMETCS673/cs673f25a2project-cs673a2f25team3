@@ -19,7 +19,7 @@ import { increaseExp } from "../dataInterface/exp";
 import { changeStatus, getStatus } from "../dataInterface/status";
 import { goalCompleted } from "../dataInterface/goal";
 
-const PRESET_MINUTES = [25, 45, 60];
+const PRESET_MINUTES = [25, 60];
 const TIMER_STORAGE_KEY = "@StudyTimer:state";
 const MAX_MINUTES = 180;
 
