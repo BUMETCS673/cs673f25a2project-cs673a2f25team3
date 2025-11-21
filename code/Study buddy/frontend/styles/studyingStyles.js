@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export default StyleSheet.create({
+export const studyingStyles = StyleSheet.create({
   iconSpacing: {
     marginRight: 6,
   },
