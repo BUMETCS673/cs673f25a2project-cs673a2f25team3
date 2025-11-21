@@ -40,6 +40,11 @@ export const styles = StyleSheet.create({
     borderColor: colors.tertiary,
     backgroundColor: colors.pale,
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 10,
+    elevation: 3,
   },
   overlay: {
     flex: 1,
