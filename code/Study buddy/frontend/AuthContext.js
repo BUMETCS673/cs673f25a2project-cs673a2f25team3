@@ -25,6 +25,34 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Helper function to check if token is valid and not expired
+  const isTokenValid = (tokenString) => {
+    const payload = parseJwt(tokenString);
+    if (!payload || !payload.exp) return false;
+    const now = Math.floor(Date.now() / 1000);
+    return payload.exp > now;
+  };
+
+  const logout = async () => {
+    setUser(null);
+    setToken(null);
+    setStudyData(null); 
+    await AsyncStorage.removeItem("user");
+    await AsyncStorage.removeItem("token");
+  };
+
+  // Helper function to set auto-logout timeout based on token expiration
+  const setupTokenExpirationTimeout = useCallback((tokenString) => {
+    const payload = parseJwt(tokenString);
+    if (!payload || !payload.exp) return;
+
+    const now = Math.floor(Date.now() / 1000);
+    if (payload.exp > now) {
+      const timeout = (payload.exp - now) * 1000;
+      setTimeout(() => logout(), timeout);
+    }
+  }, []);
+
   // -------------------------
   // get Study Buddy data
   // -------------------------
@@ -53,18 +81,14 @@ export const AuthProvider = ({ children }) => {
         const storedToken = await AsyncStorage.getItem("token");
 
         if (storedUser && storedToken) {
-          const payload = parseJwt(storedToken);
-          const now = Math.floor(Date.now() / 1000);
-
-          if (payload && payload.exp > now) {
+          if (isTokenValid(storedToken)) {
             setUser(JSON.parse(storedUser));
             setToken(storedToken);
 
             // refresh study buddy data
             await fetchStudyBuddyData();
 
-            const timeout = (payload.exp - now) * 1000;
-            setTimeout(() => logout(), timeout);
+            setupTokenExpirationTimeout(storedToken);
           } else {
             await logout();
           }
@@ -91,21 +115,7 @@ export const AuthProvider = ({ children }) => {
     // After login refresh study buddy data
     await fetchStudyBuddyData();
 
-    const payload = parseJwt(tokenData);
-    const now = Math.floor(Date.now() / 1000);
-
-    if (payload?.exp > now) {
-      const timeout = (payload.exp - now) * 1000;
-      setTimeout(() => logout(), timeout);
-    }
-  };
-
-  const logout = async () => {
-    setUser(null);
-    setToken(null);
-    setStudyData(null); 
-    await AsyncStorage.removeItem("user");
-    await AsyncStorage.removeItem("token");
+    setupTokenExpirationTimeout(tokenData);
   };
 
   return (
