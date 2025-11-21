@@ -121,7 +121,7 @@ router.post("/login", (req, res) => {
       token = jwt.sign(
         { id: user.id, username: user.username },
         process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+        { expiresIn: process.env.JWT_EXPIRES_IN || "1d" }
       );
     } catch (err) {
       console.error("JWT generation failed:", err);
