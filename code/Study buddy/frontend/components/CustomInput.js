@@ -15,7 +15,7 @@ export const CustomInput = ({text, value, setValue, inputMode}) => {
   return(
     <View style={styles.inputOutline}>
       <Text style={styles.inputText}>{text}: </Text>
-      <TextInput style={styles.inputBox} value={value} inputMode={inputMode} onChangeText={setValue}/>
+      <TextInput style={styles.inputBox} value={value} underlineColor="transparent" inputMode={inputMode} onChangeText={setValue}/>
     </View>
   );
 }
