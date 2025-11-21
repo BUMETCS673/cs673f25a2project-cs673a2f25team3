@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "./base";
 
 /*
   100% manual
@@ -6,12 +7,12 @@ import { StyleSheet } from "react-native";
 
 export const loginStyles = StyleSheet.create({
     hint: {
-        color: "#aaa",
+        color: colors.text,
         fontSize: 12,
         marginTop: 4
     },
     error: {
-        color: "#ff6b6b", 
+        color: colors.primary, 
         marginTop: 12, 
         textAlign: "center"
     }
