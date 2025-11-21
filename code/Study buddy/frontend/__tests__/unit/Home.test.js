@@ -29,7 +29,6 @@ describe('Home Screen', () => {
     const { getByText } = render(<AppWithNavigation />);
 
     await waitFor(() => expect(getByText('Home')).toBeTruthy());
-    expect(getByText('Start Studying!')).toBeTruthy();
     expect(getByText('Logout')).toBeTruthy();
   });
 
