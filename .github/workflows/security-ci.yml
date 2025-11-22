@@ -1,4 +1,4 @@
-﻿# 100% AI
+# 100% AI
 
 name: Security CI
 
@@ -47,7 +47,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Scan dependencies
-        uses: google/osv-scanner-action@v1
+        uses: google/osv-scanner-action@v1.7.4
         with:
           scan-args: >
             --lockfile="code/Study buddy/frontend/package-lock.json"
