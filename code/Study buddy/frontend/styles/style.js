@@ -247,6 +247,7 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     padding: 16,
+    alignItems: "center",
   },
   statsCardTitle: {
     fontSize: fonts.lg,

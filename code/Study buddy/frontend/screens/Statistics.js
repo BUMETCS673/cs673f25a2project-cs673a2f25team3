@@ -17,6 +17,7 @@ import { API_BASE_URL } from "@env";
 import { styles } from "../styles/style";
 import { Background } from "../components/Background";
 import { colors, fonts } from "../styles/base";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Statistics() {
   const { token } = useContext(AuthContext);
@@ -134,38 +135,44 @@ export default function Statistics() {
 
   if (!token) {
     return (
-      <Background>
-        <View style={styles.centered}>
-          <Text style={styles.noSessions}>Please login to view your study history</Text>
-        </View>
-      </Background>
+      <SafeAreaView style={{ flex: 1 }}>
+        <Background>
+          <View style={styles.centered}>
+            <Text style={styles.noSessions}>Please login to view your study history</Text>
+          </View>
+        </Background>
+      </SafeAreaView>
     );
   }
 
   if (loading) {
     return (
-      <Background>
-        <View style={styles.centered}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={styles.noSessions}>Loading your study history...</Text>
-        </View>
-      </Background>
+      <SafeAreaView style={{ flex: 1 }}>
+        <Background>
+          <View style={styles.centered}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={styles.noSessions}>Loading your study history...</Text>
+          </View>
+        </Background>
+      </SafeAreaView>
     );
   }
 
   if (error) {
     return (
-      <Background>
-        <View style={styles.centered}>
-          <Text style={styles.noSessions}>Error: {error}</Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setLoading(true)}
-          >
-            <Text style={styles.noSessions}>Retry</Text>
-          </TouchableOpacity>
-        </View>
-      </Background>
+      <SafeAreaView style={{ flex: 1 }}>
+        <Background>
+          <View style={styles.centered}>
+            <Text style={styles.noSessions}>Error: {error}</Text>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setLoading(true)}
+            >
+              <Text style={styles.noSessions}>Retry</Text>
+            </TouchableOpacity>
+          </View>
+        </Background>
+      </SafeAreaView>
     );
   }
 
@@ -177,89 +184,91 @@ export default function Statistics() {
   );
 
   return (
-    <Background>
-      <ScrollView contentContainerStyle={styles.statsContainer}>
-        {/* Overall Statistics */}
-        <View style={styles.card}>
-          <Text style={styles.statsCardTitle}>Statistics</Text>
-
-          <View style={styles.statsRow}>
-            <View style={styles.statBox}>
-              <Text style={styles.statNumber}>{stats.totalSessions}</Text>
-              <Text style={styles.statLabel}>Sessions</Text>
-            </View>
-
-            <View style={styles.statBox}>
-              <Text style={styles.statNumber}>{stats.totalDays}</Text>
-              <Text style={styles.statLabel}>Days</Text>
-            </View>
-
-            <View style={styles.statBox}>
-              <Text style={styles.statNumber}>{formatDuration(stats.totalMinutes)}</Text>
-              <Text style={styles.statLabel}>Total Time</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Calendar */}
-        <View style={styles.card}>
-          <Calendar
-            markedDates={markedDates}
-            onDayPress={onDayPress}
-            style={{ backgroundColor: "transparent" }}
-            markingType="custom"
-            theme={{
-              calendarBackground: "transparent",
-              monthTextColor: colors.primary,
-              textMonthFontSize: fonts.lg,
-              textMonthFontWeight: "bold",
-              textMonthAlignment: "center",
-              textSectionTitleColor: colors.text,
-              textSectionTitleDisabledColor: "rgba(0,0,0,0.2)",
-              dayTextColor: colors.text,
-              textDayFontSize: fonts.md,
-              textDayFontWeight: "500",
-              textDisabledColor: "rgba(0,0,0,0.2)",
-              todayTextColor: colors.primary,
-              selectedDayBackgroundColor: colors.primary,
-              selectedDayTextColor: colors.pale,
-              dotColor: colors.primary,
-              selectedDotColor: colors.pale,
-              arrowColor: colors.primary,
-            }}
-          />
-        </View>
-
-        {/* Daily Sessions */}
-        {selectedDate && (
+    <SafeAreaView style={{ flex: 1 }}>    
+      <Background>
+        <ScrollView contentContainerStyle={styles.statsContainer}>
+          {/* Overall Statistics */}
           <View style={styles.card}>
-            <Text style={styles.statsCardTitle}>
-              {formatSelectedDateForDisplay(selectedDate)}
-            </Text>
+            <Text style={styles.statsCardTitle}>Statistics</Text>
 
-            {selectedDaySessions.length === 0 ? (
-              <Text style={styles.noSessions}>No study sessions on this day</Text>
-            ) : (
-              selectedDaySessions.map((s) => (
-                <View key={s.id} style={styles.sessionRow}>
-                  <Text style={styles.sessionText}>
-                    {formatTime(s.start_time)} - {formatTime(s.end_time)}
-                  </Text>
-                  <Text style={styles.sessionText}>
-                    {formatDuration(s.duration)}
-                  </Text>
-                </View>
-              ))
-            )}
+            <View style={styles.statsRow}>
+              <View style={styles.statBox}>
+                <Text style={styles.statNumber}>{stats.totalSessions}</Text>
+                <Text style={styles.statLabel}>Sessions</Text>
+              </View>
 
-            {selectedDaySessions.length > 0 && (
-              <Text style={styles.dayTotal}>
-                Total: {formatDuration(dayTotalMinutes)}
-              </Text>
-            )}
+              <View style={styles.statBox}>
+                <Text style={styles.statNumber}>{stats.totalDays}</Text>
+                <Text style={styles.statLabel}>Days</Text>
+              </View>
+
+              <View style={styles.statBox}>
+                <Text style={styles.statNumber}>{formatDuration(stats.totalMinutes)}</Text>
+                <Text style={styles.statLabel}>Total Time</Text>
+              </View>
+            </View>
           </View>
-        )}
-      </ScrollView>
-    </Background>
+
+          {/* Calendar */}
+          <View style={styles.card}>
+            <Calendar
+              markedDates={markedDates}
+              onDayPress={onDayPress}
+              style={{ backgroundColor: "transparent" }}
+              markingType="custom"
+              theme={{
+                calendarBackground: "transparent",
+                monthTextColor: colors.primary,
+                textMonthFontSize: fonts.lg,
+                textMonthFontWeight: "bold",
+                textMonthAlignment: "center",
+                textSectionTitleColor: colors.text,
+                textSectionTitleDisabledColor: "rgba(0,0,0,0.2)",
+                dayTextColor: colors.text,
+                textDayFontSize: fonts.md,
+                textDayFontWeight: "500",
+                textDisabledColor: "rgba(0,0,0,0.2)",
+                todayTextColor: colors.primary,
+                selectedDayBackgroundColor: colors.primary,
+                selectedDayTextColor: colors.pale,
+                dotColor: colors.primary,
+                selectedDotColor: colors.pale,
+                arrowColor: colors.primary,
+              }}
+            />
+          </View>
+
+          {/* Daily Sessions */}
+          {selectedDate && (
+            <View style={styles.card}>
+              <Text style={styles.statsCardTitle}>
+                {formatSelectedDateForDisplay(selectedDate)}
+              </Text>
+
+              {selectedDaySessions.length === 0 ? (
+                <Text style={styles.noSessions}>No study sessions on this day</Text>
+              ) : (
+                selectedDaySessions.map((s) => (
+                  <View key={s.id} style={styles.sessionRow}>
+                    <Text style={styles.sessionText}>
+                      {formatTime(s.start_time)} - {formatTime(s.end_time)}
+                    </Text>
+                    <Text style={styles.sessionText}>
+                      {formatDuration(s.duration)}
+                    </Text>
+                  </View>
+                ))
+              )}
+
+              {selectedDaySessions.length > 0 && (
+                <Text style={styles.dayTotal}>
+                  Total: {formatDuration(dayTotalMinutes)}
+                </Text>
+              )}
+            </View>
+          )}
+        </ScrollView>
+      </Background>
+    </SafeAreaView>
   );
 }
