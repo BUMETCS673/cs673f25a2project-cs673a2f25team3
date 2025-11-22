@@ -46,13 +46,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install OSV Scanner
+        run: |
+          set -euo pipefail
+          VERSION=1.7.4
+          curl -sSfL "https://github.com/google/osv-scanner/releases/download/v${VERSION}/osv-scanner_${VERSION}_linux_amd64.tar.gz" -o /tmp/osv.tar.gz
+          tar -C /tmp -xzf /tmp/osv.tar.gz
+          sudo mv /tmp/osv-scanner /usr/local/bin/osv-scanner
       - name: Scan dependencies
-        uses: google/osv-scanner-action@v1.7.4
-        with:
-          scan-args: >
-            --lockfile="code/Study buddy/frontend/package-lock.json"
+        run: |
+          set -euo pipefail
+          osv-scanner \
+            --lockfile="code/Study buddy/frontend/package-lock.json" \
             --lockfile="code/Study buddy/backend/package-lock.json"
-        continue-on-error: false
 
   secrets-trufflehog:
     name: Secrets (TruffleHog)
