@@ -1,9 +1,4 @@
-/*
-  80% Human
-  20% AI
-*/
-
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext, useCallback } from "react";
 import {
   ScrollView,
   Text,
@@ -18,9 +13,9 @@ import { styles } from "../styles/style";
 import { Background } from "../components/Background";
 import { colors, fonts } from "../styles/base";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { CalendarDays } from "lucide-react-native";
 import { gameMenuStyles } from '../styles/gamesStyle';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function Statistics() {
   const { token } = useContext(AuthContext);
@@ -44,29 +39,31 @@ export default function Statistics() {
     return new Date(year, month - 1, day).toLocaleDateString("en-US");
   };
 
-  useEffect(() => {
-    const fetchSessions = async () => {
-      if (!token) return;
-      try {
-        setLoading(true);
-        const res = await fetch(`${API_BASE_URL}/study/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch study sessions");
+  const fetchSessions = async () => {
+    if (!token) return;
+    try {
+      setLoading(true);
+      const res = await fetch(`${API_BASE_URL}/study/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch study sessions");
 
-        const data = await res.json();
-        setSessions(data);
-        markCalendarDates(data, selectedDate);
-      } catch (err) {
-        console.error(err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const data = await res.json();
+      setSessions(data);
+      markCalendarDates(data, selectedDate);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchSessions();
-  }, [token]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchSessions();
+    }, [token])
+  );
 
   const markCalendarDates = (sessionsData, selected = selectedDate) => {
     const marked = {};
@@ -168,7 +165,7 @@ export default function Statistics() {
             <Text style={styles.noSessions}>Error: {error}</Text>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => setLoading(true)}
+              onPress={() => fetchSessions()}
             >
               <Text style={styles.noSessions}>Retry</Text>
             </TouchableOpacity>
@@ -190,7 +187,6 @@ export default function Statistics() {
       <Background>
         <ScrollView contentContainerStyle={styles.statsContainer}>
 
-          {/* NEW HEADER */}
           <View style={gameMenuStyles.header}>
             <View style={gameMenuStyles.iconWrapper}>
               <CalendarDays color={colors.primary} size={48} strokeWidth={2.5} />
@@ -201,21 +197,17 @@ export default function Statistics() {
             </Text>
           </View>
 
-          {/* SUMMARY CARD */}
           <View style={styles.card}>
             <Text style={styles.statsCardTitle}>Statistics</Text>
-
             <View style={styles.statsRow}>
               <View style={styles.statBox}>
                 <Text style={styles.statNumber}>{stats.totalSessions}</Text>
                 <Text style={styles.statLabel}>Sessions</Text>
               </View>
-
               <View style={styles.statBox}>
                 <Text style={styles.statNumber}>{stats.totalDays}</Text>
                 <Text style={styles.statLabel}>Days</Text>
               </View>
-
               <View style={styles.statBox}>
                 <Text style={styles.statNumber}>
                   {formatDuration(stats.totalMinutes)}
@@ -225,7 +217,6 @@ export default function Statistics() {
             </View>
           </View>
 
-          {/* CALENDAR CARD */}
           <View style={styles.card}>
             <Calendar
               markedDates={markedDates}
@@ -250,13 +241,11 @@ export default function Statistics() {
             />
           </View>
 
-          {/* DAILY SESSIONS */}
           {selectedDate && (
             <View style={styles.card}>
               <Text style={styles.statsCardTitle}>
                 {formatSelectedDateForDisplay(selectedDate)}
               </Text>
-
               {selectedDaySessions.length === 0 ? (
                 <Text style={styles.noSessions}>No study sessions on this day</Text>
               ) : (
@@ -271,7 +260,6 @@ export default function Statistics() {
                   </View>
                 ))
               )}
-
               {selectedDaySessions.length > 0 && (
                 <Text style={styles.dayTotal}>
                   Total: {formatDuration(dayTotalMinutes)}
