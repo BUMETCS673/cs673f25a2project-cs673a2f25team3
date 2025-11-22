@@ -67,8 +67,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Scan for secrets
-        uses: trufflesecurity/trufflehog@main
-        with:
-          path: .
-          extra_args: --only-verified
+      - name: Scan for secrets (filesystem)
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v "${{ github.workspace }}:/workspace" \
+            -w /workspace \
+            ghcr.io/trufflesecurity/trufflehog:latest \
+            filesystem --only-verified .
