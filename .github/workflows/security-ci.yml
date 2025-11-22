@@ -46,13 +46,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install OSV Scanner
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: stable
+      - name: Install OSV Scanner (Go)
         run: |
           set -euo pipefail
-          VERSION=1.7.4
-          curl -sSfL "https://github.com/google/osv-scanner/releases/download/v${VERSION}/osv-scanner_${VERSION}_linux_amd64.tar.gz" -o /tmp/osv.tar.gz
-          tar -C /tmp -xzf /tmp/osv.tar.gz
-          sudo mv /tmp/osv-scanner /usr/local/bin/osv-scanner
+          GO111MODULE=on go install github.com/google/osv-scanner/v2/cmd/osv-scanner@latest
+          echo "${HOME}/go/bin" >> "$GITHUB_PATH"
       - name: Scan dependencies
         run: |
           set -euo pipefail
