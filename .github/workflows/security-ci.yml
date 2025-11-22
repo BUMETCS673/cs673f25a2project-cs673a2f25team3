@@ -54,16 +54,13 @@ jobs:
             --lockfile="code/Study buddy/backend/package-lock.json"
         continue-on-error: false
 
-  secrets-gitleaks:
-    name: Secrets (Gitleaks)
+  secrets-trufflehog:
+    name: Secrets (TruffleHog)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Scan for secrets
-        uses: gitleaks/gitleaks-action@v2
+        uses: trufflesecurity/trufflehog@main
         with:
-          args: detect --source . --report-format sarif --report-path gitleaks.sarif
-      - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: gitleaks.sarif
+          path: .
+          extra_args: --only-verified --no-update
