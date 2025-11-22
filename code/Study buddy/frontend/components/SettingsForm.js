@@ -136,7 +136,6 @@ export default function SettingsForm() {
         </Picker>
       </View>
 			<SubmitButton text="Save" submit={submit} />
-      <NavigationButton text="Get Buddy" onPress={buddy} />
     </>
   );
 }

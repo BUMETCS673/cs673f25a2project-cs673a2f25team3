@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
     resizeMode: "cover",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: colors.secondary
   },
   container: {
     flex: 1,
@@ -35,10 +36,15 @@ export const styles = StyleSheet.create({
     maxWidth: 400,
     padding: padding.lg,
     borderRadius: borderRadius.md,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 0,
+    borderColor: colors.tertiary,
+    backgroundColor: colors.pale,
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 10,
+    elevation: 3,
   },
   overlay: {
     flex: 1,
@@ -51,7 +57,7 @@ export const styles = StyleSheet.create({
   cardH1: {
     fontSize: fonts.lg,
     fontWeight: "bold",
-    color: "white",
+    color: colors.primary,
     textAlign: "center",
     marginBottom: padding.md,
   },
@@ -64,7 +70,7 @@ export const styles = StyleSheet.create({
   },
   paragraph: {
     fontSize: fonts.md,
-    color: "white",
+    color: colors.text,
   },
   timer: {
     fontSize: fonts.huge,
@@ -98,10 +104,10 @@ export const styles = StyleSheet.create({
   input: {
     height: 44,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-    color: "#fff",
-    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 2,
+    borderColor: colors.primary,
+    color: colors.text,
+    backgroundColor: colors.pale,
     paddingHorizontal: 12,
   },
   iconLeft: {
@@ -115,6 +121,11 @@ export const styles = StyleSheet.create({
     zIndex: 1,
   },
   inputBox: {
+    backgroundColor: colors.pale,
+    borderColor: colors.primary,
+    borderWidth: 2,
+    borderRadius: 8,
+    width: 100
   },
   inputText: {
     fontSize: fonts.md,
@@ -123,11 +134,18 @@ export const styles = StyleSheet.create({
   inputOutline: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: padding.lg
   },
   inputPicker: {
-    width: '100%',
-    backgroundColor: '#fff',
-    color: '#000'
+    width: "100%",
+    borderColor: colors.primary,
+    borderWidth: 2,
+    borderRadius: 8,
+    padding: padding.sm,
+    margin: padding.sm,
+    fontSize: fonts.md,
+    backgroundColor: colors.pale,
+    color: colors.text
   },
 
   // ====== Buttons ======
@@ -140,22 +158,37 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   navigationButton: {
-    backgroundColor: "white",
-    color: "black",
-    fontWeight: "bold",
-    borderWidth: 2,
-    borderColor: "transparent",
-    paddingVertical: padding.sm,
-    paddingHorizontal: padding.md,
-    borderRadius: borderRadius.sm,
-    fontSize: fonts.lg,
-    textAlign: "center",
-    textAlignVertical: "center",
-    margin: padding.xs,
+    backgroundColor: '#E67E22',
+    borderRadius: 10,
+    paddingVertical: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 6,
+    shadowColor: '#E67E22',
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  navigationAccentButton: {
+    backgroundColor: '#C0392B',
+    borderRadius: 10,
+    paddingVertical: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 6,
+    shadowColor: '#E67E22',
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  navigationButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   submitButton: {
-    backgroundColor: 'white', 
-    color: 'black',
+    backgroundColor: colors.primary, 
+    color: colors.pale,
     fontWeight: 'bold', 
     borderWidth: 2,
     borderColor: 'transparent',
@@ -163,7 +196,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: padding.md,
     borderRadius: borderRadius.sm,
     cursor: 'pointer',
-    fontSize: fonts.lg,
+    fontSize: fonts.mdlg,
     textAlign: 'center',
     textAlignVertical: 'center',
     margin: padding.xs
@@ -181,17 +214,17 @@ export const styles = StyleSheet.create({
   loginFormButton: {
     width: "100%",
     maxWidth: "400%",
-    backgroundColor: "rgba(255,255,255,0.2)",
-    borderColor: "rgba(255,255,255,0.3)",
-    borderWidth: 1,
+    backgroundColor: colors.primary,
+    borderColor: colors.text,
+    borderWidth: 0,
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: "center",
     marginTop: 16,
   },
   loginFormButtonText: {
-    color: "#fff",
-    fontSize: 16,
+    color: colors.pale,
+    fontSize: 20,
     fontWeight: "600",
     textAlign: "center",
   },

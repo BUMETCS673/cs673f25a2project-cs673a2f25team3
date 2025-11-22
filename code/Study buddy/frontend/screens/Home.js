@@ -2,15 +2,16 @@
   30% AI
   70% Human
 */
-
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import { View, Text, Alert, Platform } from 'react-native';
-import { styles } from '../styles/style';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
 import { HomeBuddy } from '../components/buddies/buddy';
-import { useContext, useRef, useEffect, useCallback } from 'react';
-import { AuthContext } from '../AuthContext'; 
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { AuthContext } from '../AuthContext';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import AppIcon from '../components/icons/AppIcon';
+import { iconWrapper } from '../styles/iconStyles';
+import homeStyles from '../styles/homeStyles';
 import { resetBuddy } from '../dataInterface/resetBuddy';
 
 export default function Home() {
@@ -57,16 +58,40 @@ export default function Home() {
     prevStatusRef.current = currentStatus;
   }, [studyData]);
 
+  const navItems = [
+    { text: 'Start Studying!', link: 'Studying' },
+    { text: 'Game Menu', link: 'GameMenu' },
+    { text: 'Statistics', link: 'Statistics' },
+    { text: 'Settings', link: 'Settings' },
+  ];
+
   return (
     <Background>
-      <View style={styles.card} testID="home-screen">
-        <Text style={styles.cardH1} accessibilityRole='header'>Home</Text>
+      <View style={homeStyles.container}>
+        
+        {/* Header */}
+        <View style={homeStyles.header}>
+          <View style={iconWrapper}>
+            <AppIcon />
+          </View>
+
+          <Text style={homeStyles.headerTitle}>Home</Text>
+          <Text style={homeStyles.motto}>
+            A balanced mind learns more efficiently
+          </Text>
+        </View>
+
+        {/* Buddy */}
         <HomeBuddy />
-        <NavigationButton text="Start Studying!" link="Studying" />
-        <NavigationButton text="Game Menu" link="GameMenu" />
-        <NavigationButton text="Statistics" link="Statistics" />
-        <NavigationButton text="Settings" link="Settings" />
-        <NavigationButton text="Logout" onPress={handleLogout} />
+
+        {/* Navigation Buttons */}
+        <View style={homeStyles.buttonGroup}>
+          {navItems.map((item) => (
+            <NavigationButton text={item.text} link={item.link} />
+          ))}
+          <NavigationButton text="Logout" onPress={handleLogout} accent={true} />
+        </View>
+
       </View>
     </Background>
   );

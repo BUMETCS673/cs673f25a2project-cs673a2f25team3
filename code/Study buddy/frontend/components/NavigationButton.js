@@ -15,7 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 //    params: parameters to send with link (optional)
 // example: <NavigationButton text="15 Minutes" link="Studying" params={{minutes: "10"}} />
 // example: <NavigationButton text="Logout" onPress={handleLogout} />
-export const NavigationButton = ({ text, link, onPress, params }) => {
+export const NavigationButton = ({ text, link, onPress, params, accent=false }) => {
   const navigation = useNavigation();
 
   const handlePress = () => {
@@ -31,8 +31,8 @@ export const NavigationButton = ({ text, link, onPress, params }) => {
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} accessibilityRole="link">
-      <Text style={styles.navigationButton}>{text}</Text>
+    <TouchableOpacity onPress={handlePress} accessibilityRole="link" activeOpacity={0.85} style={accent ? styles.navigationAccentButton : styles.navigationButton}>
+      <Text style={styles.navigationButtonText}>{text}</Text>
     </TouchableOpacity>
   );
 };
