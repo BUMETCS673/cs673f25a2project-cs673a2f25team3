@@ -17,7 +17,10 @@ import { API_BASE_URL } from "@env";
 import { styles } from "../styles/style";
 import { Background } from "../components/Background";
 import { colors, fonts } from "../styles/base";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { CalendarDays } from "lucide-react-native";
+import { gameMenuStyles } from '../styles/gamesStyle';
 
 export default function Statistics() {
   const { token } = useContext(AuthContext);
@@ -78,7 +81,6 @@ export default function Statistics() {
       };
     });
 
-    // selected date
     if (selected) {
       marked[selected] = {
         ...(marked[selected] || {}),
@@ -88,17 +90,13 @@ export default function Statistics() {
       };
     }
 
-    // handle today
     const todayMarked = { ...(marked[todayStr] || {}) };
-    if (selected === todayStr) {
-      todayMarked.customStyles = {
-        text: { fontWeight: "bold", color: colors.pale },
-      };
-    } else {
-      todayMarked.customStyles = {
-        text: { fontWeight: "bold", color: colors.primary },
-      };
-    }
+    todayMarked.customStyles = {
+      text: {
+        fontWeight: "bold",
+        color: selected === todayStr ? colors.pale : colors.primary,
+      },
+    };
     marked[todayStr] = todayMarked;
 
     setMarkedDates(marked);
@@ -106,7 +104,7 @@ export default function Statistics() {
 
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
-    markCalendarDates(sessions, day.dateString); 
+    markCalendarDates(sessions, day.dateString);
   };
 
   const getSessionsForDate = (date) =>
@@ -130,7 +128,11 @@ export default function Statistics() {
       sessions.map((s) => getLocalDateString(s.start_time))
     );
     const totalMinutes = sessions.reduce((acc, s) => acc + (s.duration || 0), 0);
-    return { totalSessions: sessions.length, totalDays: uniqueDays.size, totalMinutes };
+    return {
+      totalSessions: sessions.length,
+      totalDays: uniqueDays.size,
+      totalMinutes,
+    };
   };
 
   if (!token) {
@@ -176,18 +178,30 @@ export default function Statistics() {
     );
   }
 
-  const selectedDaySessions = selectedDate ? getSessionsForDate(selectedDate) : [];
   const stats = getStats();
+  const selectedDaySessions = selectedDate ? getSessionsForDate(selectedDate) : [];
   const dayTotalMinutes = selectedDaySessions.reduce(
     (sum, s) => sum + (s.duration || 0),
     0
   );
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>    
+    <SafeAreaView style={{ flex: 1 }}>
       <Background>
         <ScrollView contentContainerStyle={styles.statsContainer}>
-          {/* Overall Statistics */}
+
+          {/* NEW HEADER */}
+          <View style={gameMenuStyles.header}>
+            <View style={gameMenuStyles.iconWrapper}>
+              <CalendarDays color={colors.primary} size={48} strokeWidth={2.5} />
+            </View>
+            <Text style={gameMenuStyles.headerTitle}>Calendar</Text>
+            <Text style={gameMenuStyles.motto}>
+              Every study day matters — keep track of your progress
+            </Text>
+          </View>
+
+          {/* SUMMARY CARD */}
           <View style={styles.card}>
             <Text style={styles.statsCardTitle}>Statistics</Text>
 
@@ -203,13 +217,15 @@ export default function Statistics() {
               </View>
 
               <View style={styles.statBox}>
-                <Text style={styles.statNumber}>{formatDuration(stats.totalMinutes)}</Text>
+                <Text style={styles.statNumber}>
+                  {formatDuration(stats.totalMinutes)}
+                </Text>
                 <Text style={styles.statLabel}>Total Time</Text>
               </View>
             </View>
           </View>
 
-          {/* Calendar */}
+          {/* CALENDAR CARD */}
           <View style={styles.card}>
             <Calendar
               markedDates={markedDates}
@@ -221,12 +237,8 @@ export default function Statistics() {
                 monthTextColor: colors.primary,
                 textMonthFontSize: fonts.lg,
                 textMonthFontWeight: "bold",
-                textMonthAlignment: "center",
-                textSectionTitleColor: colors.text,
-                textSectionTitleDisabledColor: "rgba(0,0,0,0.2)",
                 dayTextColor: colors.text,
                 textDayFontSize: fonts.md,
-                textDayFontWeight: "500",
                 textDisabledColor: "rgba(0,0,0,0.2)",
                 todayTextColor: colors.primary,
                 selectedDayBackgroundColor: colors.primary,
@@ -238,7 +250,7 @@ export default function Statistics() {
             />
           </View>
 
-          {/* Daily Sessions */}
+          {/* DAILY SESSIONS */}
           {selectedDate && (
             <View style={styles.card}>
               <Text style={styles.statsCardTitle}>
@@ -267,6 +279,7 @@ export default function Statistics() {
               )}
             </View>
           )}
+
         </ScrollView>
       </Background>
     </SafeAreaView>
