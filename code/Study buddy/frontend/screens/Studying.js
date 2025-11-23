@@ -17,15 +17,25 @@ export default function Studying() {
   return (
     <Background>
       <SafeAreaView
-        style={[studyingStyles.container, { paddingTop: insets.top }]}
+        style={[
+          studyingStyles.container,
+          {
+            backgroundColor: "transparent", // let the background show through the safe area
+          },
+        ]}
         edges={["top", "bottom"]}
       >
         <ScrollView
+          style={{ flex: 1, width: "100%" }}
           contentContainerStyle={[
             studyingStyles.scrollContent,
-            { paddingBottom: insets.bottom + 16 },
+            {
+              paddingBottom: insets.bottom + 16,
+              paddingTop: insets.top,
+            },
           ]}
           showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
         >
           <View style={studyingStyles.header}>
             <View style={iconWrapper}>
