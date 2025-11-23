@@ -67,11 +67,11 @@ jobs:
 
           for path in paths:
               try:
-                  with open(path, "r", encoding="utf-8") as f:
-                                data = json.load(f)
-                        except Exception:
-                            continue
-                        for run in data.get("runs", []):
+                with open(path, "r", encoding="utf-8") as f:
+                  data = json.load(f)
+              except Exception:
+                continue
+              for run in data.get("runs", []):
                   for res in run.get("results", []):
                       level = (res.get("level") or "").lower()
                       if level in fail_levels:
