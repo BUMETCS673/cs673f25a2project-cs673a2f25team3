@@ -10,7 +10,7 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - '**' 
+      - '**'  # Run on PRs from any branch
     paths:
       - "code/Study buddy/frontend/**"
       - "code/Study buddy/backend/**"
@@ -106,4 +106,4 @@ jobs:
         env:
           CI: true
         run: |
-          docker run --rm -w /app studybuddy-frontend:ci npm test -- --testPathIgnorePatterns="StudyTimerInterface.test.js"
+          docker run --rm -w /app studybuddy-frontend:ci npm test
