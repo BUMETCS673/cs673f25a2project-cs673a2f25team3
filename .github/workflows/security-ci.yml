@@ -1,0 +1,134 @@
+# 100% AI
+name: Security CI
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "code/Study buddy/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/security-ci.yml"
+  pull_request:
+    branches: ["**"]
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  sca-osv:
+    name: SCA (OSV Scanner)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: stable
+      - name: Install OSV Scanner (Go)
+        run: |
+          set -euo pipefail
+          GO111MODULE=on go install github.com/google/osv-scanner/v2/cmd/osv-scanner@latest
+          echo "${HOME}/go/bin" >> "$GITHUB_PATH"
+      - name: Scan dependencies
+        run: |
+          set -euo pipefail
+          osv-scanner \
+            --format sarif \
+            --output osv-results.sarif \
+            --lockfile="code/Study buddy/frontend/package-lock.json" \
+            --lockfile="code/Study buddy/backend/package-lock.json" \
+            || true
+      - name: Upload OSV SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: osv-results.sarif
+
+  secrets-trufflehog:
+    name: Secrets (TruffleHog)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan for secrets (filesystem)
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v "${{ github.workspace }}:/workspace" \
+            -w /workspace \
+            ghcr.io/trufflesecurity/trufflehog:latest \
+            filesystem --json --only-verified . > trufflehog.json || true
+      - name: Convert TruffleHog JSON to SARIF
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+
+          input_path = "trufflehog.json"
+          output_path = "trufflehog.sarif"
+          results = []
+
+          def sarif_loc(path):
+              return {"uri": path, "uriBaseId": "%SRCROOT%"}
+
+          if os.path.exists(input_path):
+              with open(input_path, "r", encoding="utf-8", errors="ignore") as f:
+                  for line in f:
+                      line = line.strip()
+                      if not line:
+                          continue
+                      try:
+                          rec = json.loads(line)
+                      except Exception:
+                          continue
+                      detector = rec.get("DetectorName") or "trufflehog"
+                      fs_meta = rec.get("SourceMetadata", {}).get("Data", {}).get("Filesystem", {})
+                      file_path = fs_meta.get("file") or "UNKNOWN_PATH"
+                      verified = rec.get("Verified", False)
+                      raw = rec.get("Raw") or ""
+                      message = f"{detector} ({'verified' if verified else 'unverified'}): {raw}"
+                      results.append({
+                          "ruleId": detector,
+                          "level": "warning" if verified else "note",
+                          "message": {"text": message[:4000]},
+                          "locations": [{
+                              "physicalLocation": {
+                                  "artifactLocation": sarif_loc(file_path),
+                                  "region": {"startLine": 1}
+                              }
+                          }]
+                      })
+
+          tool = {
+              "driver": {
+                  "name": "trufflehog",
+                  "informationUri": "https://github.com/trufflesecurity/trufflehog",
+                  "rules": [{"id": r["ruleId"]} for r in {r["ruleId"]: r for r in results}.values()],
+              }
+          }
+
+          sarif = {
+              "version": "2.1.0",
+              "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+              "runs": [{"tool": tool, "results": results}],
+          }
+
+          with open(output_path, "w", encoding="utf-8") as out:
+              json.dump(sarif, out, ensure_ascii=False, indent=2)
+
+          if not os.path.exists(output_path):
+              empty = {
+                  "version": "2.1.0",
+                  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+                  "runs": [{"tool": tool, "results": []}],
+              }
+              with open(output_path, "w", encoding="utf-8") as out:
+                  json.dump(empty, out, ensure_ascii=False, indent=2)
+          PY
+      - name: Upload TruffleHog SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: trufflehog.sarif
