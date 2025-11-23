@@ -20,6 +20,16 @@ router.use(auth);
 
 /**
  * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+/**
+ * @swagger
  * /api/stats/me:
  *   get:
  *     summary: Get study statistics of the logged-in user
@@ -36,10 +46,13 @@ router.use(auth);
  *               properties:
  *                 totalDuration:
  *                   type: integer
+ *                   example: 3600
  *                 totalSessions:
  *                   type: integer
+ *                   example: 25
  *                 monthlyDuration:
  *                   type: integer
+ *                   example: 600
  *                 recentSessions:
  *                   type: array
  *                   items:
@@ -47,14 +60,22 @@ router.use(auth);
  *                     properties:
  *                       id:
  *                         type: integer
+ *                         example: 101
  *                       duration:
  *                         type: integer
+ *                         example: 45
  *                       start_time:
  *                         type: string
+ *                         format: date-time
+ *                         example: "2025-11-23T14:00:00Z"
  *                       end_time:
  *                         type: string
+ *                         format: date-time
+ *                         example: "2025-11-23T14:45:00Z"
  *                       created_at:
  *                         type: string
+ *                         format: date-time
+ *                         example: "2025-11-23T14:50:00Z"
  *       401:
  *         description: Unauthorized (invalid or missing token)
  *       500:

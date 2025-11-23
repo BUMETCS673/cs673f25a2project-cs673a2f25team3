@@ -32,7 +32,7 @@ const swaggerOptions = {
     openapi: "3.0.0",
     info: {
       title: "Study Buddy API",
-      version: "1.0.0",
+      version: "0.3.1",
       description: "API documentation for Study Buddy backend",
     },
     servers: [
@@ -69,8 +69,8 @@ app.use("/api/stats", statsRoutes);
 // listen Only listen when running server.js directly. Do not listen when testing
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
-    console.log(`📄 Swagger docs available at http://localhost:${PORT}/api-docs`);
+    console.log(`🚀 Server running at ${PORT}`);
+    console.log(`📄 Swagger docs available at /api-docs`);
   });
 }
 

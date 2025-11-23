@@ -20,6 +20,16 @@ router.use(auth);
 
 /**
  * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+/**
+ * @swagger
  * /api/settings/me:
  *   get:
  *     summary: Get the settings of the logged-in user
@@ -36,12 +46,16 @@ router.use(auth);
  *               properties:
  *                 id:
  *                   type: integer
+ *                   example: 1
  *                 user_id:
  *                   type: integer
+ *                   example: 42
  *                 theme:
  *                   type: string
+ *                   example: "dark"
  *                 daily_goal:
  *                   type: integer
+ *                   example: 20
  *       401:
  *         description: Unauthorized (invalid or missing token)
  *       500:
@@ -71,8 +85,10 @@ router.get("/me", (req, res) => {
  *             properties:
  *               theme:
  *                 type: string
+ *                 example: "light"
  *               daily_goal:
  *                 type: integer
+ *                 example: 25
  *     responses:
  *       200:
  *         description: Settings updated successfully
@@ -83,18 +99,21 @@ router.get("/me", (req, res) => {
  *               properties:
  *                 user_id:
  *                   type: integer
+ *                   example: 42
  *                 theme:
  *                   type: string
+ *                   example: "light"
  *                 daily_goal:
  *                   type: integer
+ *                   example: 25
  *       401:
  *         description: Unauthorized (invalid or missing token)
  *       500:
  *         description: Internal server error
  */
 router.post("/me", (req, res) => {
-  const { theme, goal } = req.body;
-  Settings.updateSettings(req.user.id, theme, goal, (err, updated) => {
+  const { theme, daily_goal } = req.body;
+  Settings.updateSettings(req.user.id, theme, daily_goal, (err, updated) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(updated);
   });

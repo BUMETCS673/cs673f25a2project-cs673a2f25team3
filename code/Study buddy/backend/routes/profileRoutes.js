@@ -36,12 +36,17 @@ router.use(auth);
  *               properties:
  *                 id:
  *                   type: integer
+ *                   example: 1
  *                 user_id:
  *                   type: integer
+ *                   example: 42
  *                 bio:
  *                   type: string
+ *                   example: "I love studying!"
  *                 avatar_url:
  *                   type: string
+ *                   format: uri
+ *                   example: "https://example.com/avatar.png"
  *       401:
  *         description: Unauthorized (invalid or missing token)
  *       500:
@@ -71,8 +76,11 @@ router.get("/me", (req, res) => {
  *             properties:
  *               bio:
  *                 type: string
+ *                 example: "New bio"
  *               avatar_url:
  *                 type: string
+ *                 format: uri
+ *                 example: "https://example.com/new-avatar.png"
  *     responses:
  *       200:
  *         description: Profile updated successfully
@@ -83,10 +91,14 @@ router.get("/me", (req, res) => {
  *               properties:
  *                 user_id:
  *                   type: integer
+ *                   example: 42
  *                 bio:
  *                   type: string
+ *                   example: "Updated bio"
  *                 avatar_url:
  *                   type: string
+ *                   format: uri
+ *                   example: "https://example.com/new-avatar.png"
  *       401:
  *         description: Unauthorized (invalid or missing token)
  *       500:

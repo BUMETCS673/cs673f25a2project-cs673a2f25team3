@@ -23,6 +23,17 @@ const router = express.Router();
 
 /**
  * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+
+/**
+ * @swagger
  * /api/users/register:
  *   post:
  *     summary: Register a new user
@@ -39,14 +50,34 @@ const router = express.Router();
  *             properties:
  *               username:
  *                 type: string
+ *                 example: "student123"
  *               password:
  *                 type: string
+ *                 example: "SecurePass!123"
  *     responses:
  *       201:
  *         description: User registered successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User registered successfully"
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     username:
+ *                       type: string
+ *                       example: "student123"
  *       400:
- *         description: Bad request, e.g., missing username/password
+ *         description: Bad request, e.g., missing username/password or user already exists
  */
+
 router.post("/register", (req, res) => {
   const { username, password } = req.body;
 
@@ -87,15 +118,39 @@ router.post("/register", (req, res) => {
  *             properties:
  *               username:
  *                 type: string
+ *                 example: "student123"
  *               password:
  *                 type: string
+ *                 example: "SecurePass!123"
  *     responses:
  *       200:
- *         description: Login successful, returns token
+ *         description: Login successful, returns user info and token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Login successful"
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     username:
+ *                       type: string
+ *                       example: "student123"
+ *                 token:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       400:
  *         description: User not found or bad request
  *       401:
  *         description: Invalid credentials
+ *       500:
+ *         description: Internal server error (e.g., JWT secret missing or generation failed)
  */
 router.post("/login", (req, res) => {
   const { username, password } = req.body;
@@ -110,7 +165,6 @@ router.post("/login", (req, res) => {
     const valid = bcrypt.compareSync(password, user.password);
     if (!valid) return res.status(401).json({ error: "Invalid credentials" });
 
-    // make sure jwt secret exists
     if (!process.env.JWT_SECRET) {
       console.error("JWT_SECRET is missing in .env!");
       return res.status(500).json({ error: "Internal server error: JWT secret missing" });
@@ -147,6 +201,17 @@ router.post("/login", (req, res) => {
  *     responses:
  *       200:
  *         description: Current user info
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 username:
+ *                   type: string
+ *                   example: "student123"
  *       401:
  *         description: Unauthorized (invalid or missing token)
  */
