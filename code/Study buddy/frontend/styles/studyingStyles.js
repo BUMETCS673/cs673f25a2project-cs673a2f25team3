@@ -28,8 +28,8 @@ export const studyingStyles = StyleSheet.create({
 
   container: {
     flex: 1,
-    padding: 20,
-    justifyContent: "flex-start",
+    padding: 16,
+    justifyContent: "center",
   },
   scrollContent: {
     flexGrow: 1,

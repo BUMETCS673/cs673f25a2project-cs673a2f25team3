@@ -31,7 +31,6 @@ export default function Studying() {
             studyingStyles.scrollContent,
             {
               paddingBottom: insets.bottom + 16,
-              paddingTop: insets.top,
             },
           ]}
           showsVerticalScrollIndicator={false}
