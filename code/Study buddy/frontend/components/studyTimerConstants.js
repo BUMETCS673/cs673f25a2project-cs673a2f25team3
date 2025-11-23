@@ -8,9 +8,9 @@
 export const PRESET_MINUTES = [25, 60];
 export const TIMER_STORAGE_KEY = "@StudyTimer:state";
 export const MAX_MINUTES = 180;
-export const CIRCLE_DIAMETER = 200;
-export const CIRCLE_BORDER_WIDTH = 10;
-export const CIRCLE_MARKER_SIZE = 12;
+export const CIRCLE_DIAMETER = 220;
+export const CIRCLE_BORDER_WIDTH = 12;
+export const CIRCLE_MARKER_SIZE = 16;
 
 // Format helper for HH:MM:SS countdown label inside the circular timer.
 export const formatDuration = (totalSeconds) => {

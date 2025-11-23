@@ -19,7 +19,7 @@ const scaleFont = (size) =>
 // Timer geometry pulled from shared constants so math stays in sync.
 const circleOuterSize = CIRCLE_DIAMETER;
 const circleOuterRadius = circleOuterSize / 2;
-const circleInnerSize = CIRCLE_DIAMETER - CIRCLE_BORDER_WIDTH * 2 - 16;
+const circleInnerSize = CIRCLE_DIAMETER - CIRCLE_BORDER_WIDTH * 2 - 20;
 
 export const studyingStyles = StyleSheet.create({
   iconSpacing: {
