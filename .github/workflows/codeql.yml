@@ -1,14 +1,12 @@
-# 100% Human
-
 name: CodeQL
 
 on:
   push:
-    branches: [ "**" ]
+    branches: ["**"]
   pull_request:
-    branches: [ "**" ]
+    branches: ["**"]
   schedule:
-    - cron: '36 2 * * 6'
+    - cron: "36 2 * * 6"
 
 permissions:
   contents: read
@@ -19,7 +17,7 @@ permissions:
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
-    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.language == 'swift' && 'macos-latest' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
@@ -67,10 +65,10 @@ jobs:
 
           for path in paths:
               try:
-                with open(path, "r", encoding="utf-8") as f:
-                  data = json.load(f)
+                  with open(path, "r", encoding="utf-8") as f:
+                      data = json.load(f)
               except Exception:
-                continue
+                  continue
               for run in data.get("runs", []):
                   for res in run.get("results", []):
                       level = (res.get("level") or "").lower()
