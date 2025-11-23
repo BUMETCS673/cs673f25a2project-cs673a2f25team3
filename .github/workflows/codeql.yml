@@ -51,12 +51,12 @@ jobs:
           python - <<'PY'
           import glob, json, os, sys
 
-                    paths = []
-                    paths += glob.glob("codeql-results/**/*.sarif", recursive=True)
-                    paths += glob.glob("codeql-results/*.sarif")
-                    rt = os.environ.get("RUNNER_TEMP")
-                    if rt:
-                        paths += glob.glob(os.path.join(rt, "**", "*.sarif"), recursive=True)
+          paths = []
+          paths += glob.glob("codeql-results/**/*.sarif", recursive=True)
+          paths += glob.glob("codeql-results/*.sarif")
+          rt = os.environ.get("RUNNER_TEMP")
+          if rt:
+              paths += glob.glob(os.path.join(rt, "**", "*.sarif"), recursive=True)
 
           if not paths:
               print("No CodeQL SARIF files found; skipping fail check.")
