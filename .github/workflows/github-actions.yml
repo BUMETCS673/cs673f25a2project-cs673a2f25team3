@@ -10,7 +10,7 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - '**' 
+      - 'main'  # Run on pushes to main branch
     paths:
       - "code/Study buddy/frontend/**"
       - "code/Study buddy/backend/**"
