@@ -65,7 +65,7 @@ export default function Home() {
   ];
 
   return (
-    <Background align={false}>
+    <Background>
       <View style={homeStyles.container}>
         
         {/* Header */}
