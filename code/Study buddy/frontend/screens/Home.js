@@ -21,7 +21,6 @@ export default function Home() {
 
   const handleLogout = () => {
     logout();
-    navigation.replace('Login');
   };
 
   // -----------------------------------
