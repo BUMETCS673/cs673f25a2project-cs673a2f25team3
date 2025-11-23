@@ -83,8 +83,7 @@ export default function LoginForm() {
         setMode("login"); // change to login after register
       } else {
         await login(data.user, data.token);
-        // successfully login, direct to Home
-        navigation.replace("Home")
+        // Auth state change will re-render navigator to MainTabs/Home
       }
     } catch (err) {
       if (err?.message == "SQLITE_CONSTRAINT: UNIQUE constraint failed: users.username") {

@@ -21,7 +21,6 @@ export default function Home() {
 
   const handleLogout = () => {
     logout();
-    navigation.replace('Login');
   };
 
   // -----------------------------------
@@ -87,7 +86,7 @@ export default function Home() {
         {/* Navigation Buttons */}
         <View style={homeStyles.buttonGroup}>
           {navItems.map((item) => (
-            <NavigationButton text={item.text} link={item.link} />
+            <NavigationButton key={item.link} text={item.text} link={item.link} />
           ))}
           <NavigationButton text="Logout" onPress={handleLogout} accent={true} />
         </View>
