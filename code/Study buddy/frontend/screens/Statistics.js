@@ -201,7 +201,6 @@ export default function Statistics() {
           contentContainerStyle={[
             styles.statsContainer,
             {
-              paddingTop: insets.top,
               paddingBottom: insets.bottom + 16,
               minHeight: height - insets.top - insets.bottom,
             },
