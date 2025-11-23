@@ -6,6 +6,8 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Dimensions } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { AuthContext } from "../AuthContext";
 import { API_BASE_URL } from "@env";
@@ -18,6 +20,9 @@ import { gameMenuStyles } from '../styles/gamesStyle';
 import { useFocusEffect } from '@react-navigation/native';
 
 export default function Statistics() {
+  const insets = useSafeAreaInsets();
+  const { height, width } = Dimensions.get("window");
+  const calendarMinHeight = Math.max(320, height * 0.45);
   const { token } = useContext(AuthContext);
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -183,9 +188,28 @@ export default function Statistics() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: colors.secondary, // match Background color so the inset area blends in
+      }}
+      edges={["top", "bottom"]}
+    >
       <Background>
-        <ScrollView contentContainerStyle={styles.statsContainer}>
+        <ScrollView
+          style={{ flex: 1, width: "100%" }}
+          contentContainerStyle={[
+            styles.statsContainer,
+            {
+              paddingTop: insets.top,
+              paddingBottom: insets.bottom + 16,
+              minHeight: height - insets.top - insets.bottom,
+            },
+          ]}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          horizontal={false}
+        >
 
           <View style={gameMenuStyles.header}>
             <View style={gameMenuStyles.iconWrapper}>
@@ -197,7 +221,7 @@ export default function Statistics() {
             </Text>
           </View>
 
-          <View style={styles.card}>
+          <View style={[styles.card, styles.statsCardSpacing]}>
             <Text style={styles.statsCardTitle}>Statistics</Text>
             <View style={styles.statsRow}>
               <View style={styles.statBox}>
@@ -217,11 +241,15 @@ export default function Statistics() {
             </View>
           </View>
 
-          <View style={styles.card}>
+          <View style={[styles.card, styles.statsCardSpacing]}>
             <Calendar
               markedDates={markedDates}
               onDayPress={onDayPress}
-              style={{ backgroundColor: "transparent" }}
+              style={{
+                backgroundColor: "transparent",
+                minHeight: calendarMinHeight,
+                width: "100%",
+              }}
               markingType="custom"
               theme={{
                 calendarBackground: "transparent",
@@ -242,7 +270,7 @@ export default function Statistics() {
           </View>
 
           {selectedDate && (
-            <View style={styles.card}>
+            <View style={[styles.card, styles.statsCardSpacing]}>
               <Text style={styles.statsCardTitle}>
                 {formatSelectedDateForDisplay(selectedDate)}
               </Text>

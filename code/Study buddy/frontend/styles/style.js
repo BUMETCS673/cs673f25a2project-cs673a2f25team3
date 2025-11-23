@@ -274,6 +274,11 @@ export const styles = StyleSheet.create({
     fontSize: fonts.md,
     color: colors.text,
   },
+
+  // Extra spacing utility for cards on stats screen
+  statsCardSpacing: {
+    marginTop: padding.md,
+  },
   sessionRow: {
     flexDirection: "row",
     justifyContent: "space-between",
