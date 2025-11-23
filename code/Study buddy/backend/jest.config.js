@@ -13,4 +13,20 @@ module.exports = {
 
   // Avoid flaky first-run timeouts during DB init
   testTimeout: 10000,
+
+  // ============================
+  // Added: Coverage configuration
+  // ============================
+  collectCoverage: true,
+  collectCoverageFrom: [
+    "routes/**/*.js",
+    "models/**/*.js",
+    "middleware/**/*.js",
+    "db/**/*.js",
+    "server.js",
+    "!**/__tests__/**",
+    "!**/node_modules/**"
+  ],
+  coverageDirectory: "./coverage",
+  coverageReporters: ["text", "html"]
 };

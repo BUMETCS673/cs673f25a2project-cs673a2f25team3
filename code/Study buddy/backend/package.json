@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "jest --detectOpenHandles",
+    "test": "cross-env NODE_ENV=test jest --detectOpenHandles --coverage",
     "lint": "eslint ."
   },
   "keywords": [],
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.37.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9.37.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",
