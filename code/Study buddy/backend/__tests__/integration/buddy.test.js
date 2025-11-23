@@ -33,40 +33,43 @@ describe("Buddy Model Integration Tests", () => {
   test("Create default buddy", (done) => {
     BuddyModel.createBuddy(userId, "Buddy", (err) => {
       expect(err).toBeNull();
-    });
-    
-    BuddyModel.getBuddy(userId, (err, buddy) => {
-      expect(err).toBeNull();
-      expect(buddy.name).toBe("Buddy");
-      expect(buddy.exp).toBe(0);
-      expect(buddy.status).toBe(4);
-      expect(buddy.last_updated).not.toBeNull();
-      done();
+
+      BuddyModel.getBuddy(userId, (err2, buddy) => {
+        expect(err2).toBeNull();
+        expect(buddy.name).toBe("Buddy");
+        expect(buddy.exp).toBe(0);
+        expect(buddy.status).toBe(4);
+        expect(buddy.last_updated).not.toBeNull();
+        done();
+      });
     });
   });
 
+  /*
+    FIXED VERSION — sequential execution so CI does not race
+  */
   test("Update exp", (done) => {
+    // 1) First increment by 5
     BuddyModel.updateExp(userId, 5, (err) => {
       expect(err).toBeNull();
-    });
 
-    BuddyModel.getBuddy(userId, (err, buddy) => {
-      expect(err).toBeNull();
-      expect(buddy.exp).toBe(5);
-    });
+      BuddyModel.getBuddy(userId, (err2, buddy1) => {
+        expect(err2).toBeNull();
+        expect(buddy1.exp).toBe(5); // 0 + 5
 
-    BuddyModel.updateExp(userId, 10, (err) => {
-      expect(err).toBeNull();
-    });
+        // 2) Then increment by 10
+        BuddyModel.updateExp(userId, 10, (err3) => {
+          expect(err3).toBeNull();
 
-    BuddyModel.getBuddy(userId, (err, buddy) => {
-      expect(err).toBeNull();
-      expect(buddy.exp).toBe(15);
-      done();
+          BuddyModel.getBuddy(userId, (err4, buddy2) => {
+            expect(err4).toBeNull();
+            expect(buddy2.exp).toBe(15); // 5 + 10
+            done();
+          });
+        });
+      });
     });
   });
-
-  
 
   describe("updateStatus", () => {
     beforeEach((done) => {
@@ -78,13 +81,13 @@ describe("Buddy Model Integration Tests", () => {
       BuddyModel.getBuddy(userId, (err, buddy) => {
         expect(err).toBeNull();
         var origionalLastUpdated = new Date(buddy.last_updated).getTime();
-        
+
         BuddyModel.updateStatus(userId, 1, (err) => {
           expect(err).toBeNull();
-          
-          BuddyModel.getBuddy(userId, (err, buddy) => {
-            expect(err).toBeNull();
-            expect(new Date(buddy.last_updated).getTime()).not.toBe(origionalLastUpdated);
+
+          BuddyModel.getBuddy(userId, (err2, buddy2) => {
+            expect(err2).toBeNull();
+            expect(new Date(buddy2.last_updated).getTime()).not.toBe(origionalLastUpdated);
             done();
           });
         });
@@ -95,8 +98,8 @@ describe("Buddy Model Integration Tests", () => {
       BuddyModel.updateStatus(userId, 1, (err) => {
         expect(err).toBeNull();
 
-        BuddyModel.getBuddy(userId, (err, buddy) => {
-          expect(err).toBeNull();
+        BuddyModel.getBuddy(userId, (err2, buddy) => {
+          expect(err2).toBeNull();
           expect(buddy.status).toBe(3);
           done();
         });
@@ -107,8 +110,8 @@ describe("Buddy Model Integration Tests", () => {
       BuddyModel.updateStatus(userId, -1, (err) => {
         expect(err).toBeNull();
 
-        BuddyModel.getBuddy(userId, (err, buddy) => {
-          expect(err).toBeNull();
+        BuddyModel.getBuddy(userId, (err2, buddy) => {
+          expect(err2).toBeNull();
           expect(buddy.status).toBe(1);
           done();
         });
@@ -116,13 +119,12 @@ describe("Buddy Model Integration Tests", () => {
     });
 
     test("Status capped at maximum (4)", (done) => {
-      // Set status to 4
       db.run("UPDATE study_buddies SET status = 4 WHERE user_id = ?", [userId], () => {
         BuddyModel.updateStatus(userId, 1, (err) => {
           expect(err).toBe("Status capped");
 
-          BuddyModel.getBuddy(userId, (err, buddy) => {
-            expect(err).toBeNull();
+          BuddyModel.getBuddy(userId, (err2, buddy) => {
+            expect(err2).toBeNull();
             expect(buddy.status).toBe(4);
             done();
           });
@@ -131,13 +133,12 @@ describe("Buddy Model Integration Tests", () => {
     });
 
     test("Status capped at maximum when increment exceeds 4", (done) => {
-      // Set status to 3
       db.run("UPDATE study_buddies SET status = 3 WHERE user_id = ?", [userId], () => {
         BuddyModel.updateStatus(userId, 2, (err) => {
           expect(err).toBeNull();
 
-          BuddyModel.getBuddy(userId, (err, buddy) => {
-            expect(err).toBeNull();
+          BuddyModel.getBuddy(userId, (err2, buddy) => {
+            expect(err2).toBeNull();
             expect(buddy.status).toBe(4);
             done();
           });
@@ -146,13 +147,12 @@ describe("Buddy Model Integration Tests", () => {
     });
 
     test("Status capped at minimum (0)", (done) => {
-      // Set status to 0
       db.run("UPDATE study_buddies SET status = 0 WHERE user_id = ?", [userId], () => {
         BuddyModel.updateStatus(userId, -1, (err) => {
           expect(err).toBe("Status capped");
 
-          BuddyModel.getBuddy(userId, (err, buddy) => {
-            expect(err).toBeNull();
+          BuddyModel.getBuddy(userId, (err2, buddy) => {
+            expect(err2).toBeNull();
             expect(buddy.status).toBe(0);
             done();
           });
@@ -161,13 +161,12 @@ describe("Buddy Model Integration Tests", () => {
     });
 
     test("Status capped at minimum when decrement goes below 0", (done) => {
-      // Set status to 1
       db.run("UPDATE study_buddies SET status = 1 WHERE user_id = ?", [userId], () => {
         BuddyModel.updateStatus(userId, -2, (err) => {
           expect(err).toBeNull();
 
-          BuddyModel.getBuddy(userId, (err, buddy) => {
-            expect(err).toBeNull();
+          BuddyModel.getBuddy(userId, (err2, buddy) => {
+            expect(err2).toBeNull();
             expect(buddy.status).toBe(0);
             done();
           });
@@ -206,34 +205,32 @@ describe("Buddy Model Integration Tests", () => {
     });
 
     test("Handles multiple status updates correctly", (done) => {
-      // Set status to 1
       BuddyModel.updateStatus(userId, 1, (err) => {
-          expect(err).toBeNull();
+        expect(err).toBeNull();
 
-          BuddyModel.getBuddy(userId, (err, buddy) => {
-            expect(err).toBeNull();
-            expect(buddy.status).toBe(3);
-  
-            BuddyModel.updateStatus(userId, 1, (err) => {
-              expect(err).toBeNull();
+        BuddyModel.getBuddy(userId, (err2, buddy1) => {
+          expect(err2).toBeNull();
+          expect(buddy1.status).toBe(3);
 
-              BuddyModel.getBuddy(userId, (err, buddy) => {
-                expect(err).toBeNull();
-                expect(buddy.status).toBe(4);
-                done();
-              });
+          BuddyModel.updateStatus(userId, 1, (err3) => {
+            expect(err3).toBeNull();
+
+            BuddyModel.getBuddy(userId, (err4, buddy2) => {
+              expect(err4).toBeNull();
+              expect(buddy2.status).toBe(4);
+              done();
             });
           });
         });
+      });
     });
 
     test("Handles large positive delta correctly", (done) => {
       BuddyModel.updateStatus(userId, 10, (err) => {
         expect(err).toBeNull();
 
-        BuddyModel.getBuddy(userId, (err, buddy) => {
-          expect(err).toBeNull();
-          // 2 + 10 = 12, capped at 4
+        BuddyModel.getBuddy(userId, (err2, buddy) => {
+          expect(err2).toBeNull();
           expect(buddy.status).toBe(4);
           done();
         });
@@ -244,9 +241,8 @@ describe("Buddy Model Integration Tests", () => {
       BuddyModel.updateStatus(userId, -10, (err) => {
         expect(err).toBeNull();
 
-        BuddyModel.getBuddy(userId, (err, buddy) => {
-          expect(err).toBeNull();
-          // 2 + (-10) = -8, capped at 0
+        BuddyModel.getBuddy(userId, (err2, buddy) => {
+          expect(err2).toBeNull();
           expect(buddy.status).toBe(0);
           done();
         });
