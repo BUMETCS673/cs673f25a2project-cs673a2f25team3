@@ -42,3 +42,44 @@ jobs:
         uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{ matrix.language }}"
+          output: codeql-results
+
+      - name: Fail on CodeQL alerts (errors only)
+        if: always()
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import glob, json, os, sys
+
+                    paths = []
+                    paths += glob.glob("codeql-results/**/*.sarif", recursive=True)
+                    paths += glob.glob("codeql-results/*.sarif")
+                    rt = os.environ.get("RUNNER_TEMP")
+                    if rt:
+                        paths += glob.glob(os.path.join(rt, "**", "*.sarif"), recursive=True)
+
+          if not paths:
+              print("No CodeQL SARIF files found; skipping fail check.")
+              sys.exit(0)
+
+          fail_levels = {"error"}
+          total = 0
+
+          for path in paths:
+              try:
+                  with open(path, "r", encoding="utf-8") as f:
+                                data = json.load(f)
+                        except Exception:
+                            continue
+                        for run in data.get("runs", []):
+                  for res in run.get("results", []):
+                      level = (res.get("level") or "").lower()
+                      if level in fail_levels:
+                          total += 1
+
+          if total > 0:
+              print(f"CodeQL found {total} error result(s); failing the job.")
+              sys.exit(1)
+
+          print("CodeQL found 0 error results; continuing.")
+          PY
