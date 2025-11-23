@@ -1,0 +1,35 @@
+# 70% AI generated
+# 30% Human
+
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Build arg for API base URL (secret provided at build time)
+ARG API_BASE_URL
+
+# Create a .env file *inside the image* for Expo / @env
+RUN echo "API_BASE_URL=$API_BASE_URL" > .env
+
+# Copy dependency manifests
+COPY package.json package-lock.json* ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy the rest of the app source
+COPY . .
+
+# Build static web site with Expo
+RUN npx expo export --platform web
+
+# Lightweight web server
+FROM nginx:alpine
+
+# Copy built static files from builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose HTTP port
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -96,7 +96,7 @@ jobs:
 
       - name: Build frontend image
         run: |
-          docker build -t studybuddy-frontend:ci -f "code/Study buddy/frontend/Dockerfile" "code/Study buddy/frontend"
+          docker build -t studybuddy-frontend:ci -f "code/Study buddy/frontend/Dockerfile.dev" "code/Study buddy/frontend"
 
       - name: Backend tests in Docker
         run: |
