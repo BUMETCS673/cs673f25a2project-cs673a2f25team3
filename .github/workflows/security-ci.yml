@@ -45,11 +45,16 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import glob, json, sys
+          import glob, json, os, sys
 
-          sarifs = glob.glob("codeql-results/**/*.sarif", recursive=True) + glob.glob("codeql-results/*.sarif")
+          sarifs = []
+          sarifs += glob.glob("codeql-results/**/*.sarif", recursive=True)
+          sarifs += glob.glob("codeql-results/*.sarif")
+          runner_temp = os.environ.get("RUNNER_TEMP")
+          if runner_temp:
+              sarifs += glob.glob(os.path.join(runner_temp, "**", "*.sarif"), recursive=True)
           if not sarifs:
-              print("No SARIF files produced by CodeQL; skipping fail check.")
+              print("No CodeQL SARIF files found (workspace or runner temp); assuming 0 results.")
               sys.exit(0)
 
           total = 0
