@@ -1,7 +1,7 @@
 /*
-  40% AI
-  50% Human
-  10% Framework
+  80% AI
+  15% Human
+  5% Framework
 */
 
 const express = require("express");
@@ -103,6 +103,47 @@ router.get("/me", (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /api/study/progress:
+ *   get:
+ *     summary: Get the current study progress/timer state for the logged-in user
+ *     tags: [Study]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Study progress retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user_id:
+ *                   type: integer
+ *                 target_minutes:
+ *                   type: integer
+ *                   description: Target duration in minutes
+ *                 elapsed_seconds:
+ *                   type: integer
+ *                   description: Elapsed time in seconds
+ *                 session_start:
+ *                   type: string
+ *                   description: Session start timestamp
+ *                 status:
+ *                   type: string
+ *                   enum: [running, paused, complete]
+ *                   description: Current timer status
+ *                 updated_at:
+ *                   type: string
+ *                   format: date-time
+ *       204:
+ *         description: No progress found
+ *       401:
+ *         description: Unauthorized (invalid or missing token)
+ *       500:
+ *         description: Internal server error
+ */
 // Return any persisted in-progress timer for the authenticated user so the client can resume.
 router.get("/progress", (req, res) => {
   StudyProgress.getProgress(req.user.id, (err, row) => {
@@ -112,6 +153,67 @@ router.get("/progress", (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /api/study/progress:
+ *   put:
+ *     summary: Update or create the study progress/timer state for the logged-in user
+ *     tags: [Study]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - target_minutes
+ *               - elapsed_seconds
+ *               - session_start
+ *               - status
+ *             properties:
+ *               target_minutes:
+ *                 type: integer
+ *                 description: Target duration in minutes (must be positive)
+ *               elapsed_seconds:
+ *                 type: integer
+ *                 description: Elapsed time in seconds (must be non-negative)
+ *               session_start:
+ *                 type: string
+ *                 description: Session start timestamp
+ *               status:
+ *                 type: string
+ *                 enum: [running, paused, complete]
+ *                 description: Current timer status
+ *     responses:
+ *       200:
+ *         description: Progress updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user_id:
+ *                   type: integer
+ *                 target_minutes:
+ *                   type: integer
+ *                 elapsed_seconds:
+ *                   type: integer
+ *                 session_start:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 updated_at:
+ *                   type: string
+ *                   format: date-time
+ *       400:
+ *         description: Bad request (invalid progress payload, negative values, or unsupported status)
+ *       401:
+ *         description: Unauthorized (invalid or missing token)
+ *       500:
+ *         description: Internal server error
+ */
 // Upsert the current timer snapshot; the client periodically sends this while running/paused.
 router.put("/progress", (req, res) => {
   const { target_minutes, elapsed_seconds, session_start, status } = req.body || {};
@@ -146,6 +248,22 @@ router.put("/progress", (req, res) => {
   );
 });
 
+/**
+ * @swagger
+ * /api/study/progress:
+ *   delete:
+ *     summary: Clear the study progress/timer state for the logged-in user
+ *     tags: [Study]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       204:
+ *         description: Progress cleared successfully
+ *       401:
+ *         description: Unauthorized (invalid or missing token)
+ *       500:
+ *         description: Internal server error
+ */
 // Clear the stored snapshot once the timer is complete or reset.
 router.delete("/progress", (req, res) => {
   StudyProgress.clearProgress(req.user.id, (err) => {
