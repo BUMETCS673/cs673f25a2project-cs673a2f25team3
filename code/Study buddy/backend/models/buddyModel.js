@@ -10,8 +10,8 @@ function getBuddy(userId, callback) {
 }
 
 function createBuddy(userId, name, callback) {
-  const query = `INSERT INTO study_buddies (user_id, name) VALUES (?, ?)`;
-  db.run(query, [userId, name], function(err) {
+  const query = `INSERT INTO study_buddies (user_id, name, last_updated) VALUES (?, ?, ?)`;
+  db.run(query, [userId, name, Date.now()], function(err) {
     callback(err, { id: this.lastID, user_id: userId, name });
   });
 }
