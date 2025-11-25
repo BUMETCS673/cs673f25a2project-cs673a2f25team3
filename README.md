@@ -1,20 +1,63 @@
 # Study Buddy
 
-Study Buddy is a mobile and web application for tracking study sessions, user profiles, and settings. It is built with **React Native (Expo)** for the frontend and **Express + SQLite** for the backend.
+Study hard with your Buddy to help them grow! Study Buddy is an app/website that tracks your studying. The more you study, the more your Buddy grows. But careful! If you don't meet your goals for the week, your Buddy will become sick and eventually die.
+
+Deployed at: https://cs673f25a2project-cs673a2f25team3-kej3.onrender.com/
 
 ---
 
 ## Table of Contents
 
-- [Technologies](#technologies)
-- [Installation](#installation)
-- [Backend Setup](#backend-setup)
-- [Frontend Setup](#frontend-setup)
+- [Installation and Setup](#installation-and-setup)
 - [Running the App](#running-the-app)
+- [Technologies](#technologies)
 - [API Endpoints](#api-endpoints)
 - [Testing](#testing)
 - [Docker Setup](#docker-setup)
-- [Project Structure](#project-structure)
+
+---
+
+## Installation and Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/BUMETCS673/cs673f25a2project-cs673a2f25team3
+```
+
+2. Install Dependencies:
+```bash
+npm run install-all
+```
+
+3. Copy `code/Study buddy/backend/.env.example` and rename it `.env`. Replace `<YOUR_SECRET>` with an appropiate secret.
+
+4. Copy `code/Study buddy/front/.env.example` and rename it `.env`. Replace `<YOUR_BACKEND_IP>` with the ip address of the backend.
+
+---
+
+## Running the App
+
+1. Start the backend and frontend:
+```bash
+npm run dev
+```
+
+2. Open the app on your mobile device using the Expo Go app or an emulator or open on web.
+
+If you wish to start the backend and frontend separately, INSTEAD run the following on the separate devices.
+
+Backend:
+```bash
+cd '.\code\Study buddy\backend\'
+npm start
+```
+
+Frontend:
+```bash
+cd '.\code\Study buddy\frontend\'
+npm start
+```
+Note: may fail if device is not on the same wifi as the frontend.
 
 ---
 
@@ -29,88 +72,32 @@ Study Buddy is a mobile and web application for tracking study sessions, user pr
 
 ---
 
-## Installation
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/BUMETCS673/cs673f25a2project-cs673a2f25team3
-cd Study buddy
-```
-
-2. Install Dependencies for Backend:
-```bash
-cd backend
-npm install
-```
-
-3. Install Dependencies for Frontend:
-```bash
-cd ../frontend
-npm install
-```
-
----
-
-## Backend Setup
-
-```bash
-cd backend
-npm start
-```
-
-The backend will run at `http://localhost:3000`. Swagger documentation is available at `http://localhost:3000/api-docs`.
-
----
-
-## Frontend Setup
-
-Create `code/Study buddy/frontend/.env` with the API base URL.
-
-- Docker-based dev (phone and web):
-  - `API_BASE_URL=http://<YOUR_LAN_IP>:3000/api` (example: `http://192.168.99.27:3000/api`)
-  - Your phone must be on the same Wi‑Fi and able to reach your PC on port 3000.
-- Non‑Docker local dev (both services on host):
-  - `API_BASE_URL=http://127.0.0.1:3000/api`
-
-Note: The app reads this file at bundle time via `react-native-dotenv` (importing from `@env`). If you change it, restart Expo with cache clear.
-
----
-
-## Running the App
-
-1. Start the Expo project:
-```bash
-cd frontend
-npx expo start
-```
-
-2. Open the app on your mobile device using the Expo Go app or an emulator or open on web.
-
-Another easier way to install all the dependencies in frontend and backend in the root directory and then run the frontend and the backend is:
-```bash
-npm run install-all
-npm run dev
-```
-
----
-
 ## API Endpoints
 * **User**
    * `POST /api/users/register` - Register a new user
    * `POST /api/users/login` - Login and receive a JWT token
    * ` GET /api/users/me` - Get user info (requires JWT token)
 * **Profile**
-   * `GET /api/profiles/me` - Get profile info
-   * `POST /api/profiles/me` - Update profile info
+   * `GET /api/profiles/me` - Get profile info for logged in user
+   * `POST /api/profiles/me` - Update profile info for logged in user
 * **Settings**
-   * `GET /api/settings/me` - Get user settings
-   * `POST /api/settings/me` - Update settings
+   * `GET /api/settings/me` - Get settings for logged in user
+   * `POST /api/settings/me` - Update settings for logged in user
 * **Study**
-   * `POST /api/study/me` - Add a study session
-   * `GET /api/study/me` - Get all study sessions
+   * `POST /api/study/me` - Add a study session for logged in user
+   * `GET /api/study/me` - Get all study sessions for logged in user
+   * `GET /api/study/progress` - Get current study timer for logged in user
+   * `PUT /api/study/progress` - Create/update current study timer for logged in user
+   * `DELETE /api/study/progress` - Delete current study timer for logged in user
 * **Stats**
    * `GET /api/stats/me` - Get study statistics for logged in user
+* **Buddy**
+   * `GET /api/buddy/me` - Get buddy data for logged in user
+   * `POST /api/buddy/me` - Create a new buddy for logged in user
+   * `POST /api/buddy/update` - Update the name and type of buddy for logged in user
+   * `POST /api/buddy/exp` - Increase buddy exp for logged in user
+   * `POST /api/buddy/status` - Change buddy status for logged in user
+   * `POST /api/buddy/reset` - Delete buddy for logged in user and create new one
 
 All routes except registration and login require **Authorization** header with a Bearer token
 
@@ -121,13 +108,13 @@ We rely on **ESLint** for linting and **Jest/Supertest** for unit and integratio
 
 - **Backend**
   ```bash
-  cd backend
+  cd '.\code\Study buddy\backend\'
   npm run lint
   npm test
   ```
 - **Frontend**
   ```bash
-  cd frontend
+  cd '.\code\Study buddy\frontend\'
   npm run lint
   npm test -- --watchAll=false
   ```
@@ -234,109 +221,3 @@ docker compose up
 For more details, see the Dockerfiles and `compose.yaml` in the repository. If you encounter issues, check the troubleshooting section above or reach out to your team for support.
 
 ---
-
-## Project Structure
-```bash
-cs673f25a2project-cs673a2f25team3/
-├── code/
-│   └── Study buddy/
-│       ├── backend/
-│       │   ├── __tests__/
-│       │   │   ├── unit/
-│       │   │   │   ├── auth.test.js
-│       │   │   │   ├── logger.test.js
-│       │   │   ├── acceptance.test.js
-│       │   │   ├── api.test.js
-│       │   │   ├── energyDecay.test.js
-│       │   ├── db/
-│       │   │   ├── database.sqlite
-│       │   │   ├── db.js
-│       │   ├── middleware/
-│       │   │   ├── auth.js
-│       │   │   ├── logger.js
-│       │   ├── models/
-│       │   │   ├── buddyModel.js
-│       │   │   ├── profileModel.js
-│       │   │   ├── settingsModel.js
-│       │   │   ├── studyModel.js
-│       │   │   ├── userModel.js
-│       │   ├── routes/
-│       │   │   ├── buddyRoutes.js
-│       │   │   ├── profileRoutes.js
-│       │   │   ├── settingsRoutes.js
-│       │   │   ├── studyRoutes.js
-│       │   │   ├── userRoutes.js
-│       │   ├── .gitignore
-│       │   ├── Dockerfile
-│       │   ├── eslint.config.js
-│       │   ├── jest.config.js
-│       │   ├── jest.setup.js
-│       │   ├── package.json
-│       │   ├── server.js
-│       │
-│       └── frontend/
-│           ├── .expo/
-│           ├── .npm/
-│           ├── __tests__/
-│           │   ├── smoke.test.js
-│           ├── assets/
-│           │   ├── images/
-│           │   │   ├── Terrier.png
-│           │   │   ├── adaptive-icon.png
-│           │   │   ├── favicon.png
-│           │   │   ├── icon.png
-│           │   │   ├── splash-icon.png
-│           │   ├── sounds/
-│           │   │   ├── Click sound.mp3
-│           ├── components/
-│           │   ├── Background.js
-│           │   ├── Checkbox.js
-│           │   ├── NavigationButton.js
-│           ├── screens/
-│           │   ├── GameMenu.js
-│           │   ├── Home.js
-│           │   ├── Login.js
-│           │   ├── SelectStudyTime.js
-│           │   ├── Settings.js
-│           │   ├── Statistics.js
-│           │   ├── Studying.js
-│           ├── styles/
-│           │   ├── base.js
-│           │   ├── style.js
-│           │   ├── styles.css
-│           ├── util/
-│           │   ├── formatString.js
-│           ├── .dockerignore
-│           ├── App.js
-│           ├── Dockerfile
-│           ├── app.json
-│           ├── babel.config.js
-│           ├── eslint.config.js
-│           ├── index.js
-│           ├── package-lock.json
-│           ├── package.json
-│
-├── demo/
-│   ├── CS673_iteration1_demo_team3.mp4
-├── doc/
-│   ├── CS673_MeetingMinutes_team3.docx
-│   ├── CS673_presentation1_team3.pptx
-│   ├── CS673_ProgressReport_team3.xlsx
-│   ├── CS673_SDD_team3.docx
-│   ├── CS673_SPPP_RiskManagement.xlsx
-│   ├── CS673_SPPP_team3.docx
-│   ├── CS673_STD_team3.docx
-├── misc/
-│   ├── .gitkeep
-├── tests/
-│   ├── .gitkeep
-├── .dockerignore
-├── .gitignore
-├── README.md
-├── compose.yaml
-├── package.json
-├── team.md
-...
-```
-
-
