@@ -58,7 +58,7 @@ export function useBuddyValues() {
     }
     return DEFAULT_BUDDY_DATA.exp;
   })();
-  const size = Math.max(0, 100 + parsedExp / 2);
+  const size = Math.max(0, 150 + parsedExp / 2);
 
   return {
     ...DEFAULT_BUDDY_DATA,
