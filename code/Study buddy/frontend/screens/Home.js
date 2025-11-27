@@ -83,13 +83,7 @@ export default function Home() {
         {/* Buddy */}
         <Buddy />
 
-        {/* Navigation Buttons */}
-        <View style={homeStyles.buttonGroup}>
-          {navItems.map((item) => (
-            <NavigationButton key={item.link} text={item.text} link={item.link} />
-          ))}
-          <NavigationButton text="Logout" onPress={handleLogout} accent={true} />
-        </View>
+        <NavigationButton text="Logout" onPress={handleLogout} />
 
       </View>
     </Background>

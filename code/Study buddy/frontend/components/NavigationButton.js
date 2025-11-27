@@ -31,8 +31,8 @@ export const NavigationButton = ({ text, link, onPress, params, accent=false }) 
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} accessibilityRole="link" activeOpacity={0.85} style={accent ? styles.navigationAccentButton : styles.navigationButton}>
-      <Text style={styles.navigationButtonText}>{text}</Text>
+    <TouchableOpacity onPress={handlePress} accessibilityRole="link">
+      <Text style={styles.navigationButton}>{text}</Text>
     </TouchableOpacity>
   );
 };

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Gamepad2, Play } from 'lucide-react-native';
-import { Background } from '../components/Background';
 import { colors } from '../styles/base';
 import { gameMenuStyles } from '../styles/gamesStyle';
+import { Background } from '../components/Background';
 
 /*
   50% framework
@@ -44,7 +44,7 @@ export default function GameMenu({ navigation }) {
   const selected = games.find((g) => g.id === selectedGame);
 
   return (
-    <View style={gameMenuStyles.background}>
+    <Background align={false}>
       <View style={gameMenuStyles.container}>
         {/* Header */}
         <View style={gameMenuStyles.header}>
@@ -99,6 +99,6 @@ export default function GameMenu({ navigation }) {
           </View>
         )}
       </View>
-    </View>
+    </Background>
   );
 }

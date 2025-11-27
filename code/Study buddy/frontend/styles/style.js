@@ -24,6 +24,12 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.secondary
   },
+  background2: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+    backgroundColor: colors.secondary
+  },
   container: {
     flex: 1,
     width: "100%",
@@ -158,7 +164,8 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   navigationButton: {
-    backgroundColor: '#E67E22',
+    backgroundColor: colors.primary,
+    color: colors.pale,
     borderRadius: 10,
     paddingVertical: 12,
     justifyContent: 'center',
@@ -168,23 +175,9 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 3,
-  },
-  navigationAccentButton: {
-    backgroundColor: '#C0392B',
-    borderRadius: 10,
-    paddingVertical: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 6,
-    shadowColor: '#E67E22',
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  navigationButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: fonts.mdlg,
+    textAlign: "center",
+    fontWeight: 'bold'
   },
   submitButton: {
     backgroundColor: colors.primary, 

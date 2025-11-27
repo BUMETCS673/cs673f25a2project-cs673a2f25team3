@@ -24,9 +24,5 @@ export default StyleSheet.create({
     fontStyle: 'italic',
     textAlign: 'center',
     marginTop: 4,
-  },
-
-  buttonGroup: {
-    marginTop: 10,
   }
 });

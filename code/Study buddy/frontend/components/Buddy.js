@@ -1,10 +1,11 @@
-import { View, Image } from "react-native";
+import { View, Image, Text } from "react-native";
 import { buddyStyles } from "../styles/buddyStyles";
 import { statusToString } from "../util/status";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../AuthContext";
 
 import { API_BASE_URL } from "@env";
+import { styles } from "../styles/style";
 
 /*
     40% manual
@@ -52,6 +53,7 @@ export function Buddy() {
     const [statusString, setStatusString] = useState("Happy");
     const [imageSource, setImageSource] = useState(buddyImages["Happy"]?.["deer"]);
     const [size, setSize] = useState(150);
+		const [name, setName] = useState("Buddy");
 
     useEffect(() => {
 			async function fetchData() {
@@ -67,6 +69,7 @@ export function Buddy() {
 					setStatusString(tempStatusString);
 					setImageSource(buddyImages[tempStatusString]?.[tempBuddyType]);
 					setSize(Math.max(0, 150 + buddy.exp / 2));
+					setName(buddy.name);
 				} catch (err) {
 					console.log("Failed to fetch study buddy data:", err);
 				}
@@ -84,6 +87,7 @@ export function Buddy() {
                 resizeMode="contain"
                 alt={`${statusString} ${buddyType}`}
             />
+						<Text style={styles.cardH1}>{studyData?.name}</Text>
         </View>
     )
 }
