@@ -1,13 +1,22 @@
 /*
-  100% AI generate
+  100% AI generate + FIXED for AuthContext
 */
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import GameMenu from '../../screens/GameMenu';
+import { AuthContext } from '../../AuthContext';
+
+// Mock Auth Context Value
+const mockAuth = {
+  gameTimeRemaining: 600, // 10 minutes unlocked
+  setGameTimeRemaining: jest.fn(),
+};
 
 const Wrapper = ({ children }) => (
-  <NavigationContainer>{children}</NavigationContainer>
+  <AuthContext.Provider value={mockAuth}>
+    <NavigationContainer>{children}</NavigationContainer>
+  </AuthContext.Provider>
 );
 
 describe('GameMenu', () => {
