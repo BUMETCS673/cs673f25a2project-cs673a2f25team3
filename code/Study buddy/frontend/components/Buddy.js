@@ -1,7 +1,10 @@
 import { View, Image } from "react-native";
 import { buddyStyles } from "../styles/buddyStyles";
-import { useBuddyValues } from "../dataInterface/buddyValues";
 import { statusToString } from "../util/status";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../AuthContext";
+
+import { API_BASE_URL } from "@env";
 
 /*
     40% manual
@@ -43,17 +46,41 @@ const buddyImages = {
 };
 
 export function Buddy() {
-    const buddyDetails = {...useBuddyValues()};
+    const { studyData, token } = useContext(AuthContext);
+    
+    const[buddyType, setBuddyType] = useState("deer");
+    const [statusString, setStatusString] = useState("Happy");
+    const [imageSource, setImageSource] = useState(buddyImages["Happy"]?.["deer"]);
+    const [size, setSize] = useState(150);
 
-    const buddyType = buddyDetails.buddyType || "deer";
-    const statusString = statusToString(buddyDetails.status) || "Happy";
-    const imageSource = buddyImages[statusString]?.[buddyType];
+    useEffect(() => {
+			async function fetchData() {
+				try {
+					const res = await fetch(`${API_BASE_URL}/buddy/me`, {
+						headers: { Authorization: `Bearer ${token}` }
+					});
+		
+					const buddy = await res.json();
+					const tempBuddyType = buddy.type || "deer";
+					const tempStatusString = statusToString(buddy.status) || "Happy";
+					setBuddyType(tempBuddyType);
+					setStatusString(tempStatusString);
+					setImageSource(buddyImages[tempStatusString]?.[tempBuddyType]);
+					setSize(Math.max(0, 150 + buddy.exp / 2));
+				} catch (err) {
+					console.log("Failed to fetch study buddy data:", err);
+				}
+			}
+			
+			fetchData();
+			
+		}, [studyData]);
 
     return (
         <View style={buddyStyles.buddyContainer}>
             <Image
                 source={imageSource}
-                style={{width: buddyDetails.size, height: buddyDetails.size}}
+                style={{width: size, height: size}}
                 resizeMode="contain"
                 alt={`${statusString} ${buddyType}`}
             />
