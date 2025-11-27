@@ -6,7 +6,7 @@ import { useCallback, useContext, useEffect, useRef } from 'react';
 import { View, Text, Alert, Platform } from 'react-native';
 import { NavigationButton } from '../components/NavigationButton';
 import { Background } from '../components/Background';
-import { HomeBuddy } from '../components/buddies/buddy';
+import { Buddy } from '../components/Buddy';
 import { AuthContext } from '../AuthContext';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import AppIcon from '../components/icons/AppIcon';
@@ -81,7 +81,7 @@ export default function Home() {
         </View>
 
         {/* Buddy */}
-        <HomeBuddy />
+        <Buddy />
 
         {/* Navigation Buttons */}
         <View style={homeStyles.buttonGroup}>
