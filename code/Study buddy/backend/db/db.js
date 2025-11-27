@@ -96,6 +96,18 @@ db.serialize(() => {
     )
   `);
 
+  // Game highest score record table
+  db.run(`
+    CREATE TABLE IF NOT EXISTS game_records (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      game_id TEXT NOT NULL,
+      high_score INTEGER DEFAULT 0,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `);
+  
   // Add last_updated column to study_buddies if it doesn't exist
   // This handles cases where the table was created before this column was added
   db.run(`

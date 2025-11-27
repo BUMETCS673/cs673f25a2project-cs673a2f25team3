@@ -65,6 +65,7 @@ app.use("/api/study", studyRoutes);
 app.use("/api/profiles", profileRoutes);
 app.use("/api/buddy", buddyRoutes);
 app.use("/api/stats", statsRoutes);
+app.use("/api/scores", require("./routes/scoreRoutes"));
 
 // listen Only listen when running server.js directly. Do not listen when testing
 if (process.env.NODE_ENV !== "test") {
