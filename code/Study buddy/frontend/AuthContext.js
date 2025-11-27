@@ -15,6 +15,8 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [studyData, setStudyData] = useState(null); 
   const [loading, setLoading] = useState(true);
+  // Game unlock timer (in seconds)
+  const [gameTimeRemaining, setGameTimeRemaining] = useState(0);
 
   const parseJwt = (jwt) => {
     try {
@@ -42,6 +44,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setToken(null);
     setStudyData(null); 
+    setGameTimeRemaining(0);
     await AsyncStorage.removeItem("user");
     await AsyncStorage.removeItem("token");
   };
@@ -113,6 +116,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (userData, tokenData) => {
     setUser(userData);
     setToken(tokenData);
+    setGameTimeRemaining(0);
     await AsyncStorage.setItem("user", JSON.stringify(userData));
     await AsyncStorage.setItem("token", tokenData);
 
@@ -131,6 +135,8 @@ export const AuthProvider = ({ children }) => {
         fetchStudyBuddyData,
         login,
         logout,
+        gameTimeRemaining,
+        setGameTimeRemaining,
         loading
       }}
     >

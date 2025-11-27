@@ -25,7 +25,7 @@ import {
 } from "./studyTimerConstants";
 
 // Encapsulates all Study Timer business logic and side effects.
-export function useStudyTimer() {
+export function useStudyTimer({ onSessionComplete } = {}) {
   const { token } = useContext(AuthContext);
 
   // Local timer state.
@@ -411,6 +411,9 @@ export function useStudyTimer() {
         (new Date(endISO).getTime() - new Date(startISO).getTime()) / 60000
       )
     );
+    if (onSessionComplete) {
+      onSessionComplete(durationMinutes);
+    }
     const payload = {
       duration: durationMinutes,
       start_time: startISO,

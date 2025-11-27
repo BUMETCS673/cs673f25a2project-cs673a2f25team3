@@ -10,7 +10,7 @@ import { formatDuration, MAX_MINUTES, PRESET_MINUTES } from "./studyTimerConstan
 import { studyTimerStyles as styles } from "../styles/studyingStyles";
 
 // UI wrapper that delegates all timer logic to the useStudyTimer hook.
-export default function StudyTimerInterface() {
+export default function StudyTimerInterface({ onSessionComplete }) {
   const {
     isIdle,
     isRunning,
@@ -38,7 +38,7 @@ export default function StudyTimerInterface() {
     handleStop,
     isCustomValid,
     clearError,
-  } = useStudyTimer();
+  } = useStudyTimer({ onSessionComplete });
 
   if (!hydrated) {
     return (
