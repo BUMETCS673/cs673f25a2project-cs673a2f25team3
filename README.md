@@ -4,7 +4,7 @@ Study Buddy is a mobile and web application for tracking study sessions, user pr
 
 ---
 
-## Table of Contents
+##  Table of Contents 
 
 - [Technologies](#technologies)
 - [Installation](#installation)
