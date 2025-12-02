@@ -96,11 +96,7 @@ jobs:
 
       - name: Build frontend image
         run: |
-<<<<<<< HEAD
           docker build -t studybuddy-frontend:ci -f "code/Study buddy/frontend/Dockerfile.dev" "code/Study buddy/frontend"
-=======
-          docker build -t studybuddy-frontend:ci -f "code/Study buddy/frontend/Dockerfile" "code/Study buddy/frontend"
->>>>>>> main
 
       - name: Backend tests in Docker
         run: |
@@ -110,8 +106,4 @@ jobs:
         env:
           CI: true
         run: |
-<<<<<<< HEAD
           docker run --rm -w /app studybuddy-frontend:ci npm test
-=======
-          docker run --rm -w /app studybuddy-frontend:ci npm test -- --testPathIgnorePatterns="StudyTimerInterface.test.js"
->>>>>>> main
