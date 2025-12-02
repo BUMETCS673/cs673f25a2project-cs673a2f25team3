@@ -214,7 +214,11 @@ test("progress marker tracks elapsed ratio", async () => {
     elapsedMsTotal = targetMs;
 
     const timerLabel = getByTestId("timerDisplay").props.children;
+<<<<<<< HEAD
     const expectedSeconds = Math.min(60 * 60 - targetMs / 1000, 60 * 60);
+=======
+    const expectedSeconds = Math.min(targetMs / 1000, 60 * 60);
+>>>>>>> main
     const expectedLabel = [
       Math.floor(expectedSeconds / 3600),
       Math.floor((expectedSeconds % 3600) / 60),
@@ -240,7 +244,10 @@ test("progress marker tracks elapsed ratio", async () => {
       circleRadius * Math.sin(expectedAngle) + circleDiameter / 2 - markerSize / 2;
     expect(Math.abs(left - expectedX)).toBeLessThan(2);
     expect(Math.abs(top - expectedY)).toBeLessThan(2);
+<<<<<<< HEAD
     return { timerLabel: timerLabel, left: left, top: top };
+=======
+>>>>>>> main
   };
 
   await validateMarker(15, 0.25);

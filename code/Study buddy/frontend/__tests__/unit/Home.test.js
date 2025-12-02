@@ -6,13 +6,18 @@ import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+<<<<<<< HEAD
 import { AuthContext } from '../../AuthContext';
+=======
+import { AuthProvider } from '../../AuthContext';
+>>>>>>> main
 import Home from '../../screens/Home';
 
 const Stack = createNativeStackNavigator();
 
 const LoginScreen = () => null;
 
+<<<<<<< HEAD
 const TestAuthProvider = ({ children }) => {
   const [user, setUser] = React.useState({ username: 'testuser' });
 
@@ -50,6 +55,16 @@ const AppWithNavigation = () => (
     <TestAuthProvider>
       <StackNavigator />
     </TestAuthProvider>
+=======
+const AppWithNavigation = () => (
+  <NavigationContainer>
+    <AuthProvider>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+      </Stack.Navigator>
+    </AuthProvider>
+>>>>>>> main
   </NavigationContainer>
 );
 
@@ -58,6 +73,10 @@ describe('Home Screen', () => {
     const { getByText } = render(<AppWithNavigation />);
 
     await waitFor(() => expect(getByText('Home')).toBeTruthy());
+<<<<<<< HEAD
+=======
+    expect(getByText('Start Studying!')).toBeTruthy();
+>>>>>>> main
     expect(getByText('Logout')).toBeTruthy();
   });
 
