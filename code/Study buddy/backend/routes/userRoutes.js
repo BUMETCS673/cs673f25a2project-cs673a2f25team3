@@ -10,6 +10,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const auth = require("../middleware/auth");
+const { authLimiter } = require("../middleware/rateLimiter");
 const db = require("../db/db");
 
 const router = express.Router();
@@ -47,7 +48,7 @@ const router = express.Router();
  *       400:
  *         description: Bad request, e.g., missing username/password
  */
-router.post("/register", (req, res) => {
+router.post("/register", authLimiter, (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -97,7 +98,7 @@ router.post("/register", (req, res) => {
  *       401:
  *         description: Invalid credentials
  */
-router.post("/login", (req, res) => {
+router.post("/login", authLimiter, (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
