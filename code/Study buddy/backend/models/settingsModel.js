@@ -26,16 +26,16 @@ function getSettings(userId, callback) {
  *
  * @param {number} userId - The ID of the user
  * @param {string} theme - The selected theme (e.g., "light" or "dark")
- * @param {number} dailyGoal - The daily study goal (e.g., in minutes)
+ * @param {number} goal - The study goal (e.g., in ms)
  * @param {function} callback - Callback function (err, updatedSettings)
  */
-function updateSettings(userId, theme, dailyGoal, callback) {
+function updateSettings(userId, theme, goal, callback) {
   const query = `
-    INSERT INTO settings (user_id, theme, daily_goal)
+    INSERT INTO settings (user_id, theme, goal)
     VALUES (?, ?, ?)
-    ON CONFLICT(user_id) DO UPDATE SET theme = ?, daily_goal = ?`;
-  db.run(query, [userId, theme, dailyGoal, theme, dailyGoal], function (err) {
-    callback(err, { user_id: userId, theme, daily_goal: dailyGoal });
+    ON CONFLICT(user_id) DO UPDATE SET theme = ?, goal = ?`;
+  db.run(query, [userId, theme, goal, theme, goal], function (err) {
+    callback(err, { user_id: userId, theme, goal: goal });
   });
 }
 

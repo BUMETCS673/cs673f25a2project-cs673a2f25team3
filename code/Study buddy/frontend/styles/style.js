@@ -1,9 +1,14 @@
 import { StyleSheet } from "react-native";
-import { borderRadius, fonts, padding } from "./base";
+import { borderRadius, fonts, padding, colors } from "./base";
+
+/*
+  50% AI
+  50% Manual
+*/
 
 /*
   100% unified styles for the app
-  - combines original style.js + LoginForm styles
+  - combines original style.js + LoginForm styles + Statistics page styles
 */
 
 export const styles = StyleSheet.create({
@@ -12,8 +17,14 @@ export const styles = StyleSheet.create({
     resizeMode: "cover",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: colors.secondary
   },
-  // ====== Containers ======
+  background2: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+    backgroundColor: colors.secondary
+  },
   container: {
     flex: 1,
     width: "100%",
@@ -26,10 +37,15 @@ export const styles = StyleSheet.create({
     maxWidth: 400,
     padding: padding.lg,
     borderRadius: borderRadius.md,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 0,
+    borderColor: colors.tertiary,
+    backgroundColor: colors.pale,
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 10,
+    elevation: 3,
   },
   overlay: {
     flex: 1,
@@ -39,18 +55,23 @@ export const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.4)",
     paddingHorizontal: 20,
   },
-
-  // ====== Text ======
   cardH1: {
     fontSize: fonts.lg,
     fontWeight: "bold",
-    color: "white",
+    color: colors.primary,
     textAlign: "center",
     marginBottom: padding.md,
   },
+  cardH2: {
+    color: 'white',
+    textAlign: 'center',
+    fontSize: fonts.md,
+    fontWeight: 'bold',
+    marginBottom: padding.md
+  },
   paragraph: {
     fontSize: fonts.md,
-    color: "white",
+    color: colors.text,
   },
   timer: {
     fontSize: fonts.huge,
@@ -69,8 +90,6 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     textDecorationLine: "underline",
   },
-
-  // ====== Input Fields ======
   field: {
     marginBottom: 16,
     width: "100%",
@@ -86,10 +105,10 @@ export const styles = StyleSheet.create({
   input: {
     height: 44,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-    color: "#fff",
-    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 2,
+    borderColor: colors.primary,
+    color: colors.text,
+    backgroundColor: colors.pale,
     paddingHorizontal: 12,
   },
   iconLeft: {
@@ -102,6 +121,33 @@ export const styles = StyleSheet.create({
     right: 10,
     zIndex: 1,
   },
+  inputBox: {
+    backgroundColor: colors.pale,
+    borderColor: colors.primary,
+    borderWidth: 2,
+    borderRadius: 8,
+    width: 100
+  },
+  inputText: {
+    fontSize: fonts.md,
+    color: colors.text
+  },
+  inputOutline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: padding.lg
+  },
+  inputPicker: {
+    width: "100%",
+    borderColor: colors.primary,
+    borderWidth: 2,
+    borderRadius: 8,
+    padding: padding.sm,
+    margin: padding.sm,
+    fontSize: fonts.md,
+    backgroundColor: colors.pale,
+    color: colors.text
+  },
 
   // ====== Buttons ======
   button: {
@@ -113,18 +159,35 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   navigationButton: {
-    backgroundColor: "white",
-    color: "black",
-    fontWeight: "bold",
+    backgroundColor: colors.primary,
+    color: colors.pale,
+    borderRadius: 10,
+    paddingVertical: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 6,
+    shadowColor: '#E67E22',
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
+    fontSize: fonts.mdlg,
+    textAlign: "center",
+    fontWeight: 'bold'
+  },
+  submitButton: {
+    backgroundColor: colors.primary, 
+    color: colors.pale,
+    fontWeight: 'bold', 
     borderWidth: 2,
-    borderColor: "transparent",
+    borderColor: 'transparent',
     paddingVertical: padding.sm,
     paddingHorizontal: padding.md,
     borderRadius: borderRadius.sm,
-    fontSize: fonts.lg,
-    textAlign: "center",
-    textAlignVertical: "center",
-    margin: padding.xs,
+    cursor: 'pointer',
+    fontSize: fonts.mdlg,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    margin: padding.xs
   },
 
   // ====== Bottom Row ======
@@ -139,22 +202,20 @@ export const styles = StyleSheet.create({
   loginFormButton: {
     width: "100%",
     maxWidth: "400%",
-    backgroundColor: "rgba(255,255,255,0.2)",
-    borderColor: "rgba(255,255,255,0.3)",
-    borderWidth: 1,
+    backgroundColor: colors.primary,
+    borderColor: colors.text,
+    borderWidth: 0,
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: "center",
     marginTop: 16,
   },
   loginFormButtonText: {
-    color: "#fff",
-    fontSize: 16,
+    color: colors.pale,
+    fontSize: 20,
     fontWeight: "600",
     textAlign: "center",
   },
-
-  // ====== Checkbox ======
   checkboxOutline: {
     flexDirection: "row",
     alignItems: "center",
@@ -167,5 +228,68 @@ export const styles = StyleSheet.create({
     margin: padding.sm,
     fontSize: fonts.md,
     color: "white",
+  },
+
+  // ====== Statistics Page Styles ======
+  statsContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    padding: 16,
+    alignItems: "center",
+  },
+  statsCardTitle: {
+    fontSize: fonts.lg,
+    fontWeight: "bold",
+    color: colors.primary,
+    marginBottom: padding.sm,
+    textAlign: "center",
+  },
+  statsRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+  },
+  statBox: {
+    alignItems: "center",
+  },
+  statNumber: {
+    fontSize: fonts.mdlg,
+    fontWeight: "bold",
+    color: colors.primary,
+  },
+
+  statLabel: {
+    fontSize: fonts.md,
+    color: colors.text,
+  },
+
+  // Extra spacing utility for cards on stats screen
+  statsCardSpacing: {
+    marginTop: padding.md,
+  },
+  sessionRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255,255,255,0.2)",
+    width: "100%",
+  },
+  sessionText: {
+    color: colors.text,
+    fontSize: 16,
+  },
+  noSessions: {
+    color: colors.text,
+    fontSize: 16,
+    textAlign: "center",
+    paddingVertical: 10,
+  },
+  dayTotal: {
+    color: colors.text,
+    fontWeight: "bold",
+    fontSize: 16,
+    marginTop: 8,
+    textAlign: "center",
   },
 });

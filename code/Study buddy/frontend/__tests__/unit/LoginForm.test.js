@@ -11,20 +11,52 @@ import { Text } from 'react-native';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AuthProvider } from '../../AuthContext';
+import { AuthContext } from '../../AuthContext';
 import LoginForm from '../../components/LoginForm';
 const Stack = createNativeStackNavigator();
 
 const HomeScreen = () => <Text testID="home-screen">Home Screen</Text>;
 
+const StackNavigator = () => {
+  const { user } = React.useContext(AuthContext);
+
+  return (
+    <Stack.Navigator initialRouteName="Login">
+      {!user ? (
+        <Stack.Screen name="Login" component={LoginForm} />
+      ) : (
+        <Stack.Screen name="Home" component={HomeScreen} />
+      )}
+    </Stack.Navigator>
+  );
+};
+
+const TestAuthProvider = ({ children }) => {
+  const [user, setUser] = React.useState(null);
+
+  const login = async (userData) => {
+    setUser(userData);
+  };
+
+  const value = React.useMemo(
+    () => ({
+      user,
+      token: null,
+      login,
+      logout: jest.fn(),
+      loading: false,
+    }),
+    [user]
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
 const AppWithNavigation = () => (
   <NavigationContainer>
-    <AuthProvider>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login" component={LoginForm} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-      </Stack.Navigator>
-    </AuthProvider>
+    <TestAuthProvider>
+      <StackNavigator />
+    </TestAuthProvider>
   </NavigationContainer>
 );
 
@@ -36,15 +68,15 @@ describe('LoginForm', () => {
   test('renders login form correctly', async () => {
     const { getByPlaceholderText, getByTestId } = render(<AppWithNavigation />);
 
-    await waitFor(() => expect(getByPlaceholderText('Enter your username')).toBeTruthy());
-    expect(getByPlaceholderText('Enter your password')).toBeTruthy();
+    await waitFor(() => expect(getByPlaceholderText('Username')).toBeTruthy());
+    expect(getByPlaceholderText('Password')).toBeTruthy();
     expect(getByTestId('loginButton')).toBeTruthy();
   });
 
   test('login updates context and navigates', async () => {
-    const { getByPlaceholderText, getByTestId, queryByPlaceholderText, findByTestId } = render(<AppWithNavigation />);
+    const { getByPlaceholderText, getByTestId, findByTestId } = render(<AppWithNavigation />);
 
-    await waitFor(() => expect(getByPlaceholderText('Enter your username')).toBeTruthy());
+    await waitFor(() => expect(getByPlaceholderText('Username')).toBeTruthy());
 
     fetchMock.mockResponseOnce(
       JSON.stringify({
@@ -55,14 +87,14 @@ describe('LoginForm', () => {
     );
 
     // input user name and password
-    fireEvent.changeText(getByPlaceholderText('Enter your username'), 'testuser');
-    fireEvent.changeText(getByPlaceholderText('Enter your password'), 'password');
+    fireEvent.changeText(getByPlaceholderText('Username'), 'testuser');
+    fireEvent.changeText(getByPlaceholderText('Password'), '$Password123');
 
     await act(async () => {
       fireEvent.press(getByTestId('loginButton'));
     });
 
-    await waitFor(() => expect(queryByPlaceholderText('Enter your username')).toBeNull());
+    // Home screen should render once user is set in AuthContext
     await findByTestId('home-screen');
   });
 

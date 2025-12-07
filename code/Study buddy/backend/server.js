@@ -7,6 +7,7 @@ require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const logger = require("./middleware/logger");
+const { generalLimiter } = require("./middleware/rateLimiter");
 
 const userRoutes = require("./routes/userRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
@@ -23,6 +24,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(logger);
+
+// Apply general rate limiting to all API routes
+app.use("/api", generalLimiter);
 
 // ======================
 // Swagger setup
