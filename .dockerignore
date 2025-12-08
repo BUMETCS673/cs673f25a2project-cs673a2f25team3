@@ -1,0 +1,84 @@
+# 50% AI generated
+# 50% manual
+
+# Node.js dependencies
+node_modules/
+npm-debug.log
+yarn-debug.log
+
+# Version control
+.git/
+.gitignore
+.hg/
+.svn/
+
+# IDE/editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.iml
+
+# Build outputs
+build/
+dist/
+out/
+
+# Test files and directories
+test/
+tests/
+*.test.js
+
+# Debug and log files
+*.log
+debug/
+
+# Environment and secrets
+.env*
+*.env
+*.pem
+*.key
+*.crt
+config.local.*
+*.local.yml
+.local/
+
+# Documentation and markdown
+README*
+*.md
+docs/
+doc/
+
+# Temporary and misc files
+tmp/
+temp/
+*.tmp
+
+# Project-specific
+misc/
+
+# Docker files
+Dockerfile*
+docker-compose*
+
+# Other
+*.xml
+*.keep
+
+# Exclude lock files from ignore (explicitly NOT ignored)
+!package-lock.json
+!yarn.lock
+
+# Exclude gradle/maven files (explicitly NOT ignored)
+!.gradlew
+!.mvnw
+!.gradle/
+!.mvn/
+
+# Exclude audio assets (keep mp3 for frontend)
+# (Do not ignore .mp3 files in assets/sounds)
+# If you want to ignore all mp3 except those in assets/sounds, use:
+# *.mp3
+# !code/Study buddy/frontend/assets/sounds/*.mp3
+
+# End of .dockerignore
