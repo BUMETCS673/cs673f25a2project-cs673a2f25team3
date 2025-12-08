@@ -10,6 +10,7 @@ Deployed at: https://cs673f25a2project-cs673a2f25team3-kej3.onrender.com/
 
 - [Installation and Setup](#installation-and-setup)
 - [Running the App](#running-the-app)
+- [Deployment (Render)](#deployment-render)
 - [Technologies](#technologies)
 - [API Endpoints](#api-endpoints)
 - [Testing](#testing)
@@ -58,6 +59,13 @@ cd '.\code\Study buddy\frontend\'
 npm start
 ```
 Note: may fail if device is not on the same wifi as the frontend.
+
+---
+
+## Deployment (Render)
+
+- Live deployment: https://cs673f25a2project-cs673a2f25team3-kej3.onrender.com/
+- Expect a short cold-start delay after periods of inactivity; refresh if the first request times out.
 
 ---
 
